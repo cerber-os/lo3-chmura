@@ -1,0 +1,106 @@
+{% extends 'chmura/index.html' %}
+
+{% block header %}Zastępstwa na {{data}}{% endblock %}
+
+{% block content %}
+<section class="dashboard-counts no-padding-bottom">
+  <div class="container-fluid">
+    <div class="row bg-white has-shadow">
+      <div class="col-xl-12 col-sm-12">
+        <h1 style="width: 100%; text-align: center;">Zastępstwa</h1>
+        <div class="text-center">
+            <select id="date-switcher" class="form-control">
+            </select>
+        </div>
+        <div class="item d-flex align-items-center" style="overflow-x: auto;">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:5%;">Klasa</th>
+                        <th style="width: 5%;">Lekcja</th>
+                        <th style="width: 30%;">Przedmiot</th>
+                        <th style="width: 30%;">Nauczyciel</th>
+                        <th style="width: 5%;">Sala</th>
+                        <th style="width: 10%;">Typ</th>
+                        <th style="width: 15%;">Notatka</th>
+                    </tr>
+                </thead>
+				<tbody>
+                {% for zast in zastepstwa %}
+				    <tr>
+                        <td>{% for k in zast.klasa %} {{k.name}} {% endfor %}</td><!--Klasa-->
+                        <td>{{zast.lekcja.id}}</td><!--Lekcja-->
+                        <td>{% for z in zast.przedmiot %}
+                              {% if z in zast.old_przedmiot %}<s>{% endif %}
+                                {{z.name}}
+                              {% if z in zast.old_przedmiot %}</s>{% endif %}
+                            {% endfor %}
+                            {% if zast.przedmiot|length != 0 and zast.new_przedmiot|length != 0 %}
+                            ->
+                            {% endif %}
+                            {% for z in zast.new_przedmiot %} {{z.name}} {% endfor %}
+                        </td><!--Przedmiot-->
+                        <td>{% for z in zast.nauczyciel %}
+                              {% if z in zast.old_nauczyciel %}<s>{% endif %}
+                                {{z.name}}
+                              {% if z in zast.old_nauczyciel %}</s>{% endif %}
+                            {% endfor %}
+                            {% if zast.nauczyciel|length != 0 and zast.new_nauczyciel|length != 0 %}
+                            ->
+                            {% endif %}
+                            {% for z in zast.new_nauczyciel %} {{z.name}} {% endfor %}
+                        </td><!--Nauczyciel-->
+                        <td>{% for s in zast.sala %} {{s.short}} {% endfor %}</td><!--Sala-->
+                        <td>{% if zast.typ.name == "pl"%}
+                          <i class="fa fa-money" aria-hidden="true"></i>{% else %}
+                          {{zast.typ.name}}{% endif %}</td><!--Typ-->
+                        <td>{{zast.notka}}</td><!--Notka-->
+                    </tr>
+                {% endfor %}
+				</tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+    var date = "{{data_now}}";
+    var date_selected = "{{data}}";
+    var date_switcher = document.getElementById('date-switcher');
+    var dzien = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+
+    date_switcher.onchange = function() {
+        var date = date_switcher.options[date_switcher.selectedIndex].value;
+        window.location.href = '/substitution?date=' + date;
+    };
+
+    function addDays(date, days) {
+      var result = new Date(date);
+      result.setDate(result.getDate() + days);
+      return result;
+    }
+
+    function padding(num) {
+        return ('0' + num).slice(-2);
+    }
+
+    var shift = 0;
+    for(var i = 0; i < 5; i++){
+        var opt = document.createElement('option');
+        var newDay = addDays(date, i + shift);
+        if(newDay.getDay() == 0 || newDay.getDay() == 6){
+            shift++;
+            i--;
+            continue;
+        }
+        opt.value = newDay.getFullYear() + '-' + padding(newDay.getMonth()+1) + '-' + padding(newDay.getDate());
+        opt.innerHTML = dzien[newDay.getDay()] + ' ' + padding(newDay.getDate()) + '-' + padding(newDay.getMonth()+1) + '-' + newDay.getFullYear();
+        if(opt.value == date_selected) opt.selected = true;
+        date_switcher.appendChild(opt);
+    }
+    </script>
+{% endblock %}
