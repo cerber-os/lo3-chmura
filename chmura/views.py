@@ -50,5 +50,7 @@ def substitutionList(request):
     now = str(now.year) + '-' + str(now.month).zfill(2) + '-' + str(now.day).zfill(2)
     date = request.GET.get('date', now)
 
-    con = {'zastepstwa': get_substitution(date), 'data': date, 'data_now': now}
+    zastepstwa = get_substitution(date)
+
+    con = {'zastepstwa': zastepstwa['dane'], 'notka': zastepstwa['notka'], 'data': date, 'data_now': now}
     return render(request, 'chmura/subst.html', con)

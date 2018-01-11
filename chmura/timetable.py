@@ -79,7 +79,7 @@ def genTimeTable(uid='-22', selector='trieda'):
         if dzien == 'Sobota' or dzien == 'Niedziela':
             continue
         planJSON[dzien] = {}
-        for lessonNumber in range(2,12):
+        for lessonNumber in range(2, 12):
             planJSON[dzien][str(lessonNumber-1)] = []
             if 'c_' + str(lessonNumber) not in day:
                 continue

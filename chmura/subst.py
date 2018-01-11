@@ -46,7 +46,7 @@ def download_and_regenerate_subst(date):
         try:
             return download_subst(date)
         except ValueError:
-            return [{'przedmiot': [{'name': 'W tym dniu nie'}], 'nauczyciel': [{'name': 'ma żadnych zastępstw.'}]}]
+            return {'dane': [{'przedmiot': [{'name': 'W tym dniu nie'}], 'nauczyciel': [{'name': 'ma żadnych zastępstw.'}]}], 'notka': ''}
 
 
 def regenerate_pass():
@@ -94,6 +94,13 @@ def download_subst(date, debug=False):
     subType = jsdb['substitution_types']
     if debug:
         print(periods)
+
+    # Pobieranie czerwonej notatki
+    note_start = serverResponse.index('.innerHTML="', serverResponse.index('.innerHTML="') + 1) + len('.indexHTML="')
+    note = serverResponse[note_start: jsdb_start - 10]
+    note = note[0: note.index('";gi')]
+    note = note.replace('\\n', '')
+    print(note)
 
     subst = serverResponse[serverResponse.find('dt.DataSource(') + 14:serverResponse.find(');var dt = new')]
     subst = StringIO(subst)
@@ -173,7 +180,7 @@ def download_subst(date, debug=False):
 
         zastepstwa.append(status)
     posortowane = sorted(zastepstwa, key=lambda k: k['klasa'][0]['name'])
-    return posortowane
+    return {'dane': posortowane, 'notka': note}
 
 
 def updateJob():
