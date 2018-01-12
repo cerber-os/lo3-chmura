@@ -30,7 +30,7 @@
                 {% for zast in zastepstwa %}
 				    <tr>
                         <td>{% for k in zast.klasa %} {{k.name}} {% endfor %}</td><!--Klasa-->
-                        <td>{{zast.lekcja.id}}</td><!--Lekcja-->
+                        <td>{{zast.lekcja.id}}{{ zast.przerwa.short }}</td><!--Lekcja-->
                         <td>{% for z in zast.przedmiot %}
                               {% if z in zast.old_przedmiot %}<s>{% endif %}
                                 {{z.name}}

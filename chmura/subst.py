@@ -92,6 +92,7 @@ def download_subst(date, debug=False):
     classrooms = jsdb['classrooms']
     periods = jsdb['periods']
     subType = jsdb['substitution_types']
+    breaks = jsdb['breaks']
     if debug:
         print(periods)
 
@@ -173,9 +174,12 @@ def download_subst(date, debug=False):
                   'Nauczyciel:', status['nauczyciel'], '->', status['new_nauczyciel'], '\n',
                   'Przedmiot:', status.get('przedmiot', None), '->', status['new_przedmiot'], '\n',
                   'Sala:', status['sala'], '->', status['new_sala'], '\n',
-                  'Typ zastępstwa:', status['typ'], '\t', 'Notka: ', status.get('notka', None), '\n\n')
+                  'Typ zastępstwa:', status.get('typ', None), '\t', 'Notka: ', status.get('notka', None), '\n\n')
+
         if len(status['klasa']) == 0:
             status['klasa'].append({'name': ''})
+
+        status['przerwa'] = breaks.get(zastepstwo.get('break'))
 
         zastepstwa.append(status)
     posortowane = sorted(zastepstwa, key=lambda k: k['klasa'][0]['name'])
