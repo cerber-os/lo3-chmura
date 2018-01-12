@@ -1,0 +1,22 @@
+{% extends 'chmura/index.html' %}
+
+{% block header %}Aktualności{% endblock %}
+
+{% block content %}
+<section class="dashboard-counts no-padding-bottom">
+  <div class="container-fluid">
+    <div class="row bg-white has-shadow">
+      <div class="col-xl-12 col-sm-12">
+        <h1 style="width: 100%; text-align: center;">Aktualności</h1>
+        {% for message in news %}
+            <hr />
+            <b>{{message.title}}</b>
+            <div class="item align-items-center" style="overflow-x: auto;">
+              {% autoescape off %}{{ message.inner }}{% endautoescape %}
+            </div>
+        {% endfor  %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

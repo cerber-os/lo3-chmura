@@ -123,6 +123,7 @@ STATIC_URL = '/static/'
 
 CRONJOBS = [
     ('0 */6 * * *', 'chmura.timetable.timetableJob'),
+    ('0 */1 * * *', 'chmura.news.newsJob'),
     ('*/30 * * * *', 'chmura.subst.updateJob'),
     ('0 12 1 * *', 'chmura.updateids.updateid'),
 ]

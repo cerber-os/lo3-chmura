@@ -3,6 +3,7 @@ from django.http import Http404
 from .timetable import get_timetable
 from .subst import get_substitution
 from .updateids import load_ids
+from .news import get_news
 import datetime
 
 
@@ -54,3 +55,7 @@ def substitutionList(request):
 
     con = {'zastepstwa': zastepstwa['dane'], 'notka': zastepstwa['notka'], 'data': date, 'data_now': now}
     return render(request, 'chmura/subst.html', con)
+
+def newsPage(request):
+    con = {'news': get_news()}
+    return render(request, 'chmura/news.html', con)

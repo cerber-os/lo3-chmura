@@ -9,5 +9,6 @@ urlpatterns = [
         url(r'^timetableSelect$', views.timetableSelect, name='timetableSelect'),
         url(r'^announcement$', views.announcement, name='announcement'),
         url(r'^substitution$', views.substitutionList, name='substitutionList'),
-        url(r'^webapi$', api.webapi, name='webapi',)
+        url(r'^webapi$', api.webapi, name='webapi'),
+        url(r'^news', views.newsPage, name='newsPage'),
 ]
