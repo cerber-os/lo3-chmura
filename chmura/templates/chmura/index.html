@@ -71,7 +71,7 @@
               </ul>
             </li>
             <li {% if request.resolver_match.url_name == 'substitutionList'%}class="active"{% endif %}> <a href="/substitution"><i class="icon-interface-windows"></i>Zastępstwa </a></li>
-            <li> <a href="#"> <i class="icon-grid"></i>Terminarz </a></li>
+            <li {% if request.resolver_match.url_name == 'agenta'%}class="active"{% endif %}> <a href="/agenta"> <i class="icon-grid"></i>Terminarz </a></li>
             <li {% if request.resolver_match.url_name == 'newsPage'%}class="active"{% endif %}> <a href="/news"> <i class="icon-picture"></i>Aktualności </a></li>
             <li {% if request.resolver_match.url_name == 'announcement'%}class="active"{% endif %}> <a href="/announcement"> <i class="fa fa-bar-chart"></i>Ogłoszenia </a></li>
           </ul><span class="heading">Nauka</span>

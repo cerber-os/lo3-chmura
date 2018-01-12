@@ -10,13 +10,13 @@ def get_cur_path():
 
 
 def save_dict(obj):
-    with open(get_cur_path() + '/news/news.nw', 'wb') as f:
+    with open(get_cur_path() + '/newsF/news.nw', 'wb') as f:
         pickle.dump(obj, f, 2)
 
 
 def load_dict():
     try:
-        with open(get_cur_path() + '/news/news.nw', 'rb') as f:
+        with open(get_cur_path() + '/newsF/news.nw', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
         news = download_news()

@@ -1,0 +1,26 @@
+{% extends 'chmura/index.html' %}
+
+{% block header %}Terminarz{% endblock %}
+
+{% block content %}
+<section class="dashboard-counts no-padding-bottom">
+  <div class="container-fluid">
+    <div class="row bg-white has-shadow">
+      <div class="col-xl-12 col-sm-12">
+        <h1 style="width: 100%; text-align: center;">Terminarz</h1>
+        <table class="table table-striped">
+            <tbody>
+            {% for row in terminarz %}
+            <tr>
+                {% for col in row %}
+                    <td {% if row|length == 1 %}colspan="3"{% endif %}>{{col}}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
