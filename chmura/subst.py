@@ -1,4 +1,4 @@
-# TODO: Dodać zastępstwa na przerwach
+# TODO: Dodać zmianę sali i klasy
 
 import urllib.request
 import urllib.parse
@@ -182,7 +182,7 @@ def download_subst(date, debug=False):
         status['przerwa'] = breaks.get(zastepstwo.get('break'))
 
         zastepstwa.append(status)
-    posortowane = sorted(zastepstwa, key=lambda k: k['klasa'][0]['name'])
+    posortowane = sorted(zastepstwa, key=lambda x: ''.join([k['name'] for k in x['klasa']]))
     return {'dane': posortowane, 'notka': note}
 
 

@@ -12,25 +12,25 @@ def get_cur_path():
 
 
 def save_dict(obj):
-    with open(get_cur_path() + '/agentaF/agenta.ag', 'wb') as f:
+    with open(get_cur_path() + '/agendaF/agenda.ag', 'wb') as f:
         pickle.dump(obj, f, 2)
 
 
 def load_dict():
     try:
-        with open(get_cur_path() + '/agentaF/agenta.ag', 'rb') as f:
+        with open(get_cur_path() + '/agendaF/agenda.ag', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
-        agenta = download_agenta()
-        save_dict(agenta)
-        return agenta
+        agenda = download_agenda()
+        save_dict(agenda)
+        return agenda
 
 
-def get_agenta():
+def get_agenda():
     return load_dict()
 
 
-def download_agenta():
+def download_agenda():
     url = urllib.request.Request('http://lo3.gdynia.pl/organizacja/page-55')
     web = urllib.request.urlopen(url)
 
@@ -43,18 +43,18 @@ def download_agenta():
 
     table = page.find('table', attrs={'cols': '3', 'frame': 'VOID', 'cellspacing': '0'}).find('tbody').find_all('tr')
 
-    agenta = []
+    agenda = []
 
     for row in table:
         copy_row = []
         cols = row.find_all('td')
         for col in cols:
             copy_row.append(col.get_text().replace('\n', ''))
-        agenta.append(copy_row)
+        agenda.append(copy_row)
 
-    return agenta
+    return agenda
 
 
-def agentaJob():
-    agenta = download_agenta()
-    save_dict(agenta)
+def agendaJob():
+    agenda = download_agenda()
+    save_dict(agenda)

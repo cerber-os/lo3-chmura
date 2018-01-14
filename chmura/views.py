@@ -4,7 +4,7 @@ from .timetable import get_timetable
 from .subst import get_substitution
 from .updateids import load_ids
 from .news import get_news
-from .agenta import get_agenta
+from .agenda import get_agenda
 import datetime
 
 
@@ -63,6 +63,6 @@ def newsPage(request):
     return render(request, 'chmura/news.html', con)
 
 
-def agenta(request):
-    con = {'terminarz': get_agenta()}
-    return render(request, 'chmura/agenta.html', con)
+def agenda(request):
+    con = {'terminarz': get_agenda()}
+    return render(request, 'chmura/agenda.html', con)
