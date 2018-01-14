@@ -103,6 +103,12 @@ def genTimeTable(uid='-22', selector='trieda'):
                                             'classroom': getclassroom(card['classrooms'], classrooms)})
                 except KeyError:
                     continue
+
+            # Grupowanie przedmiotów
+            temp_lesson = planJSON[dzien][str(lessonNumber-1)]
+            if len(temp_lesson) > 1:
+                if len(temp_lesson.remove(temp_lesson[0])) == 0:
+                    planJSON[dzien][str(lessonNumber-1)][0]['group'] = True
     return planJSON
 
 
