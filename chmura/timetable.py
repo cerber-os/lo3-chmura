@@ -27,7 +27,7 @@ def load_dict(selector, uid):
 
 
 def regenerate_pass():
-    #TODO: Dodać odnawianie gsh, gpid i ciasteczka
+    # TODO: Dodać odnawianie gsh, gpid i ciasteczka
     return
 
 
