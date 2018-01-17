@@ -1,0 +1,71 @@
+body {
+	margin: 0;
+	
+	font-family: Poppins, sans-serif;
+}
+
+#header {
+	background-color: #2F333E;
+	padding: 20px 30px;
+	
+	color: #FFFFFF;
+	font-size: 20px;
+	line-height: 30px;
+}
+#header select {
+	margin-left: 20px;
+}
+
+#timetable {
+	color: #666;
+	font-size: 0.9em;
+	
+	margin: 8px;
+}
+#timetable td {
+	text-align: center;
+	
+	width: 122px;
+	box-sizing: border-box;
+	padding: 0;
+	height: 1px;
+}
+#timetable .lesson { padding: 12px; }
+#timetable .lesson:only-child { height: 100%; }
+#timetable div.lessonholder { display: table; border-collapse: collapse; height: 100%; width: 100%; }
+#timetable div.lessonholder > div { display: table-row; }
+#timetable div.lesson { display: table-cell; vertical-align: middle; margin-bottom: 2px; }
+#timetable td.multilesson .lesson { display: none; }
+#timetable .lesson p { margin: 0; line-height: 1.1em; }
+#timetable .lesson p:nth-of-type(1), #timetable .lesson p:nth-of-type(3) { font-weight: bold; }
+#timetable a {
+	text-transform: uppercase;
+	font-size: 0.8em;
+	text-decoration: dashed;
+	
+    text-decoration-line: underline;
+	color: inherit;
+}
+#timetable .hiddenlesson { display: none !important; }
+
+select {
+	border: none;
+	background-color: #E9ECEF;
+	
+	font-family: inherit;
+	
+	height: 30px;
+	width: 220px;
+	
+	vertical-align: middle;
+}
+
+@font-face {
+	font-family: Poppins;
+	src: url("/static/fonts/Poppins-Regular.ttf");
+}
+@font-face {
+	font-family: Poppins;
+	font-weight: bold;
+	src: url("/static/fonts/Poppins-Bold.ttf");
+}

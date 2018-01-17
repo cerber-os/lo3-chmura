@@ -1,160 +1,85 @@
-{% load staticfiles %}
-{% load l10n %}
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Chmura LO3</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="all,follow">
-    <!-- Bootstrap CSS-->
-    <link rel="stylesheet" href="{% static "vendor/bootstrap/css/bootstrap.min.css" %}">
-    <!-- Fontastic Custom icon font-->
-    <link rel="stylesheet" href="{% static "css/fontastic.css" %}">
-    <!-- Font Awesome CSS-->
-    <link rel="stylesheet" href="{% static "vendor/font-awesome/css/font-awesome.min.css" %}">
-    <!-- Google fonts - Poppins -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
-    <!-- theme stylesheet-->
-    <link rel="stylesheet" href="{% static "css/style.default.css" %}" id="theme-stylesheet">
-    <!-- Custom stylesheet - for your changes-->
-    <link rel="stylesheet" href="{% static "css/custom.css" %}">
-  </head>
-  <body>
-    <div class="page home-page">
-      <!-- Main Navbar-->
-      <header class="header">
-        <nav class="navbar">
-          <!-- Search Box-->
-          <div class="search-box">
-            <button class="dismiss"><i class="icon-close"></i></button>
-            <form id="searchForm" action="#" role="search">
-              <input type="search" placeholder="What are you looking for..." class="form-control">
-            </form>
-          </div>
-          <div class="container-fluid">
-            <div class="navbar-holder d-flex align-items-center justify-content-between">
-              <!-- Navbar Header-->
-              <div class="navbar-header">
-                <!-- Navbar Brand --><a href="index.html" class="navbar-brand">
-                  <div class="brand-text brand-big"><span>Chmura </span><strong>LO3</strong></div>
-                  <div class="brand-text brand-small"><strong>LO3</strong></div></a>
-                <!-- Toggle Button--><a id="toggle-btn" href="#" class="menu-btn active"><span></span><span></span><span></span></a>
-              </div>
-              <!-- Navbar Menu -->
-              <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
-              </ul>
-            </div>
-          </div>
-        </nav>
-      </header>
-      <div class="page-content d-flex align-items-stretch">
-        <!-- Side Navbar -->
-        <nav class="side-navbar">
-          <!-- Sidebar Header-->
-          <div class="sidebar-header d-flex align-items-center">
-            <div class="avatar"><img src="{% static "img/avatar.jpeg" %}" alt="..." class="img-fluid rounded-circle"></div>
-            <div class="title">
-              <h1 class="h4">Jan Kowalski</h1>
-              <p>Uczeń klasy 2Lpp</p>
-            </div>
-          </div>
-          <!-- Sidebar Navidation Menus--><span class="heading">Organizacja szkoły</span>
-          <ul class="list-unstyled">
-            <li {% if request.resolver_match.url_name == 'index' or request.resolver_match.url_name == 'timetableSelect' %}class="active"{% endif %}><a href="#dashvariants" aria-expanded="false" data-toggle="collapse"> <i class="icon-grid"></i>Plan lekcji </a>
-              <ul id="dashvariants" class="collapse list-unstyled">
-                <li><a href="/timetable?uid=-712&sel=student">Jan Kowalski</a></li>
-                <li><a href="/timetable?uid=-22&sel=trieda">Klasa 2Lpp</a></li>
-                <li><a href="/timetableSelect">Wybierz...</a></li>
-              </ul>
-            </li>
-            <li {% if request.resolver_match.url_name == 'substitutionList'%}class="active"{% endif %}> <a href="/substitution"><i class="icon-interface-windows"></i>Zastępstwa </a></li>
-            <li {% if request.resolver_match.url_name == 'agenda'%}class="active"{% endif %}> <a href="/agenda"> <i class="icon-grid"></i>Terminarz </a></li>
-            <li {% if request.resolver_match.url_name == 'newsPage'%}class="active"{% endif %}> <a href="/news"> <i class="icon-picture"></i>Aktualności </a></li>
-            <li {% if request.resolver_match.url_name == 'announcement'%}class="active"{% endif %}> <a href="/announcement"> <i class="fa fa-bar-chart"></i>Ogłoszenia </a></li>
-          </ul><span class="heading">Nauka</span>
-          <ul class="list-unstyled">
-            <li> <a href="#"> <i class="icon-flask"></i>Poczta klasowa </a></li>
-            <li> <a href="#"> <i class="icon-screen"></i>Nauczyciele </a></li>
-            <li> <a href="#"> <i class="icon-mail"></i>Pliki </a></li>
-            <li> <a href="#"> <i class="icon-picture"></i>Zadania </a></li>
-          </ul>
-        </nav>
-        <div class="content-inner">
-          <!-- Page Header-->
-          <header class="page-header">
-            <div class="container-fluid">
-              <h2 class="no-margin-bottom">{% block header %}Plan lekcji - {{target}}{% endblock %}</h2>
-            </div>
-          </header>
-          {% block content %}
-          <section class="dashboard-counts no-padding-bottom">
-            <div class="container-fluid">
-              <div class="row bg-white has-shadow">
-                <!-- Item -->
-                <div class="col-xl-12 col-sm-12">
-                  <h1 style="width: 100%; text-align: center;">{{type}} {{target}}</h1>
-                  <div class="item d-flex align-items-center" style="overflow-x: auto;">
-                      <table class="table table-striped">
-						  <thead>
-                            <tr>
-                                <th style="width:5%;">Lekcja</th>
-                                {% for b in breaks %}
-                                    {% autoescape off %}
-                                    <th style="width: 9.5%;">{{forloop.counter}}<br />{{b}}</th>
-                                    {% endautoescape %}
-                                {% endfor %}
-                            </tr>
-							</thead>
-							<tbody>
-								{% for hour, lessons in timetable.items %}
-								<tr>
-									<td><b>{{hour}}</b></td>
-									{% for day, lesson in lessons.items %}
-                                        <td>
-                                            {% for group in lesson %}
-    										<b>{{group.subject}}</b><br />
-    										{{group.teacher}}{% for c in group.classes %}{{c}}{% if group.classes|length > forloop.counter %}, {% endif %}{% endfor %}<br />
-    										<b>{{group.classroom}}</b> <br />
-                                            {% if lesson|length > forloop.counter %}<hr />{% endif %}
-                                            {% endfor %}
-                                        </td>
-									{% endfor %}
-								</tr>
-								{% endfor %}
-							</tbody>
-                      </table>
-                  </div>
-                </div>
-                <!-- Item -->
-              </div>
-            </div>
-          </section>
-          {% endblock %}
-          <!-- Page Footer-->
-          <footer class="main-footer">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-sm-6">
-                  <p>Armia Prezesa &copy; 2017-2019</p>
-                </div>
-                <div class="col-sm-6 text-right">
-                  <p>Design by <a href="https://bootstrapious.com/admin-templates" class="external">Bootstrapious</a></p>
-                  <!-- Please do not remove the backlink to us unless you support further theme's development at https://bootstrapious.com/donate. It is part of the license conditions. Thank you for understanding :)-->
-                </div>
-              </div>
-            </div>
-          </footer>
-        </div>
-      </div>
-    </div>
-    <!-- Javascript files-->
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="{% static "vendor/popper.js/umd/popper.min.js" %}"></script>
-    <script src="{% static "vendor/bootstrap/js/bootstrap.min.js" %}"></script>
-    <script src="{% static "js/front.js" %}"></script>
-    {% block scripts %}{% endblock %}
-  </body>
+	<head>
+		<title>Plan lekcji - III LO w Gdyni</title>
+		
+		<link rel="stylesheet" href="/static/css/timetable.css">
+		<link rel="stylesheet" href="/static/css/timetablecolors.css">
+	</head>
+	<body>
+		<header id="header">
+			III LO w Gdyni
+			<select>
+				<option>Plan lekcji</option>
+				<option>Zastępstwa</option>
+			</select>
+			<select>
+				<option>3Lpp</option>
+				<option>3Lmm</option>
+			</select>
+		</header>
+		
+		<table id="timetable">
+			<tr>
+				<th></th>
+				{% for hour in breaks %}
+					<th>{{forloop.counter}}<br>{% autoescape off %}{{ hour }}{% endautoescape %}</th>
+				{% endfor %}
+			</tr>
+			
+			{% for weekday, blocks in timetable.items %}
+			<tr>
+				<th>{{ weekday }}</th>
+				
+				{% for hour, block in blocks.items %}
+				
+				{% if block|length == 0 %}
+				<td></td>
+				{% elif block|length == 1 %}
+				<td class="lesson" data-lessonname="{{ block.0.subject }}">
+					<p>{{ block.0.subject }}</p>
+					<p>{{ block.0.teacher }}</p>
+					<p>{{ block.0.classroom }}</p>
+				</td>
+				{% elif block|length <= 3 %}
+				<td>
+					<div class="lessonholder">
+						{% for lesson in block %}
+						<div>
+							<div class="lesson" data-lessonname="{{ lesson.subject }}">
+								<p>{{ lesson.subject }}</p>
+								<p>{{ lesson.teacher }}</p>
+								<p>{{ lesson.classroom }}</p>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+				</td>
+				{% else %}
+				<td>
+					<div class="lessonholder">
+						<div class="detailslesson">
+							<div class="lesson" data-lessonname="_RÓŻNE">
+								<p>Różne</p>
+								<a href="">Szczegóły</a>
+							</div>
+						</div>
+						{% for lesson in block %}
+						<div class="hiddenlesson">
+							<div class="lesson" data-lessonname="{{ lesson.subject }}">
+								<p>{{ lesson.subject }}</p>
+								<p>{{ lesson.teacher }}</p>
+								<p>{{ lesson.classroom }}</p>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+				</td>
+				{% endif %}
+				
+				{% endfor %}
+			</tr>
+			{% endfor %}
+		</table>
+	</body>
 </html>
