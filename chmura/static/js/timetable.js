@@ -1,7 +1,8 @@
 ﻿function showDetails(a) {
 	document.getElementById("overlay").style.visibility = "visible";
 	document.getElementById("overlaytitle").innerText = "Szczegóły";
-
+	document.getElementById("overlaycontent").innerHTML = "";
+	
 	var lessonContainer = a.parentElement.parentElement.parentElement;
 	
 	for (var i = 1; i < lessonContainer.children.length; i++) {
