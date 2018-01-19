@@ -20,10 +20,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '*v^4+%9%0qv0i8mzy2uaz&e9k*%f5*j&(%9)2k-!gw8r195v3c'
+SECRET_KEY = '*v^4+%9%0qv0i8mzy2uaz&e9k*%f5*j&(%9)2k-!gw8e195v3c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -128,3 +128,25 @@ CRONJOBS = [
     ('*/30 * * * *', 'chmura.subst.updateJob'),
     ('0 12 1 * *', 'chmura.updateids.updateid'),
 ]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+ADMINS = [('Nowy plan lekcji', 'cerber@cerberos.pl')]
+
+LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'mail_admins': {
+                'level': 'ERROR',
+                'class': 'django.utils.log.AdminEmailHandler',
+                'include_html': True,
+            }
+        },
+}
+
