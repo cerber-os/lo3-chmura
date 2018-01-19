@@ -29,3 +29,14 @@
 	color: inherit;
 }
 #timetable .hiddenlesson { display: none !important; }
+
+#overlaycontent .compactlesson { padding: 12px; }
+#overlaycontent .compactlesson:not(:last-child) { margin-bottom: 2px; }
+#overlaycontent .compactlesson p {
+	color: #666;
+	font-size: 0.9em;
+	line-height: 1.1em;
+	
+	margin: 0;
+}
+#overlaycontent .compactlesson p:not(:nth-child(2)) { font-weight: bold; }

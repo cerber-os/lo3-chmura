@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="/static/css/timetable.css">
 		<link rel="stylesheet" href="/static/css/timetablecolors.css">
 		
+		<script src="/static/js/global.js"></script>
 		<script src="/static/js/timetable.js"></script>
 	</head>
 	<body>
@@ -64,7 +65,7 @@
 						<div class="detailslesson">
 							<div class="lesson" data-lessonname="_RÓŻNE">
 								<p>Różne</p>
-								<a href="javascript:showDetails(this)">Szczegóły</a>
+								<a href="javascript:void(0)" onclick="showDetails(this)">Szczegóły</a>
 							</div>
 						</div>
 						{% for lesson in block %}
@@ -87,11 +88,12 @@
 		
 		<div id="overlay">
 			<div>
-				<div>
+				<div onclick="closeOverlay(this, event)">
 					
 					<div id="overlaywindow">
-						<p id="overlaytitle"></p>
+						<p id="overlaytitlebar"><span id="overlaytitle"></span><img id="overlayclose" src="/static/img/close.png" onclick="closeOverlay()"></p>
 						<div id="overlaycontent">
+							
 						</div>
 					</div>
 					
