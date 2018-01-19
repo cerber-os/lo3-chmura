@@ -13,7 +13,6 @@
 	height: 1px;
 }
 #timetable .lesson { padding: 12px; }
-#timetable .lesson:only-child { height: 100%; }
 #timetable div.lessonholder { display: table; border-collapse: collapse; height: 100%; width: 100%; }
 #timetable div.lessonholder > div { display: table-row; }
 #timetable div.lesson { display: table-cell; vertical-align: middle; margin-bottom: 2px; }
