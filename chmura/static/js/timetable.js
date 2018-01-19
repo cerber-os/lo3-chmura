@@ -6,7 +6,7 @@
 	var lessonContainer = a.parentElement.parentElement.parentElement;
 	
 	for (var i = 1; i < lessonContainer.children.length; i++) {
-		var entry = lessonContainer.children[i].children[0];
+		var entry = lessonContainer.children[i].children[0].cloneNode(true);
 		entry.className = "compactlesson";
 		document.getElementById("overlaycontent").appendChild(entry);
 	}
