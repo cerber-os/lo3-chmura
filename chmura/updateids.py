@@ -4,6 +4,7 @@ from io import StringIO
 import json
 import pickle
 import os
+import re
 
 
 def get_cur_path():
@@ -48,7 +49,7 @@ def download_ids():
 
 def get_fields(typ, obj):
     if typ in ['teachers', 'students']:
-        return obj['firstname'] + ' ' + obj['lastname']
+        return obj['lastname'] + ' ' + obj['firstname']
     elif typ in ['classes', 'groups', 'classrooms']:
         return obj['name']
     else:
@@ -62,7 +63,10 @@ def save_ids(ids):
             continue
         for t in ids[i]:
             d[get_fields(i, t)] = t['id']
-        save_dict(i, d)
+        if i == 'teachers':
+            save_dict(i, dict(sorted(d.items())))
+        else:
+            save_dict(i, d)
 
     # Specjalne traktowanie elitarnych uczniów
     klasy_org = load_ids('classes')
@@ -70,8 +74,10 @@ def save_ids(ids):
     if 'students' in ids:
         d = {}
         for uczen in ids['students']:
+            nazwisko = re.search(r'(?<=[.[|])([A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ]+)', uczen['lastname'])
+            nazwisko = nazwisko.group(0) if nazwisko is not None else ""
             d.setdefault(klasy.get(uczen['classid'], '0'), []).append({'firstname': uczen['firstname'],
-                                                                       'lastname': uczen['lastname'],
+                                                                       'lastname': nazwisko,
                                                                        'id': uczen['id']})
         save_dict('students', d)
 

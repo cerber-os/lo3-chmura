@@ -65,12 +65,12 @@ def rotateTimeTable(plan):
 
 def genTimeTable(uid='-22', selector='trieda'):
     plan = download_gcall(uid, selector)
-    teachers = plan['jsdb']['teachers']
     table = plan['data']
-    subjects = plan['jsdb']['subjects']
-    classrooms = plan['jsdb']['classrooms']
-    days = plan['jsdb']['days']
-    classes = plan['jsdb']['classes'] if 'classes' in plan['jsdb'] else None
+    teachers = plan['jsdb'].get('teachers', {})
+    subjects = plan['jsdb'].get('subjects', {})
+    classrooms = plan['jsdb'].get('classrooms', {})
+    days = plan['jsdb'].get('days', {})
+    classes = plan['jsdb'].get('classes', {})
 
     planJSON = {}
 
@@ -99,7 +99,7 @@ def genTimeTable(uid='-22', selector='trieda'):
                     else:
                         planJSON[dzien][str(lessonNumber-1)].append({
                                             'subject': subjects[card['subjects'][0]]['name'],
-                                            'teacher': teachers[card['teachers'][0]]['firstname'] + ' ' + teachers[card['teachers'][0]]['lastname'],
+                            'teacher': getteachername(card, teachers),
                                             'classroom': getclassroom(card['classrooms'], classrooms)})
                 except KeyError:
                     continue
@@ -115,7 +115,15 @@ def genTimeTable(uid='-22', selector='trieda'):
 def getclassroom(value, classrooms):
     if len(value) == 0:
         return ""
-    return classrooms[value[0]]['name']
+    return classrooms.get(value[0], {}).get('name')
+
+
+def getteachername(card, teachers):
+    ret = ""
+    for t in card['teachers']:
+        ret += teachers.get(t, {}).get('firstname')[0] + '. ' + teachers.get(t, {}).get('lastname') + ', '
+    ret = ret[:-2]
+    return ret
 
 
 def download_and_regenerate_timetable(uid, typ):
