@@ -17,9 +17,11 @@
 				<option>Plan lekcji</option>
 				<option>Zastępstwa</option>
 			</select>
-			<select>
+			<select id="timetableselect" data-previousselectedindex="0" onchange="handleTimetableSelectUpdate(this)">
 				<option>3Lpp</option>
-				<option>3Lmm</option>
+				<option>Emanuela Sobieska zu Schwarzenberg</option>
+				<option>Małgorzata Szymańska-Pancewicz</option>
+				<option>Wybierz...</option>
 			</select>
 		</header>
 		
@@ -99,6 +101,30 @@
 					
 				</div>
 			</div>
+		</div>
+		
+		<div id="timetableselectdialog" hidden>
+			<form>
+				<p>Pokaż plan</p>
+				<select name="sel" onchange="handleTimetableTypeSelectUpdate(this)">
+					<option value="trieda">Klasy</option>
+					<option value="student">Ucznia</option>
+					<option value="ucitel">Nauczyciela</option>
+				</select>
+				<p style="display: none">Z klasy</p>
+				<select style="display: none">
+					
+				</select>
+				<p></p>
+				<select name="uid" data-listtype="teachers">
+					{% for name, uid in nauczyciele.items %}
+					<option value="{{ uid }}">{{ name }}</option>
+					{% endfor %}
+				</select>
+				<!--<select>
+					<option>Dupa</option>
+				</select>-->
+			</form>
 		</div>
 	</body>
 </html>
