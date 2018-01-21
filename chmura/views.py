@@ -12,7 +12,15 @@ import re
 def getReversedDict(dictionary, key):
     for d in dictionary:
         if dictionary[d] == key:
-            return key
+            return d
+    return "null"
+
+
+def getReversedStudent(dictionary, key):
+    for d in dictionary:
+        for k in dictionary[d]:
+            if k['id'] == key:
+                return k['firstname'] + ' ' + k['lastname']
     return "null"
 
 
@@ -32,7 +40,7 @@ def index(request):
         con['target'] = getReversedDict(con['classes'], uid)
     elif selector == 'student':
         con['type'] = 'Uczeń'
-        con['target'] = 'Jan Kowalski'
+        con['target'] = getReversedStudent(con['students'], uid)
     elif selector == 'ucitel':
         con['type'] = 'Nauczyciel'
         con['target'] = getReversedDict(con['teachers'], uid)
@@ -42,16 +50,6 @@ def index(request):
     con['timetable'] = get_timetable(uid=uid, selector=selector)
 
     return render(request, 'chmura/index.html', con)
-
-
-def timetableSelect(request):
-    return
-    # Do usunięcia w nieodległej przyszłości
-    # con = {'klasy': load_ids('classes'),
-    #        'nauczyciele': load_ids('teachers'),
-    #        'uczniowie': load_ids('students'),
-    #        'sale': load_ids('classrooms')}
-    # return render(request, 'chmura/timetable_select.html', con)
 
 
 def announcement(request):
