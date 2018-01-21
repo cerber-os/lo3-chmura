@@ -19,7 +19,8 @@
 #timetable div.lesson { display: table-cell; vertical-align: middle; margin-bottom: 2px; }
 #timetable td.multilesson .lesson { display: none; }
 #timetable .lesson p {
-	margin: 0; line-height: 1.1em;
+	margin: 0;
+	line-height: 1.1em;
 	
 	/*
 	max-width: 118px;
