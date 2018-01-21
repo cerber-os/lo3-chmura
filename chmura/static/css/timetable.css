@@ -7,12 +7,13 @@
 #timetable td {
 	text-align: center;
 	
-	width: 122px;
+	width: 130px;
+	max-width: 130px;
 	box-sizing: border-box;
 	padding: 0;
 	height: 1px;
 }
-#timetable .lesson { padding: 12px; }
+#timetable .lesson { padding: 12px 6px; }
 #timetable div.lessonholder { display: table; border-collapse: collapse; height: 100%; width: 100%; }
 #timetable div.lessonholder > div { display: table-row; }
 #timetable div.lesson { display: table-cell; vertical-align: middle; margin-bottom: 2px; }
