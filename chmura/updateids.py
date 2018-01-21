@@ -58,9 +58,22 @@ def get_fields(typ, obj):
 def save_ids(ids):
     for i in ids:
         d = {}
+        if i == 'students':
+            continue
         for t in ids[i]:
             d[get_fields(i, t)] = t['id']
         save_dict(i, d)
+
+    # Specjalne traktowanie elitarnych uczniów
+    klasy_org = load_ids('classes')
+    klasy = {v: k for k, v in klasy_org.items()}
+    if 'students' in ids:
+        d = {}
+        for uczen in ids['students']:
+            d.setdefault(klasy.get(uczen['classid'], '0'), []).append({'firstname': uczen['firstname'],
+                                                                       'lastname': uczen['lastname'],
+                                                                       'id': uczen['id']})
+        save_dict('students', d)
 
 
 def load_ids(typ):
@@ -81,3 +94,4 @@ def load_ids(typ):
 
 def updateid():
     save_ids(download_ids())
+
