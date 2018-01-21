@@ -1,1 +1,4 @@
 *.pyc
+*.tt
+*.sbt
+*.sqlite3
