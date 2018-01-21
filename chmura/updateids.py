@@ -16,8 +16,12 @@ def save_dict(name, obj):
 
 
 def load_dict(name):
-    with open(get_cur_path() + '/ids/' + name + '.id', 'rb') as f:
-        return pickle.load(f)
+    try:
+        with open(get_cur_path() + '/ids/' + name + '.id', 'rb') as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        save_ids(download_ids())
+        return "null"
 
 
 def download_ids():
