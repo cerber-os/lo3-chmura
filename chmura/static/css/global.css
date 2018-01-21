@@ -1,4 +1,7 @@
 body {
+	display: table;
+	min-width: 100%;
+	
 	margin: 0;
 	
 	font-family: Poppins, sans-serif;
@@ -43,6 +46,8 @@ body {
 	background-color: #2F333E;
 	padding: 12pt;
 	
+	box-sizing: border-box;
+	width: 100%;
 	max-width: 500px;
 }
 #overlaytitlebar {
@@ -62,6 +67,18 @@ body {
 	margin-top: 5px;
 	
 	cursor: pointer;
+}
+
+#overlaycontent > form {
+	padding: 12px;
+}
+#overlaycontent p {
+	margin: 6px 0;
+}
+#overlaycontent p:first-child { margin-top: 0; }
+#overlaycontent p:last-child { margin-bottom: 0; }
+#overlaycontent select {
+	width: 100%;
 }
 
 select {
