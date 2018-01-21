@@ -50,3 +50,6 @@
 	margin: 0;
 }
 #overlaycontent .compactlesson p:not(:nth-child(2)) { font-weight: bold; }
+
+#overlaycontent p { margin-bottom: -6px; }
+#overlaycontent select { margin-top: 6px; }

@@ -14,15 +14,39 @@ function handleTimetableSelectUpdate(select) {
 	select.setAttribute("data-previousselectedindex", select.selectedIndex);
 }
 function handleTimetableTypeSelectUpdate(select) {
-	var showSecondSelect = select.selectedIndex == 1;
+	for (var i = 2; i < select.parentElement.children.length - 1; i++) {
+		select.parentElement.children[i].style.display = "none";
+		select.parentElement.children[i].removeAttribute("name");
+	}
 	
-	select.parentElement.children[2].style.display = showSecondSelect ? "" : "none";
-	select.parentElement.children[3].style.display = showSecondSelect ? "" : "none";
-	select.parentElement.children[3].selectedIndex = 0;
-	showStudentsList(select.parentElement.children[3]);
+	if (select.selectedIndex == 0) {
+		select.parentElement.children[2].style.display = "";
+		select.parentElement.children[2].setAttribute("name", "uid");
+	}
+	else if (select.selectedIndex == 1) {
+		select.parentElement.children[3].style.display = "";
+		select.parentElement.children[4].style.display = "";
+		select.parentElement.children[4].selectedIndex = 0;
+		showStudentList(select.parentElement.children[4]);
+	}
+	else {
+		select.parentElement.children[5].style.display = "";
+		select.parentElement.children[5].setAttribute("name", "uid");
+	}
 }
-function showStudentsList(classSelect) {
+function showStudentList(classSelect) {
+	var classname = classSelect.selectedOptions[0].innerText;
 	
+	for (var i = 0; i < classSelect.parentElement.children.length - 1; i++)
+		if (classSelect.parentElement.children[i].hasAttribute("data-class"))
+			if (classSelect.parentElement.children[i].getAttribute("data-class") == classname) {
+				classSelect.parentElement.children[i].style.display = "";
+				classSelect.parentElement.children[i].setAttribute("name", "uid");
+			}
+			else {
+				classSelect.parentElement.children[i].style.display = "none";
+				classSelect.parentElement.children[i].removeAttribute("name");
+			}
 }
 
 function showDetails(a) {

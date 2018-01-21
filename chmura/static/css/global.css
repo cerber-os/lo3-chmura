@@ -92,6 +92,20 @@ select {
 	
 	vertical-align: middle;
 }
+button, input[type="submit"] {
+	background-color: #2F333E;
+	border: none;
+	
+	font-family: inherit;
+	color: #FFFFFF;
+	
+	padding: 8px;
+}
+
+p.buttonholder {
+	margin: 0;
+	text-align: center;
+}
 
 @font-face {
 	font-family: Poppins;

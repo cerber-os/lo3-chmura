@@ -44,7 +44,7 @@
 				{% elif block|length == 1 %}
 				<td class="lesson" data-lessonname="{{ block.0.subject }}">
 					<p>{{ block.0.subject }}</p>
-					<p>{{ block.0.teacher }}</p>
+					<p>{{ block.0.teacher }}{% for class in block.0.classes %}{{ class }}{% if block.0.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
 					<p>{{ block.0.classroom }}</p>
 				</td>
 				{% elif block|length <= 3 %}
@@ -54,7 +54,7 @@
 						<div>
 							<div class="lesson" data-lessonname="{{ lesson.subject }}">
 								<p>{{ lesson.subject }}</p>
-								<p>{{ lesson.teacher }}</p>
+								<p>{{ lesson.teacher }}{% for class in lesson.classes %}{{ class }}{% if lesson.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
 								<p>{{ lesson.classroom }}</p>
 							</div>
 						</div>
@@ -74,7 +74,7 @@
 						<div class="hiddenlesson">
 							<div class="lesson" data-lessonname="{{ lesson.subject }}">
 								<p>{{ lesson.subject }}</p>
-								<p>{{ lesson.teacher }}</p>
+								<p>{{ lesson.teacher }}{% for class in lesson.classes %}{{ class }}{% if lesson.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
 								<p>{{ lesson.classroom }}</p>
 							</div>
 						</div>
@@ -111,19 +111,30 @@
 					<option value="student">Ucznia</option>
 					<option value="ucitel">Nauczyciela</option>
 				</select>
-				<p style="display: none">Z klasy</p>
-				<select style="display: none">
-					
+				<select name="uid">
+					{% for class, uid in classes.items %}
+					<option value="{{ uid }}">{{ class }}</option>
+					{% endfor %}
 				</select>
-				<p></p>
-				<select name="uid" data-listtype="teachers">
-					{% for name, uid in nauczyciele.items %}
+				<p style="display: none" class="nonspaced">Z klasy</p>
+				<select style="display: none" onchange="showStudentList(this)">
+					{% for class, studentlist in students.items %}
+					<option>{{ class }}</option>
+					{% endfor %}
+				</select>
+				<select style="display: none">
+					{% for name, uid in teachers.items %}
 					<option value="{{ uid }}">{{ name }}</option>
 					{% endfor %}
 				</select>
-				<!--<select>
-					<option>Dupa</option>
-				</select>-->
+				{% for class, studentlist in students.items %}
+				<select style="display: none" data-class="{{ class }}">
+					{% for student in studentlist %}
+					<option value="{{ student.id }}">{{ student.firstname }} {{ student.lastname }}</option>
+					{% endfor %}
+				</select>
+				{% endfor %}
+				<p class="buttonholder"><input type="submit" value="Wybierz"></p>
 			</form>
 		</div>
 	</body>
