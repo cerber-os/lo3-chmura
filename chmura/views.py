@@ -48,6 +48,7 @@ def index(request):
         raise Http404
     con['breaks'] = load_ids('breaks')
     con['timetable'] = get_timetable(uid=uid, selector=selector)
+    con['target_uid'] = uid
 
     return render(request, 'chmura/index.html', con)
 
