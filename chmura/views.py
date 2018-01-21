@@ -6,14 +6,6 @@ from .updateids import load_ids
 from .news import get_news
 from .agenda import get_agenda
 import datetime
-import re
-
-
-def getReversedDict(dictionary, key):
-    for d in dictionary:
-        if dictionary[d] == key:
-            return key
-    return "null"
 
 
 def index(request):
@@ -21,31 +13,33 @@ def index(request):
     uid = request.GET.get('uid', '-22')
     selector = request.GET.get('sel', 'trieda')
 
-    if not re.match(r'^[*-]?\d{1,3}$', uid):
-        raise Http404
+    klasy = load_ids('classes')
+    nauczyciele = load_ids('teachers')
 
     if selector == 'trieda':
         con['type'] = 'Klasa'
-        con['target'] = getReversedDict(load_ids('classes'), uid)
+        for klasa in klasy:
+            if klasy[klasa] == uid:
+                con['target'] = klasa
     elif selector == 'student':
         con['type'] = 'Uczeń'
         con['target'] = 'Jan Kowalski'
     elif selector == 'ucitel':
         con['type'] = 'Nauczyciel'
-        con['target'] = getReversedDict(load_ids('teachers'), uid)
+        for n in nauczyciele:
+            if nauczyciele[n] == uid:
+                con['target'] = n
     else:
         raise Http404
     con['breaks'] = load_ids('breaks')
     con['timetable'] = get_timetable(uid=uid, selector=selector)
-
     return render(request, 'chmura/index.html', con)
 
 
 def timetableSelect(request):
     con = {'klasy': load_ids('classes'),
            'nauczyciele': load_ids('teachers'),
-           'uczniowie': load_ids('students'),
-           'sale': load_ids('classrooms')}
+           'uczniowie': load_ids('students')}
     return render(request, 'chmura/timetable_select.html', con)
 
 

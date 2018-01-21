@@ -25,8 +25,7 @@ def load_dict(name):
 
 
 def download_ids():
-    fragments = {'classrooms': {'start': '{"table":"classrooms","rows":[', 'end': '{"table":"teachers","rows":['},
-                 'teachers': {'start': '{"table":"teachers","rows":[', 'end': '{"table":"classes","rows":['},
+    fragments = {'teachers': {'start': '{"table":"teachers","rows":[', 'end': '{"table":"classes","rows":['},
                  'classes': {'start': '{"table":"classes","rows":[', 'end': '{"table":"subjects","rows":['},
                  'subjects': {'start': '{"table":"subjects","rows":[', 'end': '{"table":"groups","rows":['},
                  'groups': {'start': '{"table":"groups","rows":[', 'end': '{"table":"students","rows":['},
@@ -47,9 +46,11 @@ def download_ids():
 
 
 def get_fields(typ, obj):
-    if typ in ['teachers', 'students']:
+    if typ == 'teachers' or typ == 'students':
         return obj['firstname'] + ' ' + obj['lastname']
-    elif typ in ['classes', 'groups', 'classrooms']:
+    elif typ == 'classes':
+        return obj['name']
+    elif typ == 'groups':
         return obj['name']
     else:
         return 'None'
