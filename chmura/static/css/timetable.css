@@ -3,15 +3,17 @@
 	font-size: 0.9em;
 	
 	margin: 8px;
+	
+	height: 1px;
 }
 #timetable td {
 	text-align: center;
 	
-	width: 130px;
+	min-width: 130px;
 	max-width: 130px;
 	box-sizing: border-box;
 	padding: 0;
-	height: 1px;
+	height: 100%;
 }
 #timetable .lesson { padding: 12px 6px; }
 #timetable div.lessonholder { display: table; border-collapse: collapse; height: 100%; width: 100%; }

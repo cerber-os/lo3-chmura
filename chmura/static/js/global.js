@@ -6,6 +6,10 @@ function closeOverlay(div, event) {
 	document.getElementById("overlay").style.visibility = "hidden";
 }
 
+function handleLocationSelectUpdate(select) {
+	window.location = select.selectedOptions[0].value;
+}
+
 function setCookie(name, value, milliseconds) {
 	if (milliseconds) {
 		var date = new Date();

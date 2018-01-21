@@ -13,14 +13,12 @@
 	<body>
 		<header id="header">
 			III LO w Gdyni
-			<select>
-				<option>Plan lekcji</option>
-				<option>Zastępstwa</option>
+			<select onchange="handleLocationSelectUpdate(this)">
+				<option value="/">Plan lekcji</option>
+				<option value="/substitution/">Zastępstwa</option>
 			</select>
 			<select id="timetableselect" data-previousselectedindex="0" onchange="handleTimetableSelectUpdate(this)">
-				<option>3Lpp</option>
-				<option>Emanuela Sobieska zu Schwarzenberg</option>
-				<option>Małgorzata Szymańska-Pancewicz</option>
+				<option data-type="{{ type }}" data-uid="{{ target_uid }}">{{ target }}</option>
 				<option>Wybierz...</option>
 			</select>
 		</header>
@@ -111,7 +109,7 @@
 					<option value="student">Ucznia</option>
 					<option value="ucitel">Nauczyciela</option>
 				</select>
-				<select name="uid">
+				<select name="uid" data-selecttype="class">
 					{% for class, uid in classes.items %}
 					<option value="{{ uid }}">{{ class }}</option>
 					{% endfor %}
@@ -122,7 +120,7 @@
 					<option>{{ class }}</option>
 					{% endfor %}
 				</select>
-				<select style="display: none">
+				<select style="display: none" data-selcttype="teacher">
 					{% for name, uid in teachers.items %}
 					<option value="{{ uid }}">{{ name }}</option>
 					{% endfor %}
@@ -134,7 +132,7 @@
 					{% endfor %}
 				</select>
 				{% endfor %}
-				<p class="buttonholder"><input type="submit" value="Wybierz"></p>
+				<p class="buttonholder"><input type="submit" value="Wybierz" onclick="setLastSettings(this)"></p>
 			</form>
 		</div>
 	</body>
