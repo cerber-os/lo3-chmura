@@ -97,10 +97,14 @@ def download_subst(date, debug=False):
         print(periods)
 
     # Pobieranie czerwonej notatki
-    note_start = serverResponse.index('.innerHTML="', serverResponse.index('.innerHTML="') + 1) + len('.indexHTML="')
-    note = serverResponse[note_start: jsdb_start - 10]
-    note = note[0: note.index('";gi')]
-    note = note.replace('\\n', '')
+    try:
+        note_start = serverResponse.index('.innerHTML="', serverResponse.index('.innerHTML="') + 1) + len(
+            '.indexHTML="')
+        note = serverResponse[note_start: jsdb_start - 10]
+        note = note[0: note.index('";gi')]
+        note = note.replace('\\n', '')
+    except ValueError:
+        note = "";
 
     subst = serverResponse[serverResponse.find('dt.DataSource(') + 14:serverResponse.find(');var dt = new')]
     subst = StringIO(subst)
@@ -160,7 +164,7 @@ def download_subst(date, debug=False):
                         if n is not None:
                             status['new_nauczyciel'].append(n)
                     elif z['column'] == 'classroomid' or z['column'] == 'classroomids':
-                        status['new_sala'].append({'old': classrooms[str(z['old'])],
+                        status['new_sala'].append({'old': classrooms.get(str(z.get('old', None))),
                                                    'new': classrooms.get(str(z.get('new', None)))})
                     elif z['column'] == 'subjectid' or z['column'] == 'subjectids':
                         status['old_przedmiot'].append(subjects[str(z['old'])])
