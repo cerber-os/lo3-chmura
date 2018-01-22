@@ -11,13 +11,21 @@ import re
 
 
 def index(request):
+    types = {'class': 'trieda',
+             'student': 'student',
+             'teacher': 'ucitel'}
+
     con = {'classes': load_ids('classes'),
            'teachers': load_ids('teachers'),
            'students': load_ids('students'),
            'classrooms': load_ids('classrooms'),
            'breaks': load_ids('breaks')}
-    uid = request.GET.get('uid', '-22')
-    selector = request.GET.get('sel', 'trieda')
+
+    lasttype = request.COOKIES.get('lasttype', 'teacher')
+    lastuid = request.COOKIES.get('last' + lasttype + 'uid', '-22')
+
+    uid = request.GET.get('uid', lastuid)
+    selector = request.GET.get('sel', types[lasttype])
 
     if not re.match(r'^[*-]?\d{1,3}$', uid):
         raise Http404
