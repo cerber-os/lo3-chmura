@@ -53,7 +53,7 @@ def download_gcall(uid='-22', selector='trieda'):
 
 def rotateTimeTable(plan):
     plan2 = {}
-    for i in range(1, 12):
+    for i in range(1,12):
         plan2[str(i)] = {}
         for s in ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek']:
             plan2[str(i)][s] = []

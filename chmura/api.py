@@ -1,5 +1,5 @@
 from chmura.subst import get_substitution
-# from chmura.timetable import get_timetable
+from chmura.timetable import get_timetable
 from datetime import datetime
 from django.http import JsonResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
@@ -15,8 +15,8 @@ def webapi(request):
 
     if api_type == 'substitution':
         answer = api_substitution(request)
-    # elif api_type == 'timetable':
-    # answer = api_timetable(request)
+    #elif api_type == 'timetable':
+        #answer = api_timetable(request)
     else:
         raise Http404
 

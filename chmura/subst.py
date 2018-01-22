@@ -46,7 +46,7 @@ def download_and_regenerate_subst(date):
         try:
             return download_subst(date)
         except ValueError:
-            return {'dane': [], 'notka': ''}
+            return {'dane': [{'przedmiot': [{'name': 'W tym dniu nie'}], 'nauczyciel': [{'name': 'ma żadnych zastępstw.'}]}], 'notka': ''}
 
 
 def regenerate_pass():
@@ -97,14 +97,10 @@ def download_subst(date, debug=False):
         print(periods)
 
     # Pobieranie czerwonej notatki
-    try:
-        note_start = serverResponse.index('.innerHTML="', serverResponse.index('.innerHTML="') + 1) + len(
-            '.indexHTML="')
-        note = serverResponse[note_start: jsdb_start - 10]
-        note = note[0: note.index('";gi')]
-        note = note.replace('\\n', '')
-    except ValueError:
-        note = ""
+    note_start = serverResponse.index('.innerHTML="', serverResponse.index('.innerHTML="') + 1) + len('.indexHTML="')
+    note = serverResponse[note_start: jsdb_start - 10]
+    note = note[0: note.index('";gi')]
+    note = note.replace('\\n', '')
 
     subst = serverResponse[serverResponse.find('dt.DataSource(') + 14:serverResponse.find(');var dt = new')]
     subst = StringIO(subst)
@@ -164,7 +160,7 @@ def download_subst(date, debug=False):
                         if n is not None:
                             status['new_nauczyciel'].append(n)
                     elif z['column'] == 'classroomid' or z['column'] == 'classroomids':
-                        status['new_sala'].append({'old': classrooms.get(str(z.get('old', None))),
+                        status['new_sala'].append({'old': classrooms[str(z['old'])],
                                                    'new': classrooms.get(str(z.get('new', None)))})
                     elif z['column'] == 'subjectid' or z['column'] == 'subjectids':
                         status['old_przedmiot'].append(subjects[str(z['old'])])
@@ -204,8 +200,8 @@ def updateJob():
         print('[DEBUG]Downloading new substitution for', period.strftime('%Y-%m-%d'))
         if continueDownloading:
             zast = download_and_regenerate_subst(period.strftime('%Y-%m-%d'))
-            if zast == {'dane': [], 'notka': ''}:
+            if zast == [{'przedmiot': [{'name': 'W tym dniu nie'}], 'nauczyciel': [{'name': 'ma żadnych zastępstw.'}]}]:
                 continueDownloading = False
         else:
-            zast = {'dane': [], 'notka': ''}
+            zast = [{'przedmiot': [{'name': 'W tym dniu nie'}], 'nauczyciel': [{'name': 'ma żadnych zastępstw.'}]}]
         save_dict(period.strftime('%Y-%m-%d'), zast)
