@@ -46,7 +46,7 @@ def download_and_regenerate_subst(date):
         try:
             return download_subst(date)
         except ValueError:
-            return {'dane': [{'przedmiot': [{'name': 'W tym dniu nie'}], 'nauczyciel': [{'name': 'ma żadnych zastępstw.'}]}], 'notka': ''}
+            return {'dane': [], 'notka': ''}
 
 
 def regenerate_pass():
@@ -204,8 +204,8 @@ def updateJob():
         print('[DEBUG]Downloading new substitution for', period.strftime('%Y-%m-%d'))
         if continueDownloading:
             zast = download_and_regenerate_subst(period.strftime('%Y-%m-%d'))
-            if zast == [{'przedmiot': [{'name': 'W tym dniu nie'}], 'nauczyciel': [{'name': 'ma żadnych zastępstw.'}]}]:
+            if zast == {'dane': [], 'notka': ''}:
                 continueDownloading = False
         else:
-            zast = [{'przedmiot': [{'name': 'W tym dniu nie'}], 'nauczyciel': [{'name': 'ma żadnych zastępstw.'}]}]
+            zast = {'dane': [], 'notka': ''}
         save_dict(period.strftime('%Y-%m-%d'), zast)
