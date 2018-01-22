@@ -1,14 +1,9 @@
-import urllib.request
-import urllib.parse
 import json
 from io import StringIO
 from django.http import Http404
 import pickle
-import os
-
-
-def get_cur_path():
-    return os.path.dirname(os.path.abspath(__file__))
+from random import randint
+from .utils import *
 
 
 def save_dict(name, obj):
@@ -27,23 +22,42 @@ def load_dict(selector, uid):
 
 
 def regenerate_pass():
-    # TODO: Dodać odnawianie gsh, gpid i ciasteczka
-    return
+    credentials = {}
+
+    # JSCID
+    jscid = [randint(0, 9) for _ in range(0, 7)]
+    credentials['jscid'] = 'gi' + ''.join([str(t) for t in jscid])
+
+    # Cookie
+    resp = url_request('https://lo3gdynia.edupage.org/mobile')
+    cookie = resp.getheader('Set-Cookie')
+    credentials['cookie'] = cookie[cookie.index('PHPSESSID=') + 10: cookie.index(';')]
+    resp = resp.read().decode('UTF-8')
+
+    # Gsh
+    gsh_start = resp.index('gsh=')
+    credentials['gsh'] = resp[gsh_start + 4: resp.index('"', gsh_start)]
+
+    return credentials
 
 
-def download_gcall(uid='-22', selector='trieda'):
-    params = urllib.parse.urlencode({'gadget':          'MobileTimetableBrowser',
-                                     'jscid':           'gi3703455',
-                                     'gsh':             'c1b73905',
-                                     'action':          'reload',
-                                     'num':             '95',
-                                     'oblast':          selector,
-                                     'id':              uid,
-                                     '_LJSL':           '2048'}).encode('UTF-8')
-    url = urllib.request.Request('https://lo3gdynia.edupage.org/gcall',
-                                 params,
-                                 headers={'Cookie': 'PHPSESSID=' + 'deb4ph6ahmglb36aqqfclrrlj5'})
-    serverResponse = urllib.request.urlopen(url).read().decode('UTF-8')
+# TODO: Dodać wersje planu lekcji
+
+
+def download_gcall(uid='-22', selector='trieda', credentials=None):
+    if credentials is None:
+        credentials = regenerate_pass()
+    params = {'gadget': 'MobileTimetableBrowser',
+              'jscid': credentials['jscid'],
+              'gsh': credentials['gsh'],
+              'action': 'reload',
+              'num': '141',
+              'oblast': selector,
+              'id': uid,
+              '_LJSL': '2048'}
+    serverResponse = url_request('https://lo3gdynia.edupage.org/gcall',
+                                 {'Cookie': 'PHPSESSID=' + credentials['cookie']},
+                                 params).read().decode('UTF-8')
     serverResponse = serverResponse[serverResponse.index('{'):serverResponse.find('"verticalPeriods":false}}')+25]
     serverResponse = StringIO(serverResponse)
 
@@ -63,8 +77,8 @@ def rotateTimeTable(plan):
     return plan2
 
 
-def genTimeTable(uid='-22', selector='trieda'):
-    plan = download_gcall(uid, selector)
+def genTimeTable(uid='-22', selector='trieda', credentials=None):
+    plan = download_gcall(uid, selector, credentials)
     table = plan['data']
     teachers = plan['jsdb'].get('teachers', {})
     subjects = plan['jsdb'].get('subjects', {})
@@ -104,11 +118,6 @@ def genTimeTable(uid='-22', selector='trieda'):
                 except KeyError:
                     continue
 
-            # Grupowanie przedmiotów
-            # temp_lesson = planJSON[dzien][str(lessonNumber-1)]
-            # if len(temp_lesson) > 1:
-            #    if len(temp_lesson.remove(temp_lesson[0])) == 0:
-            #        planJSON[dzien][str(lessonNumber-1)][0]['group'] = True
     return planJSON
 
 
@@ -130,12 +139,7 @@ def download_and_regenerate_timetable(uid, typ):
     try:
         return genTimeTable(uid, typ)
     except ValueError:
-        print('[DEBUG]Regenerating gpid, gsh and cookie')
-        regenerate_pass()
-        try:
-            return genTimeTable(uid, typ)
-        except ValueError:
-            return Http404
+        raise Http404
 
 
 def get_timetable(uid, selector):

@@ -1,14 +1,8 @@
-import urllib.request
-import urllib.parse
 from io import StringIO
 import json
 import pickle
-import os
 import re
-
-
-def get_cur_path():
-    return os.path.dirname(os.path.abspath(__file__))
+from .utils import *
 
 
 def save_dict(name, obj):
@@ -34,8 +28,7 @@ def download_ids():
                  'students': {'start': '{"table":"students","rows":[', 'end': '{"table":"lessons","rows":['},
                  }
 
-    url = urllib.request.Request('https://lo3gdynia.edupage.org/timetable/')
-    serverResponse = urllib.request.urlopen(url).read().decode('UTF-8')
+    serverResponse = url_request('https://lo3gdynia.edupage.org/timetable/').read().decode('UTF-8')
     ids = {}
 
     for fragment in fragments:

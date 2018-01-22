@@ -1,12 +1,6 @@
-import urllib.request
-import urllib.parse
 from bs4 import BeautifulSoup
 import pickle
-import os
-
-
-def get_cur_path():
-    return os.path.dirname(os.path.abspath(__file__))
+from .utils import *
 
 
 def save_dict(obj):
@@ -28,8 +22,7 @@ def download_news():
     # Te wiadomości pomijaj:
     exceptList = ['Użytkownicy mobilni', 'Plan Lekcji i Zastępstwa', 'Nasza nowa strona!', 'Aktualizacja danych']
 
-    url = urllib.request.Request('https://lo3gdynia.edupage.org/news/')
-    page = urllib.request.urlopen(url)
+    page = url_request('https://lo3gdynia.edupage.org/news/')
     base = BeautifulSoup(page, 'html.parser')
 
     news = base.find('ul', attrs={'id': 'nw_newsUl'})

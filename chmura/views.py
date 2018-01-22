@@ -5,30 +5,17 @@ from .subst import get_substitution
 from .updateids import load_ids
 from .news import get_news
 from .agenda import get_agenda
+from .utils import *
 import datetime
 import re
-
-
-def getReversedDict(dictionary, key):
-    for d in dictionary:
-        if dictionary[d] == key:
-            return d
-    return "null"
-
-
-def getReversedStudent(dictionary, key):
-    for d in dictionary:
-        for k in dictionary[d]:
-            if k['id'] == key:
-                return k['firstname'] + ' ' + k['lastname']
-    return "null"
 
 
 def index(request):
     con = {'classes': load_ids('classes'),
            'teachers': load_ids('teachers'),
            'students': load_ids('students'),
-           'classrooms': load_ids('classrooms')}
+           'classrooms': load_ids('classrooms'),
+           'breaks': load_ids('breaks')}
     uid = request.GET.get('uid', '-22')
     selector = request.GET.get('sel', 'trieda')
 
@@ -46,7 +33,6 @@ def index(request):
         con['target'] = getReversedDict(con['teachers'], uid)
     else:
         raise Http404
-    con['breaks'] = load_ids('breaks')
     con['timetable'] = get_timetable(uid=uid, selector=selector)
     con['target_uid'] = uid
 

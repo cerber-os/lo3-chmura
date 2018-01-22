@@ -1,14 +1,8 @@
-import urllib.request
-import urllib.parse
 from bs4 import BeautifulSoup
 from io import StringIO
-import os
 import pickle
 import html5lib
-
-
-def get_cur_path():
-    return os.path.dirname(os.path.abspath(__file__))
+from .utils import *
 
 
 def save_dict(obj):
@@ -31,8 +25,7 @@ def get_agenda():
 
 
 def download_agenda():
-    url = urllib.request.Request('http://lo3.gdynia.pl/organizacja/page-55')
-    web = urllib.request.urlopen(url)
+    web = url_request('http://lo3.gdynia.pl/organizacja/page-55')
 
     web = web.read().decode('UTF-8')
     web = web.replace('<B>', '')

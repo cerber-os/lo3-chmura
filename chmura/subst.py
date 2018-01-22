@@ -6,14 +6,10 @@ from io import StringIO
 from django.http import Http404
 from chmura.models import Settings
 import pickle
-import os
 import re
 import json
 from datetime import datetime, timedelta
-
-
-def get_cur_path():
-    return os.path.dirname(os.path.abspath(__file__))
+from .utils import *
 
 
 def save_dict(name, obj):
@@ -50,8 +46,7 @@ def download_and_regenerate_subst(date):
 
 
 def regenerate_pass():
-    url = urllib.request.Request('https://lo3gdynia.edupage.org/substitution')
-    resp = urllib.request.urlopen(url)
+    resp = url_request('https://lo3gdynia.edupage.org/substitution')
     cookie = resp.getheader('Set-Cookie')
     cookie = cookie[cookie.index('PHPSESSID=') + 10: cookie.index(';')]
     resp = resp.read().decode('UTF-8')
@@ -69,15 +64,14 @@ def regenerate_pass():
 
 def download_subst(date, debug=False):
     settings = Settings.objects.all()[0]
-    params = urllib.parse.urlencode({'gpid': settings.gpid,
-                                     'gsh': settings.gsh,
-                                     'action': 'switch',
-                                     'date': date,
-                                     '_LJSL': '2052'}).encode('UTF-8')
-    url = urllib.request.Request('https://lo3gdynia.edupage.org/gcall',
-                                 params,
-                                 headers={'Cookie': 'PHPSESSID=' + settings.phpsessid})
-    serverResponse = urllib.request.urlopen(url).read().decode('UTF-8')
+    params = {'gpid': settings.gpid,
+              'gsh': settings.gsh,
+              'action': 'switch',
+              'date': date,
+              '_LJSL': '2052'}
+    serverResponse = url_request('https://lo3gdynia.edupage.org/gcall',
+                                 {'Cookie': 'PHPSESSID=' + settings.phpsessid},
+                                 params).read().decode('UTF-8')
     if debug:
         print(serverResponse)
 
