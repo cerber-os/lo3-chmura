@@ -40,4 +40,16 @@ function eraseCookie(name) {
 	setCookie(name, "", -1);
 }
 
+function getHttpGetParameter(name) {
+	name = name.replace(/[\[\]]/g, "\\$&");
+
+	var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)")
+	var results = regex.exec(window.location.href);
+
+	if (!results) return null;
+	if (!results[2]) return "";
+	
+	return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
 window.onkeydown = function(event) { if (event.keyCode == 27) closeOverlay(); }

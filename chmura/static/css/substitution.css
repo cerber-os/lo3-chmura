@@ -1,0 +1,10 @@
+#substitutiontable {
+	color: #666;
+	font-size: 0.9em;
+	
+	margin: 8px;
+}
+#substitutiontable td, #substitutiontable th {
+	padding: 12pt;
+	background-color: #EEEEEE;
+}
