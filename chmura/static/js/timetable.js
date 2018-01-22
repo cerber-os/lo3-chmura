@@ -13,6 +13,14 @@ function handleTimetableSelectUpdate(select) {
 	
 	select.setAttribute("data-previousselectedindex", select.selectedIndex);
 	
+	var typeDictionary = {"trieda": "class", "student": "student", "ucitel": "teacher"};
+	var uidDictionary = {"trieda": "lastclassuid", "student": "laststudentuid", "ucitel": "lastteacheruid"};
+	var nameDictionary = {"trieda": "lastclass", "student": "laststudent", "ucitel": "lastteacher"};
+	
+	setCookie("lasttype", typeDictionary[select.selectedOptions[0].getAttribute("data-type")], 31536000000);
+	setCookie(uidDictionary[select.selectedOptions[0].getAttribute("data-type")], select.selectedOptions[0].getAttribute("data-uid"), 31536000000);
+	setCookie(nameDictionary[select.selectedOptions[0].getAttribute("data-type")], select.selectedOptions[0].innerText, 31536000000);
+	
 	window.location = "/?sel=" + select.selectedOptions[0].getAttribute("data-type") + "&uid=" + encodeURIComponent(select.selectedOptions[0].getAttribute("data-uid"));
 }
 function handleTimetableTypeSelectUpdate(select) {
@@ -59,19 +67,19 @@ function setLastSettings(submit) {
 		if (formElements[i].getAttribute("name") == "uid") {
 			
 			if (formElements[i].hasAttribute("data-class")) {
-				setCookie("lasttype", "student");
-				setCookie("laststudent", formElements[i].selectedOptions[0].innerText);
-				setCookie("laststudentuid", formElements[i].selectedOptions[0].value);
+				setCookie("lasttype", "student", 31536000000);
+				setCookie("laststudent", formElements[i].selectedOptions[0].innerText, 31536000000);
+				setCookie("laststudentuid", formElements[i].selectedOptions[0].value, 31536000000);
 			}
 			else if (formElements[i].getAttribute("data-selecttype") == "class") {
-				setCookie("lasttype", "class");
-				setCookie("lastclass", formElements[i].selectedOptions[0].innerText);
-				setCookie("lastclassuid", formElements[i].selectedOptions[0].value);
+				setCookie("lasttype", "class", 31536000000);
+				setCookie("lastclass", formElements[i].selectedOptions[0].innerText, 31536000000);
+				setCookie("lastclassuid", formElements[i].selectedOptions[0].value, 31536000000);
 			}
 			else {
-				setCookie("lasttype", "teacher");
-				setCookie("lastteacher", formElements[i].selectedOptions[0].innerText);
-				setCookie("lastteacheruid", formElements[i].selectedOptions[0].value);
+				setCookie("lasttype", "teacher", 31536000000);
+				setCookie("lastteacher", formElements[i].selectedOptions[0].innerText, 31536000000);
+				setCookie("lastteacheruid", formElements[i].selectedOptions[0].value, 31536000000);
 			}
 
 			return;
