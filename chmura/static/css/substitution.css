@@ -8,3 +8,10 @@
 	padding: 12pt;
 	background-color: #EEEEEE;
 }
+#substitutiontable tr:nth-child(even) td {
+	background-color: #FAFAFA;
+}
+
+body > p {
+	margin: 8px;
+}
