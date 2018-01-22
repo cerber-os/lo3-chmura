@@ -104,7 +104,7 @@ def download_subst(date, debug=False):
         note = note[0: note.index('";gi')]
         note = note.replace('\\n', '')
     except ValueError:
-        note = "";
+        note = ""
 
     subst = serverResponse[serverResponse.find('dt.DataSource(') + 14:serverResponse.find(');var dt = new')]
     subst = StringIO(subst)

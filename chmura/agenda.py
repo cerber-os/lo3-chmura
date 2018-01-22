@@ -21,9 +21,9 @@ def load_dict():
         with open(get_cur_path() + '/agendaF/agenda.ag', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
-        agenda = download_agenda()
-        save_dict(agenda)
-        return agenda
+        agendaF = download_agenda()
+        save_dict(agendaF)
+        return agendaF
 
 
 def get_agenda():

@@ -100,4 +100,3 @@ def load_ids(typ):
 
 def updateid():
     save_ids(download_ids())
-
