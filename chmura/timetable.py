@@ -135,9 +135,9 @@ def getteachername(card, teachers):
     return ret
 
 
-def download_and_regenerate_timetable(uid, typ):
+def download_and_regenerate_timetable(uid, typ, credentials=None):
     try:
-        return genTimeTable(uid, typ)
+        return genTimeTable(uid, typ, credentials)
     except ValueError:
         raise Http404
 
@@ -148,10 +148,20 @@ def get_timetable(uid, selector):
 
 def timetableJob():
     print("[DEBUG]Updating timetable")
+    for _ in range(0, 3):
+        try:
+            credentials = regenerate_pass()
+            break
+        except json.JSONDecodeError:
+            print('[DEBUG]Retrieving password failed. Trying again...')
+    else:
+        print("[ERROR] Failed to retrieve password! Exiting...")
+        return
+
     for filename in os.listdir(get_cur_path() + '/timetables'):
         name = os.path.splitext(filename)[0]
         typ = name.replace('*', '-').split('-')
         uid = typ[1]
         typ = typ[0]
-        plan = download_and_regenerate_timetable(uid, typ)
+        plan = download_and_regenerate_timetable(uid, typ, credentials)
         save_dict(filename, plan)

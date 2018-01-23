@@ -1,7 +1,5 @@
-# TODO: Dodać zmianę sali i klasy
+# TODO: Dodać zmianę klasy
 
-import urllib.request
-import urllib.parse
 from io import StringIO
 from django.http import Http404
 from chmura.models import Settings
@@ -112,6 +110,7 @@ def download_subst(date, debug=False):
                   'old_nauczyciel': [],
                   'old_przedmiot': [],
                   'new_sala': [],
+                  'old_sala': [],
                   'przedmiot': [],
                   'lekcja': [],
                   'notka': '',
@@ -158,8 +157,13 @@ def download_subst(date, debug=False):
                         if n is not None:
                             status['new_nauczyciel'].append(n)
                     elif z['column'] == 'classroomid' or z['column'] == 'classroomids':
-                        status['new_sala'].append({'old': classrooms.get(str(z.get('old', None))),
-                                                   'new': classrooms.get(str(z.get('new', None)))})
+                        # status['new_sala'].append({'old': classrooms.get(str(z.get('old', None))),
+                        #                           'new': classrooms.get(str(z.get('new', None)))})
+                        status['old_sala'].append(classrooms[str(z['old'])])
+
+                        s = classrooms.get(str(z.get('new')))
+                        if s is not None:
+                            status['new_sala'].append(s)
                     elif z['column'] == 'subjectid' or z['column'] == 'subjectids':
                         status['old_przedmiot'].append(subjects[str(z['old'])])
 
@@ -178,6 +182,7 @@ def download_subst(date, debug=False):
             status['klasa'].append({'name': ''})
 
         status['przerwa'] = breaks.get(zastepstwo.get('break'))
+        status['klasa'] = sorted(status['klasa'], key=lambda x: x['name'])
 
         zastepstwa.append(status)
     posortowane = sorted(zastepstwa, key=lambda x: ''.join([k['name'] for k in x['klasa']]))

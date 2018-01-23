@@ -21,7 +21,7 @@ def index(request):
            'classrooms': load_ids('classrooms'),
            'breaks': load_ids('breaks')}
 
-    lasttype = request.COOKIES.get('lasttype', 'teacher')
+    lasttype = request.COOKIES.get('lasttype', 'class')
     lastuid = request.COOKIES.get('last' + lasttype + 'uid', '-22')
 
     uid = request.GET.get('uid', lastuid)
