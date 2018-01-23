@@ -1,5 +1,3 @@
-# TODO: Dodać zmianę klasy
-
 from io import StringIO
 from django.http import Http404
 from chmura.models import Settings
@@ -8,6 +6,7 @@ import re
 import json
 from datetime import datetime, timedelta
 from .utils import *
+from time import sleep
 
 
 def save_dict(name, obj):
@@ -213,3 +212,4 @@ def updateJob():
         else:
             zast = {'dane': [], 'notka': ''}
         save_dict(period.strftime('%Y-%m-%d'), zast)
+        sleep(2)

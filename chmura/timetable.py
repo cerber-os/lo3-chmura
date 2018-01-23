@@ -4,6 +4,7 @@ from django.http import Http404
 import pickle
 from random import randint
 from .utils import *
+from time import sleep
 
 
 def save_dict(name, obj):
@@ -163,5 +164,16 @@ def timetableJob():
         typ = name.replace('*', '-').split('-')
         uid = typ[1]
         typ = typ[0]
+
+        if '*' in name:
+            uid = '*' + str(uid)
+        elif '-' in name:
+            uid = '-' + str(uid)
+        else:
+            print('[ERROR] Could not determine uid. Omitting update for:', name)
+            continue
+
+        print('[DEBUG]Downloading timetable:', name)
         plan = download_and_regenerate_timetable(uid, typ, credentials)
-        save_dict(filename, plan)
+        save_dict(name, plan)
+        sleep(2)
