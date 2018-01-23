@@ -111,6 +111,8 @@ def download_subst(date, debug=False):
                   'old_przedmiot': [],
                   'new_sala': [],
                   'old_sala': [],
+                  'old_klasa': [],
+                  'new_klasa': [],
                   'przedmiot': [],
                   'lekcja': [],
                   'notka': '',
@@ -157,10 +159,7 @@ def download_subst(date, debug=False):
                         if n is not None:
                             status['new_nauczyciel'].append(n)
                     elif z['column'] == 'classroomid' or z['column'] == 'classroomids':
-                        # status['new_sala'].append({'old': classrooms.get(str(z.get('old', None))),
-                        #                           'new': classrooms.get(str(z.get('new', None)))})
                         status['old_sala'].append(classrooms[str(z['old'])])
-
                         s = classrooms.get(str(z.get('new')))
                         if s is not None:
                             status['new_sala'].append(s)
@@ -170,6 +169,12 @@ def download_subst(date, debug=False):
                         p = subjects.get(str(z.get('new')))
                         if p is not None:
                             status['new_przedmiot'].append(p)
+                    elif z['column'] == 'classid' or z['column'] == 'classids':
+                        status['old_klasa'].append(classes[str(z['old'])])
+
+                        c = classes.get(str(z.get('new')))
+                        if c is not None:
+                            status['new_klasa'].append(c)
 
         if debug:
             print('Klasa:', status.get('klasa', None), '\t', 'Lekcja:', status.get('lekcja', None), '\n',

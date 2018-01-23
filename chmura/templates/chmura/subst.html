@@ -34,7 +34,16 @@
 			
 			{% for entry in zastepstwa %}
 			<tr>
-				<td>{% for class in entry.klasa %}{{ class.name }}{% if entry.klasa|length > forloop.counter %}, {% endif %}{% endfor %}</td>
+                <td>{% for class in entry.klasa %}
+                    {% if class in entry.old_klasa %}<s>{% endif %}{{ class.name }}{% if class in entry.old_klasa %}</s>
+                {% endif %}
+                    {% if entry.klasa|length > forloop.counter %}, {% endif %}
+                {% endfor %}
+
+                    {% if entry.klasa|length != 0 and entry.new_klasa|length != 0 %}<br>→<br>{% endif %}
+                    {% for class in entry.new_klasa %}{{ class.name }}{% if entry.new_klasa|length > forloop.counter %},
+                    {% endif %}{% endfor %}
+                </td>
 				<td>{{ entry.lekcja.id }}{{ entry.przerwa.short }}</td>
 				<td>
 					{% for subject in entry.przedmiot %}
