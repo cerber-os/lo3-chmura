@@ -42,6 +42,18 @@ def regenerate_pass():
     return credentials
 
 
+def retrieve_pass():
+    for _ in range(0, 3):
+        try:
+            credentials = regenerate_pass()
+            return credentials
+        except json.JSONDecodeError:
+            print('[DEBUG]Retrieving password failed. Trying again...')
+    else:
+        print("[ERROR] Failed to retrieve password! Exiting...")
+        return None
+
+
 # TODO: Dodać wersje planu lekcji
 
 
@@ -148,17 +160,13 @@ def get_timetable(uid, selector):
 
 
 def timetableJob():
+    create_new_session()
     print("[DEBUG]Updating timetable")
-    for _ in range(0, 3):
-        try:
-            credentials = regenerate_pass()
-            break
-        except json.JSONDecodeError:
-            print('[DEBUG]Retrieving password failed. Trying again...')
-    else:
-        print("[ERROR] Failed to retrieve password! Exiting...")
+    credentials = retrieve_pass()
+    if credentials is None:
         return
 
+    connection_count = 0
     for filename in os.listdir(get_cur_path() + '/timetables'):
         name = os.path.splitext(filename)[0]
         typ = name.replace('*', '-').split('-')
@@ -176,4 +184,10 @@ def timetableJob():
         print('[DEBUG]Downloading timetable:', name)
         plan = download_and_regenerate_timetable(uid, typ, credentials)
         save_dict(name, plan)
+        connection_count += 1
+        if connection_count % 10 == 0:
+            create_new_session()
+            credentials = retrieve_pass()
+            if credentials is None:
+                return
         sleep(2)

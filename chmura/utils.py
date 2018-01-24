@@ -1,7 +1,5 @@
 import os
-
-DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows; U; Win 9x 4.90; de-DE; rv:0.9.2) Gecko/20010726 Netscape6/6.1'
-ENABLE_TOR = False
+from lo3.settings import DEFAULT_USER_AGENT, ENABLE_TOR, ENABLE_AGGRESSIVE_IP_CHANGE
 
 if ENABLE_TOR:
     # Thanks to /u/gaten
@@ -21,6 +19,15 @@ if ENABLE_TOR:
     # patch the socket module
     socket.socket = socks.socksocket
     socket.create_connection = create_connection
+    print('[DEBUG] TOR forwarding enabled')
+else:
+    print('[WARN] TOR not enabled!!!')
+
+if ENABLE_AGGRESSIVE_IP_CHANGE:
+    from stem import Signal
+    from stem.control import Controller
+
+    print('[WARN] Aggressive IP changing is active!')
 
 import urllib.request
 import urllib.parse
@@ -45,8 +52,15 @@ def getReversedStudent(dictionary, key):
     return "null"
 
 
+def create_new_session():
+    if ENABLE_AGGRESSIVE_IP_CHANGE:
+        with Controller.from_port(port=14356) as controller:
+            controller.authenticate(password='tojestbardzozlaszkola')
+            controller.signal(Signal.NEWNYM)
+        print('[DEBUG] New session created')
+
+
 def url_request(address, header=None, params=None):
-    global DEFAULT_USER_AGENT
     if header is None:
         header = {}
     if params is None:

@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '*v^4+%9%0qv0i8mzy2uaz&e9k*%f5*j&(%9)2k-!gw8e195v3c'
+SECRET_KEY = '*v^4+%9%0qv0i8mzy5hsz&e9k*%f5*j&(%9)2k-!gw8e195v3c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -121,13 +121,24 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Cron jobs (updating timetable, substitution, etc.)
+# https://github.com/kraiz/django-crontab
+
 CRONJOBS = [
-    ('0 */6 * * *', 'chmura.timetable.timetableJob'),
-    ('0 */1 * * *', 'chmura.news.newsJob'),
-    ('0 0 */10 * *', 'chmura.news.agendaJob'),
-    ('*/30 * * * *', 'chmura.subst.updateJob'),
+    ('0 0 */1 * *', 'chmura.timetable.timetableJob'),
+    # ('0 */1 * * *', 'chmura.news.newsJob'),
+    # ('0 0 */10 * *', 'chmura.news.agendaJob'),
+    ('0 */1 * * *', 'chmura.subst.updateJob'),
     ('0 12 1 * *', 'chmura.updateids.updateid'),
 ]
+
+# Connection settings
+
+DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows; U; Win 9x 4.90; de-DE; rv:0.9.2) Gecko/20010726 Netscape6/6.1'
+ENABLE_TOR = False
+ENABLE_AGGRESSIVE_IP_CHANGE = False
+
+# Securiy
 
 # CSRF_COOKIE_SECURE = True
 # SESSION_COOKIE_SECURE = True
@@ -136,6 +147,9 @@ CRONJOBS = [
 # X_FRAME_OPTIONS = 'DENY'
 # SECURE_CONTENT_TYPE_NOSNIFF = True
 #
+
+# Logging
+
 # ADMINS = [('Nowy plan lekcji', 'cerber@cerberos.pl')]
 #
 # LOGGING = {

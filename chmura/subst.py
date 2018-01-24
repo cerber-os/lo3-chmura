@@ -194,6 +194,7 @@ def download_subst(date, debug=False):
 
 
 def updateJob():
+    create_new_session()
     now = datetime.now()
     for filename in os.listdir(get_cur_path() + '/substitution'):
         name = os.path.splitext(filename)[0]
