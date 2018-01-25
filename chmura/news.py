@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import pickle
 from .utils import *
+import chmura.log as log
 
 
 def save_dict(obj):
@@ -49,5 +50,6 @@ def get_news():
 
 
 def newsJob():
+    log.info('Updating news')
     news = download_news()
     save_dict(news)

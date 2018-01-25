@@ -8,6 +8,7 @@ from .agenda import get_agenda
 from .utils import *
 import datetime
 import re
+import chmura.log as log
 
 
 def index(request):
@@ -28,6 +29,7 @@ def index(request):
     selector = request.GET.get('sel', types[lasttype])
 
     if not re.match(r'^[*-]?\d{1,3}$', uid):
+        log.info('Incorrect uid was given')
         raise Http404
 
     if selector == 'trieda':

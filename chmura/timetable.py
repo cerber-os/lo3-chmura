@@ -5,6 +5,7 @@ import pickle
 from random import randint
 from .utils import *
 from time import sleep
+import chmura.log as log
 
 
 def save_dict(name, obj):
@@ -48,9 +49,9 @@ def retrieve_pass():
             credentials = regenerate_pass()
             return credentials
         except json.JSONDecodeError:
-            print('[DEBUG]Retrieving password failed. Trying again...')
+            log.info('Retrieving password failed. Trying again...')
     else:
-        print("[ERROR] Failed to retrieve password! Exiting...")
+        log.error('Failed to retrieve password!!!')
         return None
 
 
@@ -152,6 +153,7 @@ def download_and_regenerate_timetable(uid, typ, credentials=None):
     try:
         return genTimeTable(uid, typ, credentials)
     except ValueError:
+        log.warning('Unable to download timetable: ' + uid + ' - timetable:156')
         raise Http404
 
 
@@ -161,7 +163,7 @@ def get_timetable(uid, selector):
 
 def timetableJob():
     create_new_session()
-    print("[DEBUG]Updating timetable")
+    log.info("Updating timetable")
     credentials = retrieve_pass()
     if credentials is None:
         return
@@ -178,10 +180,10 @@ def timetableJob():
         elif '-' in name:
             uid = '-' + str(uid)
         else:
-            print('[ERROR] Could not determine uid. Omitting update for:', name)
+            log.error('Could not determine uid. Omitting update for: ' + name)
             continue
 
-        print('[DEBUG]Downloading timetable:', name)
+        log.info('Downloading timetable: ' + name)
         plan = download_and_regenerate_timetable(uid, typ, credentials)
         save_dict(name, plan)
         connection_count += 1

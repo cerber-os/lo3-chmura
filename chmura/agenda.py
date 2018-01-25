@@ -3,6 +3,7 @@ from io import StringIO
 import pickle
 import html5lib
 from .utils import *
+import chmura.log as log
 
 
 def save_dict(obj):
@@ -49,5 +50,6 @@ def download_agenda():
 
 
 def agendaJob():
+    log.info('Updating agenda')
     agenda = download_agenda()
     save_dict(agenda)

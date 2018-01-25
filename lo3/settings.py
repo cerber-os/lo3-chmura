@@ -150,6 +150,7 @@ ENABLE_AGGRESSIVE_IP_CHANGE = False
 
 # Logging
 
+LOGGING_LEVEL = 'INFO'
 # ADMINS = [('Nowy plan lekcji', 'cerber@cerberos.pl')]
 #
 # LOGGING = {

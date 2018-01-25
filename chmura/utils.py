@@ -1,5 +1,7 @@
 import os
+import chmura.log as log
 from lo3.settings import DEFAULT_USER_AGENT, ENABLE_TOR, ENABLE_AGGRESSIVE_IP_CHANGE
+
 
 if ENABLE_TOR:
     # Thanks to /u/gaten
@@ -19,15 +21,15 @@ if ENABLE_TOR:
     # patch the socket module
     socket.socket = socks.socksocket
     socket.create_connection = create_connection
-    print('[DEBUG] TOR forwarding enabled')
+    log.info('TOR forwarding enabled')
 else:
-    print('[WARN] TOR not enabled!!!')
+    log.warning('TOR not enabled!!!')
 
 if ENABLE_AGGRESSIVE_IP_CHANGE:
     from stem import Signal
     from stem.control import Controller
 
-    print('[WARN] Aggressive IP changing is active!')
+    log.warning('Aggressive IP changing is active!')
 
 import urllib.request
 import urllib.parse
@@ -57,7 +59,7 @@ def create_new_session():
         with Controller.from_port(port=14356) as controller:
             controller.authenticate(password='tojestbardzozlaszkola')
             controller.signal(Signal.NEWNYM)
-        print('[DEBUG] New session created')
+        log.info('New TOR session created')
 
 
 def url_request(address, header=None, params=None):

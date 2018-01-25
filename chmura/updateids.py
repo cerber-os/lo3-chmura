@@ -3,6 +3,7 @@ import json
 import pickle
 import re
 from .utils import *
+import chmura.log as log
 
 
 def save_dict(name, obj):
@@ -15,8 +16,10 @@ def load_dict(name):
         with open(get_cur_path() + '/ids/' + name + '.id', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
+        log.warning('Ids file not found. Downloading new and returning "null"')
         save_ids(download_ids())
-        return "null"
+        with open(get_cur_path() + '/ids/' + name + '.id', 'rb') as f:
+            return pickle.load(f)
 
 
 def download_ids():
@@ -92,4 +95,5 @@ def load_ids(typ):
 
 
 def updateid():
+    log.info('Updating ids')
     save_ids(download_ids())

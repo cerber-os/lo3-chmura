@@ -7,6 +7,7 @@ import json
 from datetime import datetime, timedelta
 from .utils import *
 from time import sleep
+import chmura.log as log
 
 
 def save_dict(name, obj):
@@ -26,6 +27,7 @@ def load_dict(date):
 
 def get_substitution(date):
     if re.match(r'^20[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$', date) is None:
+        log.info('Incorrect date was given - subst:30')
         raise Http404
     return load_dict(date)
 
@@ -34,7 +36,7 @@ def download_and_regenerate_subst(date):
     try:
         return download_subst(date)
     except ValueError:
-        print('[DEBUG]Regenerating gpid, gsh and cookie')
+        log.info('Regenerating gpid, gsh and cookie')
         regenerate_pass()
         try:
             return download_subst(date)
@@ -56,10 +58,10 @@ def regenerate_pass():
     Settings.objects.filter().update(gpid=gpid,
                                      gsh=gsh,
                                      phpsessid=cookie)
-    print(gpid, gsh, cookie)
+    log.info('New gpid, gsh and cookie', gpid + ' ' + gsh + ' ' + cookie)
 
 
-def download_subst(date, debug=False):
+def download_subst(date):
     settings = Settings.objects.all()[0]
     params = {'gpid': settings.gpid,
               'gsh': settings.gsh,
@@ -69,8 +71,7 @@ def download_subst(date, debug=False):
     serverResponse = url_request('https://lo3gdynia.edupage.org/gcall',
                                  {'Cookie': 'PHPSESSID=' + settings.phpsessid},
                                  params).read().decode('UTF-8')
-    if debug:
-        print(serverResponse)
+    log.debug(serverResponse)
 
     jsdb_start = serverResponse.index('ttdb.fill({') + 10
     jsdb = serverResponse[jsdb_start: serverResponse.find('"}}});', jsdb_start) + 4]
@@ -84,8 +85,6 @@ def download_subst(date, debug=False):
     periods = jsdb['periods']
     subType = jsdb['substitution_types']
     breaks = jsdb['breaks']
-    if debug:
-        print(periods)
 
     # Pobieranie czerwonej notatki
     try:
@@ -175,12 +174,11 @@ def download_subst(date, debug=False):
                         if c is not None:
                             status['new_klasa'].append(c)
 
-        if debug:
-            print('Klasa:', status.get('klasa', None), '\t', 'Lekcja:', status.get('lekcja', None), '\n',
-                  'Nauczyciel:', status['nauczyciel'], '->', status['new_nauczyciel'], '\n',
-                  'Przedmiot:', status.get('przedmiot', None), '->', status['new_przedmiot'], '\n',
-                  'Sala:', status['sala'], '->', status['new_sala'], '\n',
-                  'Typ zastępstwa:', status.get('typ', None), '\t', 'Notka: ', status.get('notka', None), '\n\n')
+        log.debug('Klasa: ' + status.get('klasa', None) + '\t' + 'Lekcja: ' + status.get('lekcja', None) + '\n' +
+                  'Nauczyciel: ' + status['nauczyciel'] + ' -> ' + status['new_nauczyciel'] + '\n' +
+                  'Przedmiot :' + status.get('przedmiot', None) + ' -> ' + status['new_przedmiot'] + '\n' +
+                  'Sala :' + status['sala'] + ' -> ' + status['new_sala'] + '\n' +
+                  'Typ zastępstwa: ' + status.get('typ', None) + '\t' + 'Notka: ' + status.get('notka', None) + '\n\n')
 
         if len(status['klasa']) == 0:
             status['klasa'].append({'name': ''})
@@ -199,13 +197,13 @@ def updateJob():
     for filename in os.listdir(get_cur_path() + '/substitution'):
         name = os.path.splitext(filename)[0]
         if datetime.strptime(name, '%Y-%m-%d').date() < now.date():
-            print('[DEBUG]Deleting old substitution cache')
+            log.info('Deleting old substitution cache')
             os.remove(get_cur_path() + '/substitution/' + filename)
 
     continueDownloading = True
     for i in range(0, 7):
         period = now + timedelta(days=i)
-        print('[DEBUG]Downloading new substitution for', period.strftime('%Y-%m-%d'))
+        log.info('Downloading new substitution for', period.strftime('%Y-%m-%d'))
         if continueDownloading:
             zast = download_and_regenerate_subst(period.strftime('%Y-%m-%d'))
             if zast == {'dane': [], 'notka': ''}:
