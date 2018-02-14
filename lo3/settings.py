@@ -105,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pl-PL'
 
 TIME_ZONE = 'UTC'
 
@@ -140,27 +140,30 @@ ENABLE_AGGRESSIVE_IP_CHANGE = False
 
 # Securiy
 
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
-# SECURE_SSL_REDIRECT = True
-# SECURE_BROWSER_XSS_FILTER = True
-# X_FRAME_OPTIONS = 'DENY'
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-#
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
 
 # Logging
 
-LOGGING_LEVEL = 'INFO'
-# ADMINS = [('Nowy plan lekcji', 'cerber@cerberos.pl')]
-#
-# LOGGING = {
-#         'version': 1,
-#         'disable_existing_loggers': False,
-#         'handlers': {
-#             'mail_admins': {
-#                 'level': 'ERROR',
-#                 'class': 'django.utils.log.AdminEmailHandler',
-#                 'include_html': True,
-#             }
-#         },
-# }
+LOGGING_LEVEL = 'DEBUG'
+if not DEBUG:
+    LOGGING_LEVEL = 'WARNING'
+    ADMINS = [('Nowy plan lekcji', 'cerber@cerberos.pl')]
+
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'mail_admins': {
+                'level': 'ERROR',
+                'class': 'django.utils.log.AdminEmailHandler',
+                'include_html': True,
+            }
+        },
+    }

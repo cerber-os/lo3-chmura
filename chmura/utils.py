@@ -1,7 +1,9 @@
 import os
 import chmura.log as log
-from lo3.settings import DEFAULT_USER_AGENT, ENABLE_TOR, ENABLE_AGGRESSIVE_IP_CHANGE
+from lo3.settings import DEFAULT_USER_AGENT, ENABLE_TOR, ENABLE_AGGRESSIVE_IP_CHANGE, DEBUG
 
+if DEBUG:
+    log.error('Debug mode is active!!! Do not use it in production!')
 
 if ENABLE_TOR:
     # Thanks to /u/gaten
