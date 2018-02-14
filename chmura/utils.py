@@ -1,26 +1,14 @@
 import os
+import urllib.request
+import urllib.parse
 import chmura.log as log
-from lo3.settings import DEFAULT_USER_AGENT, ENABLE_TOR, ENABLE_AGGRESSIVE_IP_CHANGE
+from lo3.settings import DEFAULT_USER_AGENT, ENABLE_TOR, ENABLE_AGGRESSIVE_IP_CHANGE, DEBUG
 
+
+if DEBUG:
+    log.error('Debug mode is active!!! Do not use it in production!')
 
 if ENABLE_TOR:
-    # Thanks to /u/gaten
-    import socks
-    import socket
-
-
-    def create_connection(address, timeout=None, source_address=None):
-        sock = socks.socksocket()
-        sock.connect(address)
-        return sock
-
-
-    socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050, True)
-    socket.socket = socks.socksocket
-
-    # patch the socket module
-    socket.socket = socks.socksocket
-    socket.create_connection = create_connection
     log.info('TOR forwarding enabled')
 else:
     log.warning('TOR not enabled!!!')
@@ -30,9 +18,6 @@ if ENABLE_AGGRESSIVE_IP_CHANGE:
     from stem.control import Controller
 
     log.warning('Aggressive IP changing is active!')
-
-import urllib.request
-import urllib.parse
 
 
 def get_cur_path():
@@ -67,10 +52,14 @@ def url_request(address, header=None, params=None):
         header = {}
     if params is None:
         params = {}
+    prx = {'http': '127.0.0.1:9050'} if ENABLE_TOR else {}
 
     header['User-Agent'] = DEFAULT_USER_AGENT
 
+    proxy_handler = urllib.request.ProxyHandler(prx)
+    opener = urllib.request.build_opener(proxy_handler)
+
     options = urllib.parse.urlencode(params).encode('UTF-8')
     url = urllib.request.Request(address, options, headers=header)
-    serverResponse = urllib.request.urlopen(url)
+    serverResponse = opener.open(url)
     return serverResponse

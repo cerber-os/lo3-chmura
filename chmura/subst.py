@@ -81,10 +81,16 @@ def download_subst(date):
     teachers = jsdb['teachers']
     classes = jsdb['classes']
     subjects = jsdb['subjects']
+    log.debug(subjects)
     classrooms = jsdb['classrooms']
     periods = jsdb['periods']
     subType = jsdb['substitution_types']
     breaks = jsdb['breaks']
+
+    for i in ['teachers', 'classes', 'subjects', 'classrooms', 'periods', 'breaks']:
+        exec(i + '["None"] = ""')
+
+    teachers['None'] = classes['None'] = subjects['None'] = ''
 
     # Pobieranie czerwonej notatki
     try:
@@ -129,56 +135,57 @@ def download_subst(date):
                     status['lekcja'] = periods[zastepstwo[key]]
 
             elif key == 'subjectid':
-                status['przedmiot'] = [subjects[zastepstwo[key]]]
+                status['przedmiot'] = [subjects[str(zastepstwo[key])]]
             elif key == 'subjectids':
                 status['przedmiot'] = [subjects[str(s)] for s in zastepstwo[key]]
 
             elif key == 'teacherid':
-                status['nauczyciel'] = [teachers[zastepstwo[key]]]
+                status['nauczyciel'] = [teachers[str(zastepstwo[key])]]
             elif key == 'teacherids':
                 status['nauczyciel'] = [teachers[str(s)] for s in zastepstwo[key]]
 
             elif key == 'classid':
-                status['klasa'] = [classes[zastepstwo[key]]]
+                status['klasa'] = [classes[str(zastepstwo[key])]]
             elif key == 'classids':
                 status['klasa'] = [classes[str(s)] for s in zastepstwo[key]]
 
             elif key == 'classroomid':
-                status['sala'] = [classrooms[zastepstwo[key]]]
+                status['sala'] = [classrooms[str(zastepstwo[key])]]
             elif key == 'classroomids':
                 status['sala'] = [classrooms[str(s)] for s in zastepstwo[key]]
 
             elif key == 'changes':
                 for z in zastepstwo[key]:
                     if z['column'] == 'teacherid' or z['column'] == 'teacherids':
-                        status['old_nauczyciel'].append(teachers[str(z['old'])])
+                        status['old_nauczyciel'].append(teachers[str(z.get('old'))])
 
                         n = teachers.get(str(z.get('new')))
                         if n is not None:
                             status['new_nauczyciel'].append(n)
                     elif z['column'] == 'classroomid' or z['column'] == 'classroomids':
-                        status['old_sala'].append(classrooms[str(z['old'])])
+                        status['old_sala'].append(classrooms[str(z.get('old'))])
                         s = classrooms.get(str(z.get('new')))
                         if s is not None:
                             status['new_sala'].append(s)
                     elif z['column'] == 'subjectid' or z['column'] == 'subjectids':
-                        status['old_przedmiot'].append(subjects[str(z['old'])])
+                        status['old_przedmiot'].append(subjects[str(z.get('old'))])
 
                         p = subjects.get(str(z.get('new')))
                         if p is not None:
                             status['new_przedmiot'].append(p)
                     elif z['column'] == 'classid' or z['column'] == 'classids':
-                        status['old_klasa'].append(classes[str(z['old'])])
+                        status['old_klasa'].append(classes[str(z.get('old'))])
 
                         c = classes.get(str(z.get('new')))
                         if c is not None:
                             status['new_klasa'].append(c)
 
-        log.debug('Klasa: ' + status.get('klasa', None) + '\t' + 'Lekcja: ' + status.get('lekcja', None) + '\n' +
-                  'Nauczyciel: ' + status['nauczyciel'] + ' -> ' + status['new_nauczyciel'] + '\n' +
-                  'Przedmiot :' + status.get('przedmiot', None) + ' -> ' + status['new_przedmiot'] + '\n' +
-                  'Sala :' + status['sala'] + ' -> ' + status['new_sala'] + '\n' +
-                  'Typ zastępstwa: ' + status.get('typ', None) + '\t' + 'Notka: ' + status.get('notka', None) + '\n\n')
+        log.debug('Klasa: ' + str(status.get('klasa', 'None')) + '\t' + 'Lekcja: ' + str(
+            status.get('lekcja', 'None')) + '\n' +
+                  'Nauczyciel: ' + str(status['nauczyciel']) + ' -> ' + str(status['new_nauczyciel']) + '\n' +
+                  'Przedmiot :' + str(status.get('przedmiot', 'None')) + ' -> ' + str(status['new_przedmiot']) + '\n' +
+                  'Sala :' + str(status['sala']) + ' -> ' + str(status['new_sala']) + '\n' +
+                  'Typ zastępstwa: ' + str(status.get('typ', 'None')) + '\n\n')
 
         if len(status['klasa']) == 0:
             status['klasa'].append({'name': ''})
@@ -203,12 +210,13 @@ def updateJob():
     continueDownloading = True
     for i in range(0, 7):
         period = now + timedelta(days=i)
-        log.info('Downloading new substitution for', period.strftime('%Y-%m-%d'))
         if continueDownloading:
+            log.info('Downloading new substitution for', period.strftime('%Y-%m-%d'))
             zast = download_and_regenerate_subst(period.strftime('%Y-%m-%d'))
             if zast == {'dane': [], 'notka': ''}:
                 continueDownloading = False
         else:
+            log.info('Omitting update for', period.strftime('%Y-%m-%d'))
             zast = {'dane': [], 'notka': ''}
         save_dict(period.strftime('%Y-%m-%d'), zast)
         sleep(2)
