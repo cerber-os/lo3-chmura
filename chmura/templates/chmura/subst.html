@@ -34,46 +34,37 @@
 			
 			{% for entry in zastepstwa %}
 			<tr>
-                <td>{% for class in entry.klasa %}
-                    {% if class in entry.old_klasa %}<s>{% endif %}{{ class.name }}{% if class in entry.old_klasa %}</s>
-                {% endif %}
-                    {% if entry.klasa|length > forloop.counter %}, {% endif %}
-                {% endfor %}
+				<td>{% for class in entry.klasa %}
+					{% if class in entry.old_klasa %}<s>{% endif %}{{ class.name }}{% if class in entry.old_klasa %}</s>{% endif %}{% if entry.klasa|length > forloop.counter %}, {% endif %}{% endfor %}
 
-                    {% if entry.klasa|length != 0 and entry.new_klasa|length != 0 %}<br>→<br>{% endif %}
-                    {% for class in entry.new_klasa %}{{ class.name }}{% if entry.new_klasa|length > forloop.counter %},
-                    {% endif %}{% endfor %}
-                </td>
+					{% if entry.klasa|length != 0 and entry.new_klasa|length != 0 %}<br>&rarr;<br>{% endif %}
+					{% for class in entry.new_klasa %}{{ class.name }}{% if entry.new_klasa|length > forloop.counter %}, {% endif %}{% endfor %}
+				</td>
 				<td>{{ entry.lekcja.id }}{{ entry.przerwa.short }}</td>
 				<td>
 					{% for subject in entry.przedmiot %}
-						{% if subject in entry.old_przedmiot %}<s>{% endif %}{{ subject.name }}{% if subject in entry.old_przedmiot %}</s>{% endif %}
-						{% if entry.przedmiot|length > forloop.counter %}, {% endif %}
+						{% if subject in entry.old_przedmiot %}<s>{% endif %}{{ subject.name }}{% if subject in entry.old_przedmiot %}</s>{% endif %}{% if entry.przedmiot|length > forloop.counter %}, {% endif %}
 					{% endfor %}
 					
-					{% if entry.przedmiot|length != 0 and entry.new_przedmiot|length != 0 %}<br>→<br>{% endif %}
+					{% if entry.przedmiot|length != 0 and entry.new_przedmiot|length != 0 %}<br>&rarr;<br>{% endif %}
 					{% for subject in entry.new_przedmiot %}{{subject.name}}{% if entry.new_przedmiot|length > forloop.counter %}, {% endif %}{% endfor %}
 				</td>
 				<td>
 					{% for teacher in entry.nauczyciel %}
-						{% if teacher in entry.old_nauczyciel %}<s>{% endif %}{{ teacher.name }}{% if teacher in entry.old_nauczyciel %}</s>{% endif %}
-						{% if entry.nauczyciel|length > forloop.counter %}, {% endif %}
+						{% if teacher in entry.old_nauczyciel %}<s>{% endif %}{{ teacher.name }}{% if teacher in entry.old_nauczyciel %}</s>{% endif %}{% if entry.nauczyciel|length > forloop.counter %}, {% endif %}
 					{% endfor %}
 					
-					{% if entry.nauczyciel|length != 0 and entry.new_nauczyciel|length != 0 %}<br>→<br>{% endif %}
+					{% if entry.nauczyciel|length != 0 and entry.new_nauczyciel|length != 0 %}<br>&rarr;<br>{% endif %}
 					{% for teacher in entry.new_nauczyciel %}{{ teacher.name }}{% if entry.new_nauczyciel|length > forloop.counter %}, {% endif %}{% endfor %}
 				</td>
 				<td>
-                    {#					{% for room in entry.sala %}{{room.short}}{% if entry.sala|length > forloop.counter %}, {% endif %}{% endfor %}#}
-                    {% for room in entry.sala %}
-                        {% if room in entry.old_sala %}<s>{% endif %}{{ room.name }}{% if room in entry.old_sala %}</s>
-                    {% endif %}
-                        {% if entry.sala|length > forloop.counter %}, {% endif %}
-                    {% endfor %}
+					{% for room in entry.sala %}
+						{% if room in entry.old_sala %}<s>{% endif %}{{ room.name }}{% if room in entry.old_sala %}</s>{% endif %}{% if entry.sala|length > forloop.counter %}, {% endif %}
+					{% endfor %}
 
-                    {% if entry.sala|length != 0 and entry.new_sala|length != 0 %}<br>→<br>{% endif %}
-                    {% for room in entry.new_sala %}{{ room.name }}{% if entry.new_sala|length > forloop.counter %},
-                    {% endif %}{% endfor %}
+					{% if entry.sala|length != 0 and entry.new_sala|length != 0 %}<br>&rarr;<br>{% endif %}
+					{% for room in entry.new_sala %}{{ room.name }}{% if entry.new_sala|length > forloop.counter %},
+					{% endif %}{% endfor %}
 				</td>
 				<td>{{ entry.typ.name }}</td>
 				<td>{{ entry.notka }}</td>
