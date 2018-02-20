@@ -6,3 +6,8 @@ class Settings(models.Model):
     gsh = models.CharField(max_length=10, default='c1b73915')
     phpsessid = models.CharField(max_length=50,
                                  default='deb4ph6ahmglb36qqqfclrrlj5')
+
+
+class Subject(models.Model):
+    name = models.CharField(max_length=200)
+    color = models.CharField(max_length=10)

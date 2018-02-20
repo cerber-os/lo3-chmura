@@ -6,6 +6,7 @@ from random import randint
 from .utils import *
 from time import sleep
 import chmura.log as log
+from chmura.colors import get_color
 
 
 def save_dict(name, obj):
@@ -122,12 +123,16 @@ def genTimeTable(uid='-22', selector='trieda', credentials=None):
                     if selector == 'ucitel':
                         planJSON[dzien][str(lessonNumber-1)].append({
                                             'subject': subjects[card['subjects'][0]]['name'],
+                                            'color': get_color(subjects[card['subjects'][0]]['name'],
+                                                               subjects[card['subjects'][0]]['color']),
                                             'classes': [classes[c]['name'] for c in card['classes']],
                                             'classroom': getclassroom(card['classrooms'], classrooms)})
                     else:
                         planJSON[dzien][str(lessonNumber-1)].append({
                                             'subject': subjects[card['subjects'][0]]['name'],
-                            'teacher': getteachername(card, teachers),
+                                            'color': get_color(subjects[card['subjects'][0]]['name'],
+                                                               subjects[card['subjects'][0]]['color']),
+                                            'teacher': getteachername(card, teachers),
                                             'classroom': getclassroom(card['classrooms'], classrooms)})
                 except KeyError:
                     continue
