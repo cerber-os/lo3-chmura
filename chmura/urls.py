@@ -10,5 +10,6 @@ urlpatterns = [
         url(r'^substitution/$', views.substitutionList, name='substitutionList'),
         url(r'^webapi/$', api.webapi, name='webapi'),
         url(r'^news/', views.newsPage, name='newsPage'),
-        url(r'^agenda/', views.agenda, name='agenda')
+        url(r'^agenda/', views.agenda, name='agenda'),
+        url(r'^timetablecolors.css$', views.timetablecolors, name='timetablecolors'),
 ]

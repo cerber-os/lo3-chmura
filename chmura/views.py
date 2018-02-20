@@ -9,6 +9,7 @@ from .utils import *
 import datetime
 import re
 import chmura.log as log
+from chmura.models import Subject
 
 
 def index(request):
@@ -72,3 +73,12 @@ def newsPage(request):
 def agenda(request):
     con = {'terminarz': get_agenda()}
     return render(request, 'chmura/agenda.html', con)
+
+
+def timetablecolors(request):
+    con = {'colors': []}
+    for x in Subject.objects.all():
+        con['colors'].append({'name': x.name, 'color': x.color})
+    response = render(request, 'chmura/timetablecolors.css', con)
+    response['Content-Type'] = 'text/css; charset=utf-8'
+    return response

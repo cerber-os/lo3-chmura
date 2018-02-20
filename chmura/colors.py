@@ -26,7 +26,6 @@ def find_nearest_color(hex_color):
 
     for idx, color in enumerate(material_palette[1:]):
         delta = delta_e(color_in, hex_to_labcolor(color))
-        print(delta, minv[1], minv[0])
         if delta < minv[1]:
             minv = [idx+1, delta]
     return material_palette[minv[0]]
@@ -36,6 +35,7 @@ def get_color(nazwa, hex_color):
     try:
         return Subject.objects.get(name=nazwa).color
     except ObjectDoesNotExist:
+        hex_color = find_nearest_color(hex_color)
         color = Subject(name=nazwa, color=hex_color)
         color.save()
         return hex_color
