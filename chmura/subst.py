@@ -78,19 +78,16 @@ def download_subst(date):
     jsdb = StringIO(jsdb)
     jsdb = json.load(jsdb)
 
-    teachers = jsdb['teachers']
-    classes = jsdb['classes']
-    subjects = jsdb['subjects']
-    log.debug(subjects)
-    classrooms = jsdb['classrooms']
-    periods = jsdb['periods']
-    subType = jsdb['substitution_types']
-    breaks = jsdb['breaks']
+    teachers = jsdb.get('teachers', {})
+    classes = jsdb.get('classes', {})
+    subjects = jsdb.get('subjects', {})
+    classrooms = jsdb.get('classrooms', {})
+    periods = jsdb.get('periods', {})
+    subType = jsdb.get('substitution_types', {})
+    breaks = jsdb.get('breaks', {})
 
     for i in ['teachers', 'classes', 'subjects', 'classrooms', 'periods', 'breaks']:
         exec(i + '["None"] = ""')
-
-    teachers['None'] = classes['None'] = subjects['None'] = ''
 
     # Pobieranie czerwonej notatki
     try:
@@ -131,8 +128,10 @@ def download_subst(date):
             elif key == 'period':
                 if type(periods) is list:
                     status['lekcja'] = periods[int(zastepstwo[key])]
+                elif type(periods) is str:
+                    status['lekcja'] = zastepstwo[key]
                 else:
-                    status['lekcja'] = periods[zastepstwo[key]]
+                    status['lekcja'] = periods.get(zastepstwo[key], 'None')
 
             elif key == 'subjectid':
                 status['przedmiot'] = [subjects[str(zastepstwo[key])]]
@@ -160,18 +159,18 @@ def download_subst(date):
                         status['old_nauczyciel'].append(teachers[str(z.get('old'))])
 
                         n = teachers.get(str(z.get('new')))
-                        if n is not None:
+                        if n not in [None, '']:
                             status['new_nauczyciel'].append(n)
                     elif z['column'] == 'classroomid' or z['column'] == 'classroomids':
                         status['old_sala'].append(classrooms[str(z.get('old'))])
                         s = classrooms.get(str(z.get('new')))
-                        if s is not None:
+                        if s not in [None, '']:
                             status['new_sala'].append(s)
                     elif z['column'] == 'subjectid' or z['column'] == 'subjectids':
                         status['old_przedmiot'].append(subjects[str(z.get('old'))])
 
                         p = subjects.get(str(z.get('new')))
-                        if p is not None:
+                        if p not in [None, '']:
                             status['new_przedmiot'].append(p)
                     elif z['column'] == 'classid' or z['column'] == 'classids':
                         status['old_klasa'].append(classes[str(z.get('old'))])
