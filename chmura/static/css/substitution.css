@@ -20,6 +20,9 @@ div.substitutiontablewrapper {
 	max-width: 1000px;
 	padding: 0 8px;
 }
+div.substitutiontablewrapper:last-of-type {
+	padding-bottom: 8px;
+}
 
 body > p {
 	margin: 8px;
