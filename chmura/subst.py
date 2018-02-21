@@ -199,7 +199,7 @@ def download_subst(date):
         k = ""
         for s in status['klasa']:
             k += s['name'] + ', '
-        k = k[0:-1]
+        k = k[0:-2]
         try:
             zastepstwa[k].append(status)
         except KeyError:
