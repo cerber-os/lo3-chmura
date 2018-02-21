@@ -1,20 +1,35 @@
-#substitutiontable {
+table.substitutiontable {
 	color: #666;
 	font-size: 0.9em;
 	line-height: 1.1em;
 	
-	margin: 8px;
+	width: 100%;
+	
+	table-layout: fixed;
 }
-#substitutiontable td, #substitutiontable th {
+table.substitutiontable td, table.substitutiontable th {
 	padding: 12pt;
 	background-color: #EEEEEE;
 	
 	text-align: center;
 }
-#substitutiontable tr:nth-child(even) td {
+table.substitutiontable tr:nth-child(even) td {
 	background-color: #FAFAFA;
+}
+div.substitutiontablewrapper {
+	max-width: 1000px;
+	padding: 0 8px;
 }
 
 body > p {
 	margin: 8px;
+}
+h2 {
+	font-weight: normal;
+	margin: 8px;
+	font-size: 1.3em;
+}
+
+p.notka {
+	color: #E53935;
 }
