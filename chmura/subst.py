@@ -103,7 +103,8 @@ def download_subst(date):
     subst = StringIO(subst)
     subst = json.load(subst)
 
-    zastepstwa = []
+    # zastepstwa = []
+    zastepstwa = {}
 
     for zastepstwo in subst:
         status = {'new_przedmiot': [],
@@ -190,10 +191,18 @@ def download_subst(date):
             status['klasa'].append({'name': ''})
 
         status['przerwa'] = breaks.get(zastepstwo.get('break'))
-        status['klasa'] = sorted(status['klasa'], key=lambda x: x['name'])
+        status['klasa'] = sorted(status['klasa'], key=lambda s: s['name'])
 
-        zastepstwa.append(status)
-    posortowane = sorted(zastepstwa, key=lambda x: ''.join([k['name'] for k in x['klasa']]))
+        # zastepstwa.append(status)
+        k = ""
+        for s in status['klasa']:
+            k += s['name'] + ' '
+        k = k[0:-1]
+        try:
+            zastepstwa[k].append(status)
+        except KeyError:
+            zastepstwa[k] = [status]
+    posortowane = dict(sorted(zastepstwa.items()))
     return {'dane': posortowane, 'notka': note}
 
 
