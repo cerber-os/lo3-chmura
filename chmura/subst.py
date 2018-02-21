@@ -96,6 +96,8 @@ def download_subst(date):
         note = serverResponse[note_start: jsdb_start - 10]
         note = note[0: note.index('";gi')]
         note = note.replace('\\n', '')
+        note = note.replace('\\"', '"')
+        note = note.replace('<br /> <br />', '<br />')
     except ValueError:
         note = ""
 
@@ -196,7 +198,7 @@ def download_subst(date):
         # zastepstwa.append(status)
         k = ""
         for s in status['klasa']:
-            k += s['name'] + ' '
+            k += s['name'] + ', '
         k = k[0:-1]
         try:
             zastepstwa[k].append(status)
