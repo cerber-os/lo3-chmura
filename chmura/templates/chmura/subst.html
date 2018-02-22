@@ -1,3 +1,6 @@
+<!--
+{% debug %}
+-->
 <!DOCTYPE html>
 <html>
 	<head>
@@ -45,7 +48,7 @@
 		{% for group, groupdata in zastepstwa.items %}
 		
 		<div class="substitutiontablewrapper" data-group="{% if group|length > 0 %}{{ group }}{% else %}Bez klasy{% endif %}">
-			<h2>{% if group|length > 0 %}{{ group }}{% else %}Bez klasy{% endif %}</h2>
+			<h2>{% if group|length > 0 %}{% autoescape off %}{{ groupdata.0.displayname }}{% endautoescape %}{% else %}Bez klasy{% endif %}</h2>
 			
 			<table class="substitutiontable">
 				<tr>
