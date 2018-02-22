@@ -61,7 +61,11 @@ def substitutionList(request):
 
     zastepstwa = get_substitution(date)
 
-    con = {'zastepstwa': zastepstwa['dane'], 'notka': zastepstwa['notka'], 'data': date, 'data_now': now}
+    con = {'zastepstwa': zastepstwa['dane'],
+           'notka': zastepstwa['notka'],
+           'data': date,
+           'data_now': now,
+           'classes': load_ids('classes')}
     return render(request, 'chmura/subst.html', con)
 
 
