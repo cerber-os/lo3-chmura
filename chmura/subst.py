@@ -16,6 +16,8 @@ def save_dict(name, obj):
 
 
 def load_dict(date):
+    if not os.path.exists(get_cur_path() + '/substitution'):
+        os.makedirs(get_cur_path() + '/substitution')
     try:
         with open(get_cur_path() + '/substitution/' + date + '.sbt', 'rb') as f:
             return pickle.load(f)

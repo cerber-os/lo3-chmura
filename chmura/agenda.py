@@ -12,6 +12,8 @@ def save_dict(obj):
 
 
 def load_dict():
+    if not os.path.exists(get_cur_path() + '/agendaF'):
+        os.makedirs(get_cur_path() + '/agendaF')
     try:
         with open(get_cur_path() + '/agendaF/agenda.ag', 'rb') as f:
             return pickle.load(f)

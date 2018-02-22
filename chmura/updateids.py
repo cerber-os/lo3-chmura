@@ -12,6 +12,8 @@ def save_dict(name, obj):
 
 
 def load_dict(name):
+    if not os.path.exists(get_cur_path() + '/ids'):
+        os.makedirs(get_cur_path() + '/ids')
     try:
         with open(get_cur_path() + '/ids/' + name + '.id', 'rb') as f:
             return pickle.load(f)

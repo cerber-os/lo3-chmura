@@ -15,6 +15,8 @@ def save_dict(name, obj):
 
 
 def load_dict(selector, uid):
+    if not os.path.exists(get_cur_path() + '/timetables'):
+        os.makedirs(get_cur_path() + '/timetables')
     try:
         with open(get_cur_path() + '/timetables/' + selector + uid + '.tt', 'rb') as f:
             return pickle.load(f)

@@ -10,6 +10,8 @@ def save_dict(obj):
 
 
 def load_dict():
+    if not os.path.exists(get_cur_path() + '/newsF'):
+        os.makedirs(get_cur_path() + '/newsF')
     try:
         with open(get_cur_path() + '/newsF/news.nw', 'rb') as f:
             return pickle.load(f)
