@@ -22,19 +22,31 @@
 				
 			</select>
 		</header>
-
+		
 		{% if notka|length > 0 %}
 		<h2>Uwagi</h2>
 		<p class="notka">{% autoescape off %}{{ notka }}{% endautoescape %}</p>
 		{% endif %}
-
-		{% if zastepstwa|length == 0 %}<p>W tym dniu nie ma żadnych zastępstw.</p>{% endif %}
-
+		
+		{% if zastepstwa|length == 0 %}
+		<p>W tym dniu nie ma żadnych zastępstw.</p>
+		{% else %}
+		<p>Pokaż zastępstwa dla:
+			<select id="substitutiongroupselect" onchange="handleGroupSelectUpdate()">
+				<option value="*">Wszystkie klasy</option>
+				<option>Bez klasy</option>
+				{% for class in classes %}
+				<option>{{ class }}</option>
+				{% endfor %}
+			</select>
+		</p>
+		{% endif %}
+		
 		{% for group, groupdata in zastepstwa.items %}
-
-		<h2>{% if group|length > 0 %}{{ group }}{% else %}Bez klasy{% endif %}</h2>
-
-		<div class="substitutiontablewrapper">
+		
+		<div class="substitutiontablewrapper" data-group="{% if group|length > 0 %}{{ group }}{% else %}Bez klasy{% endif %}">
+			<h2>{% if group|length > 0 %}{{ group }}{% else %}Bez klasy{% endif %}</h2>
+			
 			<table class="substitutiontable">
 				<tr>
 					<th>Lekcja</th>
@@ -44,7 +56,7 @@
 					<th>Rodzaj</th>
 					<th>Notatka</th>
 				</tr>
-
+				
 				{% for entry in groupdata %}
 				<tr>
 					<td>{{ entry.lekcja.id }}{{ entry.przerwa.short }}</td>
@@ -52,7 +64,7 @@
 						{% for subject in entry.przedmiot %}
 							{% if subject in entry.old_przedmiot %}<s>{% endif %}{{ subject.name }}{% if subject in entry.old_przedmiot %}</s>{% endif %}{% if entry.przedmiot|length > forloop.counter %}, {% endif %}
 						{% endfor %}
-
+						
 						{% if entry.przedmiot|length != 0 and entry.new_przedmiot|length != 0 %}<br>&rarr;<br>{% endif %}
 						{% for subject in entry.new_przedmiot %}{{subject.name}}{% if entry.new_przedmiot|length > forloop.counter %}, {% endif %}{% endfor %}
 					</td>
@@ -60,7 +72,7 @@
 						{% for teacher in entry.nauczyciel %}
 							{% if teacher in entry.old_nauczyciel %}<s>{% endif %}{{ teacher.name }}{% if teacher in entry.old_nauczyciel %}</s>{% endif %}{% if entry.nauczyciel|length > forloop.counter %}, {% endif %}
 						{% endfor %}
-
+						
 						{% if entry.nauczyciel|length != 0 and entry.new_nauczyciel|length != 0 %}<br>&rarr;<br>{% endif %}
 						{% for teacher in entry.new_nauczyciel %}{{ teacher.name }}{% if entry.new_nauczyciel|length > forloop.counter %}, {% endif %}{% endfor %}
 					</td>
@@ -79,7 +91,9 @@
 				{% endfor %}
 			</table>
 		</div>
-
+		
 		{% endfor %}
+		
+		<p id="nochosensubstitution" style="display: none">Brak zastępstw dla wybranej klasy.</p>
 	</body>
 </html>

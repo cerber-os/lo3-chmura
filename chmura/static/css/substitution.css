@@ -23,6 +23,10 @@ div.substitutiontablewrapper {
 div.substitutiontablewrapper:last-of-type {
 	padding-bottom: 8px;
 }
+div.substitutiontablewrapper > h2 {
+	margin-left: 0;
+	margin-right: 0;
+}
 
 body > p {
 	margin: 8px;

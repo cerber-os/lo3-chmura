@@ -29,6 +29,34 @@ function handleSubstitutionDaySelectUpdate(select) {
 	window.location.search = "?date=" + date;
 }
 
+function handleGroupSelectUpdate() {
+	var select = document.getElementById("substitutiongroupselect");
+	if (!select) return;
+	
+	var hiddenWrappers = 0;
+	
+	var wrappers = document.getElementsByClassName("substitutiontablewrapper");
+	for (var i = 0; i < wrappers.length; i++) {
+		if (select.value == "*") {
+			wrappers[i].style.display = "";
+			continue;
+		}
+		
+		var groups = wrappers[i].getAttribute("data-group").split(", ");
+		if (groups.indexOf(select.value) != -1) wrappers[i].style.display = "";
+		else {
+			wrappers[i].style.display = "none";
+			hiddenWrappers++;
+		}
+	}
+	
+	if (hiddenWrappers == wrappers.length)
+		document.getElementById("nochosensubstitution").style.display = "block";
+	else
+		document.getElementById("nochosensubstitution").style.display = "none";
+}
+
 window.onload = function() {
 	populateDaySelect();
+	handleGroupSelectUpdate();
 }
