@@ -29,6 +29,19 @@ function handleSubstitutionDaySelectUpdate(select) {
 	window.location.search = "?date=" + date;
 }
 
+function selectSavedGroup() {
+	var group = getCookie("lastsubstitutiongroup");
+	
+	var select = document.getElementById("substitutiongroupselect");
+	if (!select) return;
+	
+	for (var i = 0; i < select.options.length; i++)
+		if (select.options[i].value == group) {
+			select.selectedIndex = i;
+			handleGroupSelectUpdate();
+			break;
+		}
+}
 function handleGroupSelectUpdate() {
 	var select = document.getElementById("substitutiongroupselect");
 	if (!select) return;
@@ -54,9 +67,11 @@ function handleGroupSelectUpdate() {
 		document.getElementById("nochosensubstitution").style.display = "block";
 	else
 		document.getElementById("nochosensubstitution").style.display = "none";
+	
+	setCookie("lastsubstitutiongroup", select.value, 31536000000);
 }
 
 window.onload = function() {
 	populateDaySelect();
-	handleGroupSelectUpdate();
+	selectSavedGroup();
 }
