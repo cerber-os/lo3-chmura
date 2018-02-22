@@ -10,6 +10,7 @@ from chmura.colors import get_color
 
 
 def save_dict(name, obj):
+    name = name.replace('*', '#')
     with open(get_cur_path() + '/timetables/' + name + '.tt', 'wb') as f:
         pickle.dump(obj, f, 2)
 
@@ -18,7 +19,7 @@ def load_dict(selector, uid):
     if not os.path.exists(get_cur_path() + '/timetables'):
         os.makedirs(get_cur_path() + '/timetables')
     try:
-        with open(get_cur_path() + '/timetables/' + selector + uid + '.tt', 'rb') as f:
+        with open(get_cur_path() + '/timetables/' + selector + uid.replace('*', '#') + '.tt', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
         plan = download_and_regenerate_timetable(uid, selector)
@@ -160,7 +161,7 @@ def download_and_regenerate_timetable(uid, typ, credentials=None):
     try:
         return genTimeTable(uid, typ, credentials)
     except ValueError:
-        log.warning('Unable to download timetable: ' + uid + ' - timetable:156')
+        log.warning('Unable to download timetable: ' + uid + ' - timetable:dart')
         raise Http404
 
 
