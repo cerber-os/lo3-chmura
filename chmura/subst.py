@@ -197,7 +197,17 @@ def download_subst(date):
         status['przerwa'] = breaks.get(zastepstwo.get('break'))
         status['klasa'] = sorted(status['klasa'], key=lambda s: s['name'])
 
-        # zastepstwa.append(status)
+        k = ""
+        for s in status['klasa']:
+            for l in status['old_klasa']:
+                if s['name'] == l['name']:
+                    k += '<s>' + s['name'] + '</s>, '
+                    break
+            else:
+                k += s['name'] + ', '
+        k = k[0:-2]
+        status['displayname'] = k
+
         k = ""
         for s in status['klasa']:
             k += s['name'] + ', '
