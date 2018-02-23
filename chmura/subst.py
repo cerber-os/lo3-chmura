@@ -232,6 +232,8 @@ def updateJob():
     continueDownloading = True
     for i in range(0, 7):
         period = now + timedelta(days=i)
+        if period.weekday() >= 5: 
+            period += timedelta(days=7 - period.weekday())
         if continueDownloading:
             log.info('Downloading new substitution for', period.strftime('%Y-%m-%d'))
             zast = download_and_regenerate_subst(period.strftime('%Y-%m-%d'))
