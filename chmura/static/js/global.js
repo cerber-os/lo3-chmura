@@ -9,6 +9,14 @@ function closeOverlay(div, event) {
 function handleLocationSelectUpdate(select) {
 	window.location = select.selectedOptions[0].value;
 }
+function toggleHeaderMenu() {
+	var menu = document.getElementById("headermenu");
+	
+	if (menu.style.display == "block")
+		menu.style.display = "none";
+	else
+		menu.style.display = "block";
+}
 
 function setCookie(name, value, milliseconds) {
 	if (milliseconds) {

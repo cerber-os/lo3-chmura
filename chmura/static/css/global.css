@@ -19,6 +19,30 @@ body {
 #header select {
 	margin-left: 20px;
 }
+#header > p {
+	display: inline;
+}
+#headerhamburger {
+	height: 40px;
+	margin-top: 15px;
+	
+	display: none;
+	float: right;
+	
+	cursor: pointer;
+}
+#headermenu > a {
+	display: block;
+	padding: 0.5em 0;
+	
+	color: inherit;
+	text-align: center;
+	text-decoration: none;
+	line-height: normal;
+}
+#headermenu > a:nth-child(odd) {
+	background-color: #22252D;
+}
 
 #overlay {
 	position: fixed;
@@ -121,11 +145,21 @@ p.buttonholder {
 	body {
 		padding-top: 70px;
 	}
+	
 	#header {
 		position: fixed;
 		top: 0;
 		left: 0;
 		
 		width: 100%;
+		padding: 0;
 	}
+	#header > p {
+		display: block;
+		margin: 0 30px;
+		
+		line-height: 70px;
+	}
+	#header > select { display: none; }
+	#headerhamburger { display: inline-block; }
 }

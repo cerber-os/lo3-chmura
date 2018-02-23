@@ -13,12 +13,19 @@
 	</head>
 	<body>
 		<header id="header">
-			III LO w Gdyni
+			<p>
+				III LO w Gdyni
+				<img id="headerhamburger" src="/static/img/hamburger.png" onclick="toggleHeaderMenu()">
+			</p>
 			<select onchange="handleLocationSelectUpdate(this)">
 				<option value="/">Plan lekcji</option>
 				<option value="/substitution/">Zastępstwa</option>
 			</select>
 			{% block secondaryheaderselect %}{% endblock %}
+			<div id="headermenu" style="display: none">
+				<a href="/">Plan lekcji</a>
+				<a href="/substitution/">Zastępstwa</a>
+			</div>
 		</header>
 		
 		{% block content %}{% endblock %}
