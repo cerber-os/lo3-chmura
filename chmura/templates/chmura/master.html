@@ -18,13 +18,13 @@
 				<img id="headerhamburger" src="/static/img/hamburger.png" onclick="toggleHeaderMenu()">
 			</p>
 			<select onchange="handleLocationSelectUpdate(this)">
-				<option value="/" {% if request.path == "/"%}selected{%endif%}>Plan lekcji</option>
-				<option value="/substitution/" {% if request.path == "/substitution/"%}selected{%endif%}>Zastępstwa</option>
+				<option value="/" {% if request.path == "/" %}selected{%endif%}>Plan lekcji</option>
+				<option value="/substitution/" {% if request.path == "/substitution/" %}selected{% endif %}>Zastępstwa</option>
 			</select>
 			{% block secondaryheaderselect %}{% endblock %}
 			<div id="headermenu" style="display: none">
-				<a href="/">Plan lekcji</a>
-				<a href="/substitution/">Zastępstwa</a>
+				<a href="/" {% if request.path == "/" %}class="current"{% endif %}>Plan lekcji</a>
+				<a href="/substitution/" {% if request.path == "/substitution/" %}class="current"{% endif %}>Zastępstwa</a>
 			</div>
 		</header>
 		

@@ -23,8 +23,8 @@ body {
 	display: inline;
 }
 #headerhamburger {
-	height: 40px;
-	margin-top: 15px;
+	height: 30px;
+	margin-top: 10px;
 	
 	display: none;
 	float: right;
@@ -39,8 +39,9 @@ body {
 	text-align: center;
 	text-decoration: none;
 	line-height: normal;
+	font-size: initial;
 }
-#headermenu > a:nth-child(odd) {
+#headermenu > a.current {
 	background-color: #22252D;
 }
 
@@ -143,7 +144,7 @@ p.buttonholder {
 
 @media screen and (max-width: 1000px) {
 	body {
-		padding-top: 70px;
+		padding-top: 50px;
 	}
 	
 	#header {
@@ -156,9 +157,9 @@ p.buttonholder {
 	}
 	#header > p {
 		display: block;
-		margin: 0 30px;
+		margin: 0 15px;
 		
-		line-height: 70px;
+		line-height: 50px;
 	}
 	#header > select { display: none; }
 	#headerhamburger { display: inline-block; }
