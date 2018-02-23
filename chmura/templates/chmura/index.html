@@ -1,141 +1,133 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Plan lekcji - III LO w Gdyni</title>
+{% extends "chmura/master.html" %}
+
+{% block title %}Plan lekcji{% endblock %}
+
+{% block localcss %}
+<link rel="stylesheet" href="/static/css/timetable.css">
+<link rel="stylesheet" href="timetablecolors.css">
+{% endblock %}
+{% block localjs %}
+<script src="/static/js/timetable.js"></script>
+{% endblock %}
+
+{% block secondaryheaderselect %}
+<select id="timetableselect" data-previousselectedindex="0" onchange="handleTimetableSelectUpdate(this)">
+	<option data-type="{{ type }}" data-uid="{{ target_uid }}">{{ target }}</option>
+	<option>Wybierz...</option>
+</select>
+{% endblock %}
+
+{% block content %}
+<table id="timetable">
+	<tr>
+		<th></th>
+		{% for hour in breaks %}
+			<th>{{forloop.counter}}<br>{% autoescape off %}{{ hour }}{% endautoescape %}</th>
+		{% endfor %}
+	</tr>
+	
+	{% for weekday, blocks in timetable.items %}
+	<tr>
+		<th>{{ weekday }}</th>
 		
-		<meta name="viewport" content="width=device-width">
+		{% for hour, block in blocks.items %}
 		
-		<link rel="stylesheet" href="/static/css/global.css">
-		<link rel="stylesheet" href="/static/css/timetable.css">
-		<link rel="stylesheet" href="timetablecolors.css" type="text/css">
-		
-		<script src="/static/js/global.js"></script>
-		<script src="/static/js/timetable.js"></script>
-	</head>
-	<body>
-		<header id="header">
-			III LO w Gdyni
-			<select onchange="handleLocationSelectUpdate(this)">
-				<option value="/">Plan lekcji</option>
-				<option value="/substitution/">Zastępstwa</option>
-			</select>
-			<select id="timetableselect" data-previousselectedindex="0" onchange="handleTimetableSelectUpdate(this)">
-				<option data-type="{{ type }}" data-uid="{{ target_uid }}">{{ target }}</option>
-				<option>Wybierz...</option>
-			</select>
-		</header>
-		
-		<table id="timetable">
-			<tr>
-				<th></th>
-				{% for hour in breaks %}
-					<th>{{forloop.counter}}<br>{% autoescape off %}{{ hour }}{% endautoescape %}</th>
+		{% if block|length == 0 %}
+		<td></td>
+		{% elif block|length == 1 %}
+		<td class="lesson" data-lessonname="{{ block.0.subject }}">
+			<p>{{ block.0.subject }}</p>
+			<p>{{ block.0.teacher }}{% for class in block.0.classes %}{{ class }}{% if block.0.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
+			<p>{{ block.0.classroom }}</p>
+		</td>
+		{% elif block|length <= 3 %}
+		<td>
+			<div class="lessonholder">
+				{% for lesson in block %}
+				<div>
+					<div class="lesson" data-lessonname="{{ lesson.subject }}">
+						<p>{{ lesson.subject }}</p>
+						<p>{{ lesson.teacher }}{% for class in lesson.classes %}{{ class }}{% if lesson.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
+						<p>{{ lesson.classroom }}</p>
+					</div>
+				</div>
 				{% endfor %}
-			</tr>
+			</div>
+		</td>
+		{% else %}
+		<td>
+			<div class="lessonholder">
+				<div class="detailslesson">
+					<div class="lesson" data-lessonname="_RÓŻNE">
+						<p>Różne</p>
+						<a href="javascript:void(0)" onclick="showDetails(this)">Szczegóły</a>
+					</div>
+				</div>
+				{% for lesson in block %}
+				<div class="hiddenlesson">
+					<div class="lesson" data-lessonname="{{ lesson.subject }}">
+						<p>{{ lesson.subject }}</p>
+						<p>{{ lesson.teacher }}{% for class in lesson.classes %}{{ class }}{% if lesson.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
+						<p>{{ lesson.classroom }}</p>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</td>
+		{% endif %}
+		
+		{% endfor %}
+	</tr>
+	{% endfor %}
+</table>
+
+<div id="overlay">
+	<div>
+		<div onclick="closeOverlay(this, event)">
 			
-			{% for weekday, blocks in timetable.items %}
-			<tr>
-				<th>{{ weekday }}</th>
-				
-				{% for hour, block in blocks.items %}
-				
-				{% if block|length == 0 %}
-				<td></td>
-				{% elif block|length == 1 %}
-				<td class="lesson" data-lessonname="{{ block.0.subject }}">
-					<p>{{ block.0.subject }}</p>
-					<p>{{ block.0.teacher }}{% for class in block.0.classes %}{{ class }}{% if block.0.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
-					<p>{{ block.0.classroom }}</p>
-				</td>
-				{% elif block|length <= 3 %}
-				<td>
-					<div class="lessonholder">
-						{% for lesson in block %}
-						<div>
-							<div class="lesson" data-lessonname="{{ lesson.subject }}">
-								<p>{{ lesson.subject }}</p>
-								<p>{{ lesson.teacher }}{% for class in lesson.classes %}{{ class }}{% if lesson.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
-								<p>{{ lesson.classroom }}</p>
-							</div>
-						</div>
-						{% endfor %}
-					</div>
-				</td>
-				{% else %}
-				<td>
-					<div class="lessonholder">
-						<div class="detailslesson">
-							<div class="lesson" data-lessonname="_RÓŻNE">
-								<p>Różne</p>
-								<a href="javascript:void(0)" onclick="showDetails(this)">Szczegóły</a>
-							</div>
-						</div>
-						{% for lesson in block %}
-						<div class="hiddenlesson">
-							<div class="lesson" data-lessonname="{{ lesson.subject }}">
-								<p>{{ lesson.subject }}</p>
-								<p>{{ lesson.teacher }}{% for class in lesson.classes %}{{ class }}{% if lesson.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
-								<p>{{ lesson.classroom }}</p>
-							</div>
-						</div>
-						{% endfor %}
-					</div>
-				</td>
-				{% endif %}
-				
-				{% endfor %}
-			</tr>
-			{% endfor %}
-		</table>
-		
-		<div id="overlay">
-			<div>
-				<div onclick="closeOverlay(this, event)">
-					
-					<div id="overlaywindow">
-						<p id="overlaytitlebar"><span id="overlaytitle"></span><img id="overlayclose" src="/static/img/close.png" onclick="closeOverlay()"></p>
-						<div id="overlaycontent">
-							
-						</div>
-					</div>
+			<div id="overlaywindow">
+				<p id="overlaytitlebar"><span id="overlaytitle"></span><img id="overlayclose" src="/static/img/close.png" onclick="closeOverlay()"></p>
+				<div id="overlaycontent">
 					
 				</div>
 			</div>
+			
 		</div>
-		
-		<div id="timetableselectdialog" hidden>
-			<form>
-				<p>Pokaż plan</p>
-				<select name="sel" onchange="handleTimetableTypeSelectUpdate(this)">
-					<option value="trieda">Klasy</option>
-					<option value="student">Ucznia</option>
-					<option value="ucitel">Nauczyciela</option>
-				</select>
-				<select name="uid" data-selecttype="class">
-					{% for class, uid in classes.items %}
-					<option value="{{ uid }}">{{ class }}</option>
-					{% endfor %}
-				</select>
-				<p style="display: none" class="nonspaced">Z klasy</p>
-				<select style="display: none" onchange="showStudentList(this)">
-					{% for class, studentlist in students.items %}
-					<option>{{ class }}</option>
-					{% endfor %}
-				</select>
-				<select style="display: none" data-selcttype="teacher">
-					{% for name, uid in teachers.items %}
-					<option value="{{ uid }}">{{ name }}</option>
-					{% endfor %}
-				</select>
-				{% for class, studentlist in students.items %}
-				<select style="display: none" data-class="{{ class }}">
-					{% for student in studentlist %}
-					<option value="{{ student.id }}">{{ student.firstname }} {{ student.lastname }}</option>
-					{% endfor %}
-				</select>
-				{% endfor %}
-				<p class="buttonholder"><input type="submit" value="Wybierz" onclick="setLastSettings(this)"></p>
-			</form>
-		</div>
-	</body>
-</html>
+	</div>
+</div>
+
+<div id="timetableselectdialog" hidden>
+	<form>
+		<p>Pokaż plan</p>
+		<select name="sel" onchange="handleTimetableTypeSelectUpdate(this)">
+			<option value="trieda">Klasy</option>
+			<option value="student">Ucznia</option>
+			<option value="ucitel">Nauczyciela</option>
+		</select>
+		<select name="uid" data-selecttype="class">
+			{% for class, uid in classes.items %}
+			<option value="{{ uid }}">{{ class }}</option>
+			{% endfor %}
+		</select>
+		<p style="display: none" class="nonspaced">Z klasy</p>
+		<select style="display: none" onchange="showStudentList(this)">
+			{% for class, studentlist in students.items %}
+			<option>{{ class }}</option>
+			{% endfor %}
+		</select>
+		<select style="display: none" data-selcttype="teacher">
+			{% for name, uid in teachers.items %}
+			<option value="{{ uid }}">{{ name }}</option>
+			{% endfor %}
+		</select>
+		{% for class, studentlist in students.items %}
+		<select style="display: none" data-class="{{ class }}">
+			{% for student in studentlist %}
+			<option value="{{ student.id }}">{{ student.firstname }} {{ student.lastname }}</option>
+			{% endfor %}
+		</select>
+		{% endfor %}
+		<p class="buttonholder"><input type="submit" value="Wybierz" onclick="setLastSettings(this)"></p>
+	</form>
+</div>
+{% endblock %}

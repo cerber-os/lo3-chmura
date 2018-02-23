@@ -1,99 +1,91 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Zastępstwa - III LO w Gdyni</title>
-		
-		<meta name="viewport" content="width=device-width">
-		
-		<link rel="stylesheet" href="/static/css/global.css">
-		<link rel="stylesheet" href="/static/css/substitution.css">
-		
-		<script src="/static/js/global.js"></script>
-		<script src="/static/js/substitution.js"></script>
-	</head>
-	<body>
-		<header id="header">
-			III LO w Gdyni
-			<select onchange="handleLocationSelectUpdate(this)">
-				<option value="/">Plan lekcji</option>
-				<option value="/substitution/" selected>Zastępstwa</option>
-			</select>
-			<select id="dayselect" onchange="handleSubstitutionDaySelectUpdate(this)">
-				
-			</select>
-		</header>
-		
-		{% if notka|length > 0 %}
-		<h2>Uwagi</h2>
-		<p class="notka">{% autoescape off %}{{ notka }}{% endautoescape %}</p>
-		{% endif %}
-		
-		{% if zastepstwa|length == 0 %}
-		<p>W tym dniu nie ma żadnych zastępstw.</p>
-		{% else %}
-		<p>Pokaż zastępstwa dla:
-			<select id="substitutiongroupselect" onchange="handleGroupSelectUpdate()">
-				<option value="*">Wszystkie klasy</option>
-				<option>Bez klasy</option>
-				{% for class in classes %}
-				<option>{{ class }}</option>
-				{% endfor %}
-			</select>
-		</p>
-		{% endif %}
-		
-		{% for group, groupdata in zastepstwa.items %}
-		
-		<div class="substitutiontablewrapper" data-group="{% if group|length > 0 %}{{ group }}{% else %}Bez klasy{% endif %}">
-			<h2>{% if group|length > 0 %}{% autoescape off %}{{ groupdata.0.displayname }}{% endautoescape %}{% else %}Bez klasy{% endif %}</h2>
-			
-			<table class="substitutiontable">
-				<tr>
-					<th>Lekcja</th>
-					<th>Przedmiot</th>
-					<th>Nauczyciel</th>
-					<th>Sala</th>
-					<th>Rodzaj</th>
-					<th>Notatka</th>
-				</tr>
-				
-				{% for entry in groupdata %}
-				<tr>
-					<td>{{ entry.lekcja.id }}{{ entry.przerwa.short }}</td>
-					<td>
-						{% for subject in entry.przedmiot %}
-							{% if subject in entry.old_przedmiot %}<s>{% endif %}{{ subject.name }}{% if subject in entry.old_przedmiot %}</s>{% endif %}{% if entry.przedmiot|length > forloop.counter %}, {% endif %}
-						{% endfor %}
-						
-						{% if entry.przedmiot|length != 0 and entry.new_przedmiot|length != 0 %}<br>&rarr;<br>{% endif %}
-						{% for subject in entry.new_przedmiot %}{{subject.name}}{% if entry.new_przedmiot|length > forloop.counter %}, {% endif %}{% endfor %}
-					</td>
-					<td>
-						{% for teacher in entry.nauczyciel %}
-							{% if teacher in entry.old_nauczyciel %}<s>{% endif %}{{ teacher.name }}{% if teacher in entry.old_nauczyciel %}</s>{% endif %}{% if entry.nauczyciel|length > forloop.counter %}, {% endif %}
-						{% endfor %}
-						
-						{% if entry.nauczyciel|length != 0 and entry.new_nauczyciel|length != 0 %}<br>&rarr;<br>{% endif %}
-						{% for teacher in entry.new_nauczyciel %}{{ teacher.name }}{% if entry.new_nauczyciel|length > forloop.counter %}, {% endif %}{% endfor %}
-					</td>
-					<td>
-						{% for room in entry.sala %}
-							{% if room in entry.old_sala %}<s>{% endif %}{{ room.name }}{% if room in entry.old_sala %}</s>{% endif %}{% if entry.sala|length > forloop.counter %}, {% endif %}
-						{% endfor %}
+{% extends "chmura/master.html" %}
 
-						{% if entry.sala|length != 0 and entry.new_sala|length != 0 %}<br>&rarr;<br>{% endif %}
-						{% for room in entry.new_sala %}{{ room.name }}{% if entry.new_sala|length > forloop.counter %},
-						{% endif %}{% endfor %}
-					</td>
-					<td>{{ entry.typ.name }}</td>
-					<td>{{ entry.notka }}</td>
-				</tr>
-				{% endfor %}
-			</table>
-		</div>
-		
+{% block title %}Zastępstwa{% endblock %}
+
+{% block localcss %}
+<link rel="stylesheet" href="/static/css/substitution.css">
+{% endblock %}
+{% block localjs %}
+<script src="/static/js/substitution.js"></script>
+{% endblock %}
+
+{% block secondaryheaderselect %}
+<select id="dayselect" onchange="handleSubstitutionDaySelectUpdate(this)">
+	
+</select>
+{% endblock %}
+
+{% block content %}
+{% if notka|length > 0 %}
+<h2>Uwagi</h2>
+<p class="notka">{% autoescape off %}{{ notka }}{% endautoescape %}</p>
+{% endif %}
+
+{% if zastepstwa|length == 0 %}
+<p>W tym dniu nie ma żadnych zastępstw.</p>
+{% else %}
+<p>Pokaż zastępstwa dla:
+	<select id="substitutiongroupselect" onchange="handleGroupSelectUpdate()">
+		<option value="*">Wszystkie klasy</option>
+		<option>Bez klasy</option>
+		{% for class in classes %}
+		<option>{{ class }}</option>
 		{% endfor %}
+	</select>
+</p>
+{% endif %}
+
+{% for group, groupdata in zastepstwa.items %}
+
+<div class="substitutiontablewrapper" data-group="{% if group|length > 0 %}{{ group }}{% else %}Bez klasy{% endif %}">
+	<h2>{% if group|length > 0 %}{% autoescape off %}{{ groupdata.0.displayname }}{% endautoescape %}{% else %}Bez klasy{% endif %}</h2>
+	
+	<table class="substitutiontable">
+		<tr>
+			<th>Lekcja</th>
+			<th>Przedmiot</th>
+			<th>Nauczyciel</th>
+			<th>Sala</th>
+			<th>Rodzaj</th>
+			<th>Notatka</th>
+		</tr>
 		
-		<p id="nochosensubstitution" style="display: none">Brak zastępstw dla wybranej klasy.</p>
-	</body>
-</html>
+		{% for entry in groupdata %}
+		<tr>
+			<td>{{ entry.lekcja.id }}{{ entry.przerwa.short }}</td>
+			<td>
+				{% for subject in entry.przedmiot %}
+					{% if subject in entry.old_przedmiot %}<s>{% endif %}{{ subject.name }}{% if subject in entry.old_przedmiot %}</s>{% endif %}{% if entry.przedmiot|length > forloop.counter %}, {% endif %}
+				{% endfor %}
+				
+				{% if entry.przedmiot|length != 0 and entry.new_przedmiot|length != 0 %}<br>&rarr;<br>{% endif %}
+				{% for subject in entry.new_przedmiot %}{{subject.name}}{% if entry.new_przedmiot|length > forloop.counter %}, {% endif %}{% endfor %}
+			</td>
+			<td>
+				{% for teacher in entry.nauczyciel %}
+					{% if teacher in entry.old_nauczyciel %}<s>{% endif %}{{ teacher.name }}{% if teacher in entry.old_nauczyciel %}</s>{% endif %}{% if entry.nauczyciel|length > forloop.counter %}, {% endif %}
+				{% endfor %}
+				
+				{% if entry.nauczyciel|length != 0 and entry.new_nauczyciel|length != 0 %}<br>&rarr;<br>{% endif %}
+				{% for teacher in entry.new_nauczyciel %}{{ teacher.name }}{% if entry.new_nauczyciel|length > forloop.counter %}, {% endif %}{% endfor %}
+			</td>
+			<td>
+				{% for room in entry.sala %}
+					{% if room in entry.old_sala %}<s>{% endif %}{{ room.name }}{% if room in entry.old_sala %}</s>{% endif %}{% if entry.sala|length > forloop.counter %}, {% endif %}
+				{% endfor %}
+
+				{% if entry.sala|length != 0 and entry.new_sala|length != 0 %}<br>&rarr;<br>{% endif %}
+				{% for room in entry.new_sala %}{{ room.name }}{% if entry.new_sala|length > forloop.counter %},
+				{% endif %}{% endfor %}
+			</td>
+			<td>{{ entry.typ.name }}</td>
+			<td>{{ entry.notka }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+</div>
+
+{% endfor %}
+
+<p id="nochosensubstitution" style="display: none">Brak zastępstw dla wybranej klasy.</p>
+{% endblock %}
