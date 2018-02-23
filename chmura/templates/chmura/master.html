@@ -4,9 +4,14 @@
 	<head>
 		<title>{% block title %}{% endblock %} - III LO w Gdyni</title>
 
-        <meta name="keywords" content="plan lekcji, 3 liceum, gdyńska trójka, zastępstwa">
-        <meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width">
+		<meta charset="UTF-8">
+		<meta name="keywords" content="3lo, gdynia, iiilo, iiilogdynia, 3logdynia, plan lekcji, zastępstwa">
+		<meta name="description" content="Ulepszony plan lekcji dla III LO w Gdyni.">
+		
+		<meta property="og:url" content="https://cerberos.pl/">
+		<meta property="og:description" content="Ulepszony plan lekcji dla III LO w Gdyni.">
+		<meta property="og:image" content="/static/img/preview.png">
 		
 		<link rel="stylesheet" href="/static/css/global.css">
 		{% block localcss %}{% endblock %}
@@ -17,7 +22,7 @@
 	<body>
 		<header id="header">
 			<p>
-				III LO w Gdyni
+				<span>III LO w Gdyni</span>
 				<img id="headerhamburger" src="/static/img/hamburger.png" onclick="toggleHeaderMenu()">
 			</p>
 			<select onchange="handleLocationSelectUpdate(this)">
