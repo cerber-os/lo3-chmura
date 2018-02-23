@@ -78,7 +78,7 @@
 				{% if entry.sala|length != 0 and entry.new_sala|length != 0 %}<br>&rarr;<br>{% endif %}
 				{% for room in entry.new_sala %}{{ room.name }}{% if entry.new_sala|length > forloop.counter %}, {% endif %}{% endfor %}
 			</td>
-			<td>{{ entry.typ.short }}</td>
+			<td>{% if entry.anulowano %}Anulowano{% endif %} {{ entry.typ.short }}</td>
 			<td class="humantext">{{ entry.notka }}</td>
 			<td class="mobilesubstitution">
 				{% if entry.przedmiot|length > 0 %}
@@ -109,8 +109,9 @@
 					{% for room in entry.new_sala %}{{ room.name }}{% if entry.new_sala|length > forloop.counter %}, {% endif %}{% endfor %}
 				</p>
 				{% endif %}
-				{% if entry.typ.name != "pl" %}
+				{% if entry.typ.name != "pl" or entry.anulowano %}
 				<p>
+					{% if entry.anulowano %}Anulowano{% endif %}
 					{{ entry.typ.short }}
 				</p>
 				{% endif %}
