@@ -1,5 +1,5 @@
 function populateDaySelect() {
-	var select = document.getElementById("dayselect");
+	var selects = document.getElementsByClassName("dayselect");
 	
 	var day = new Date();
 	var dayNames = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
@@ -19,7 +19,7 @@ function populateDaySelect() {
 		option.setAttribute("value", isoString);
 		option.innerText = dateString;
 		if (day.getDate() == selectedDate.getDate()) option.setAttribute("selected", "selected");
-		select.appendChild(option);
+		for (var j = 0; j < selects.length; j++) selects[j].appendChild(option.cloneNode(true));
 		
 		day.setDate(day.getDate() + 1);
 	}
@@ -32,19 +32,28 @@ function handleSubstitutionDaySelectUpdate(select) {
 function selectSavedGroup() {
 	var group = getCookie("lastsubstitutiongroup");
 	
-	var select = document.getElementById("substitutiongroupselect");
-	if (!select) return;
+	var selects = document.getElementsByClassName("substitutiongroupselect");
+	if (selects.length == 0) return;
 	
-	for (var i = 0; i < select.options.length; i++)
-		if (select.options[i].value == group) {
-			select.selectedIndex = i;
-			handleGroupSelectUpdate();
-			break;
-		}
+	for (var i = 0; i < selects.length; i++)
+		for (var j = 0; j < selects[i].options.length; j++)
+			if (selects[i].options[j].value == group) {
+				selects[i].selectedIndex = j;
+				handleGroupSelectUpdate(selects[0]);
+				break;
+			}
 }
-function handleGroupSelectUpdate() {
-	var select = document.getElementById("substitutiongroupselect");
-	if (!select) return;
+function handleGroupSelectUpdate(updatedSelect) {
+	var selects = document.getElementsByClassName("substitutiongroupselect");
+	if (selects.length == 0) return;
+	
+	var select;
+	if (updatedSelect) {
+		select = updatedSelect;
+		
+		for (var i = 0; i < selects.length; i++)
+			selects[i].selectedIndex = select.selectedIndex;
+	}
 	
 	var hiddenWrappers = 0;
 	
@@ -63,7 +72,7 @@ function handleGroupSelectUpdate() {
 		}
 	}
 	
-	if (hiddenWrappers == wrappers.length)
+	if (hiddenWrappers == wrappers.length && wrappers.length > 0)
 		document.getElementById("nochosensubstitution").style.display = "block";
 	else
 		document.getElementById("nochosensubstitution").style.display = "none";

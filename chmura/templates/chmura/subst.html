@@ -10,12 +10,25 @@
 {% endblock %}
 
 {% block secondaryheaderselect %}
-<select id="dayselect" onchange="handleSubstitutionDaySelectUpdate(this)">
-	
-</select>
+<select class="dayselect" onchange="handleSubstitutionDaySelectUpdate(this)"></select>
 {% endblock %}
 
 {% block content %}
+<div id="mobilecontrols">
+	<p>Wybierz dzień:</p>
+	<div><select class="dayselect" onchange="handleSubstitutionDaySelectUpdate(this)"></select></div>
+	<p>Pokaż zastępstwa dla:</p>
+	<div>
+		<select class="substitutiongroupselect" onchange="handleGroupSelectUpdate(this)">
+			<option value="*">Wszystkie klasy</option>
+			<option>Bez klasy</option>
+			{% for class in classes %}
+			<option>{{ class }}</option>
+			{% endfor %}
+		</select>
+	</div>
+</div>
+
 {% if notka|length > 0 %}
 <h2>Uwagi</h2>
 <p class="notka">{% autoescape off %}{{ notka }}{% endautoescape %}</p>
@@ -24,8 +37,9 @@
 {% if zastepstwa|length == 0 %}
 <p>W tym dniu nie ma żadnych zastępstw.</p>
 {% else %}
-<p>Pokaż zastępstwa dla:
-	<select id="substitutiongroupselect" onchange="handleGroupSelectUpdate()">
+<p id="groupselectwrapper">
+	Pokaż zastępstwa dla:
+	<select class="substitutiongroupselect" onchange="handleGroupSelectUpdate(this)">
 		<option value="*">Wszystkie klasy</option>
 		<option>Bez klasy</option>
 		{% for class in classes %}

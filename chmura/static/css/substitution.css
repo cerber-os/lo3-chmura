@@ -28,6 +28,27 @@ div.substitutiontablewrapper > h2 {
 	margin-right: 0;
 }
 
+#mobilecontrols {
+	margin-top: 8px;
+	display: none;
+}
+#mobilecontrols > div {
+	padding: 0 8px;
+}
+#mobilecontrols > div > select {
+	width: 100%;
+}
+#mobilecontrols > p {
+	font-size: 1.3em;
+	margin: 4px 8px;
+}
+#mobilecontrols select {
+	font-size: 1.2em;
+	
+	height: 2em;
+    padding-left: 0.2em;
+}
+
 body > p {
 	margin: 8px;
 }
@@ -52,4 +73,7 @@ td.mobilesubstitution > p:last-of-type { margin-bottom: 0; }
 	th:not(:first-child):not(.mobilesubstitution), td:not(:first-child):not(.mobilesubstitution) { display: none; }
 	th.mobilesubstitution, td.mobilesubstitution { display: table-cell; }
 	th:first-child { width: 4em; }
+	
+	#mobilecontrols { display: block; }
+	#groupselectwrapper { display: none; }
 }
