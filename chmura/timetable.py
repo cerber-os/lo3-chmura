@@ -6,7 +6,7 @@ from random import randint
 from .utils import *
 from time import sleep
 import chmura.log as log
-from chmura.colors import get_color
+from chmura.colors import get_color, create_color_files
 
 
 def save_dict(name, obj):
@@ -140,6 +140,7 @@ def genTimeTable(uid='-22', selector='trieda', credentials=None):
                 except KeyError:
                     continue
 
+    create_color_files()
     return planJSON
 
 

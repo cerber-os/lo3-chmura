@@ -1,1 +1,0 @@
-{% for color in colors %}[data-lessonname="{{ color.name }}"] {background-color: {{color.color}}; }{% endfor %}
