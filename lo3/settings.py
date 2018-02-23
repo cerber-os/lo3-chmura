@@ -156,7 +156,7 @@ if not DEBUG:
 LOGGING_LEVEL = 'INFO'
 LOGGING_COLORS = True
 if not DEBUG:
-    LOGGING_LEVEL = 'WARNING'
+    LOGGING_LEVEL = 'WARN'
     LOGGING_COLORS = False
     ADMINS = [('Nowy plan lekcji', 'cerber@cerberos.pl')]
 

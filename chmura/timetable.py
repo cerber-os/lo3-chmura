@@ -179,12 +179,12 @@ def timetableJob():
     connection_count = 0
     for filename in os.listdir(get_cur_path() + '/timetables'):
         name = os.path.splitext(filename)[0]
-        typ = name.replace('*', '-').split('-')
+        typ = name.replace('#', '-').split('-')
         uid = typ[1]
         typ = typ[0]
 
-        if '*' in name:
-            uid = '*' + str(uid)
+        if '#' in name:
+            uid = '#' + str(uid)
         elif '-' in name:
             uid = '-' + str(uid)
         else:
