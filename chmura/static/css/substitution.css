@@ -41,3 +41,15 @@ p.notka {
 	color: #E53935;
 	margin-left: 2em;
 }
+th.mobilesubstitution, td.mobilesubstitution {
+	display: none;
+}
+td.mobilesubstitution > p:first-of-type { margin-top: 0; }
+td.mobilesubstitution > p:last-of-type { margin-bottom: 0; }
+.humantext { font-family: Consolas, monospace; }
+
+@media screen and (max-width: 1000px) {
+	th:not(:first-child):not(.mobilesubstitution), td:not(:first-child):not(.mobilesubstitution) { display: none; }
+	th.mobilesubstitution, td.mobilesubstitution { display: table-cell; }
+	th:first-child { width: 4em; }
+}

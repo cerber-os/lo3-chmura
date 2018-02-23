@@ -48,6 +48,7 @@
 			<th>Sala</th>
 			<th>Rodzaj</th>
 			<th>Notatka</th>
+			<th class="mobilesubstitution">Opis</th>
 		</tr>
 		
 		{% for entry in groupdata %}
@@ -75,11 +76,50 @@
 				{% endfor %}
 
 				{% if entry.sala|length != 0 and entry.new_sala|length != 0 %}<br>&rarr;<br>{% endif %}
-				{% for room in entry.new_sala %}{{ room.name }}{% if entry.new_sala|length > forloop.counter %},
-				{% endif %}{% endfor %}
+				{% for room in entry.new_sala %}{{ room.name }}{% if entry.new_sala|length > forloop.counter %}, {% endif %}{% endfor %}
 			</td>
-			<td>{{ entry.typ.name }}</td>
-			<td>{{ entry.notka }}</td>
+			<td>{{ entry.typ.short }}</td>
+			<td class="humantext">{{ entry.notka }}</td>
+			<td class="mobilesubstitution">
+				{% if entry.przedmiot|length > 0 %}
+				<p>
+					{% for subject in entry.przedmiot %}
+						{% if subject in entry.old_przedmiot %}<s>{% endif %}{{ subject.name }}{% if subject in entry.old_przedmiot %}</s>{% endif %}{% if entry.przedmiot|length > forloop.counter %}, {% endif %}
+					{% endfor %}
+					
+					{% if entry.przedmiot|length != 0 and entry.new_przedmiot|length != 0 %}&rarr;{% endif %}
+					{% for subject in entry.new_przedmiot %}{{subject.name}}{% if entry.new_przedmiot|length > forloop.counter %}, {% endif %}{% endfor %}
+				</p>
+				{% endif %}
+				{% if entry.old_nauczyciel|length != 0 %}
+				<p>
+					{% for teacher in entry.nauczyciel %}
+						{% if teacher in entry.old_nauczyciel %}<s>{% endif %}{{ teacher.name }}{% if teacher in entry.old_nauczyciel %}</s>{% endif %}{% if entry.nauczyciel|length > forloop.counter %}, {% endif %}
+					{% endfor %}
+					{% if entry.nauczyciel|length != 0 and entry.new_nauczyciel|length != 0 %}&rarr;{% endif %}
+					{% for teacher in entry.new_nauczyciel %}{{ teacher.name }}{% if entry.new_nauczyciel|length > forloop.counter %}, {% endif %}{% endfor %}
+				</p>
+				{% endif %}
+				{% if entry.sala|length != 0 and entry.new_sala|length != 0 %}
+				<p>
+					{% for room in entry.sala %}
+						{% if room in entry.old_sala %}<s>{% endif %}{{ room.name }}{% if room in entry.old_sala %}</s>{% endif %}{% if entry.sala|length > forloop.counter %}, {% endif %}
+					{% endfor %}
+					&rarr;
+					{% for room in entry.new_sala %}{{ room.name }}{% if entry.new_sala|length > forloop.counter %}, {% endif %}{% endfor %}
+				</p>
+				{% endif %}
+				{% if entry.typ.name != "pl" %}
+				<p>
+					{{ entry.typ.short }}
+				</p>
+				{% endif %}
+				{% if entry.notka|length > 0 %}
+				<p class="humantext">
+					{{ entry.notka }}
+				</p>
+				{% endif %}
+			</td>
 		</tr>
 		{% endfor %}
 	</table>
