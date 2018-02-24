@@ -109,6 +109,7 @@ body {
 }
 
 select {
+	color: #000000;
 	border: none;
 	background-color: #E9ECEF;
 	

@@ -23,13 +23,6 @@
 #timetable .lesson p {
 	margin: 0;
 	line-height: 1.1em;
-	
-	/*
-	max-width: 118px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	*/
 }
 #timetable .lesson p:nth-of-type(1), #timetable .lesson p:nth-of-type(3) { font-weight: bold; }
 #timetable a {
@@ -41,6 +34,7 @@
 	color: inherit;
 }
 #timetable .hiddenlesson { display: none !important; }
+#timetable span.mobileweekday { display: none; }
 
 #overlaycontent .compactlesson { padding: 12px; }
 #overlaycontent .compactlesson:not(:last-child) { margin-bottom: 2px; }
@@ -95,9 +89,9 @@
 	#timetable .lesson {
 		padding: 8px 4px;
 	}
-	#overlaycontent .compactlesson p { font-size: 0.6em; }
 	
 	#mobiletimetableselect { display: inline-block; }
+	#overlaycontent .compactlesson p { font-size: 0.6em; }
 	#overlaywindow { padding: 6pt; }
 	#overlaytitlebar { margin: 0 0 6pt; }
 	#overlaytitlebar { font-size: inherit; }
