@@ -8,6 +8,8 @@ from time import sleep
 import chmura.log as log
 from chmura.colors import get_color, create_color_files
 
+shorted_days = {'Poniedziałek': 'PON', 'Wtorek': 'WT', 'Środa': 'ŚR', 'Czwartek': 'CZW', 'Piątek': 'PT'}
+
 
 def save_dict(name, obj):
     name = name.replace('*', '#')
@@ -110,7 +112,7 @@ def genTimeTable(uid='-22', selector='trieda', credentials=None):
         dzien = days[int(day['day'])]['name']
         if dzien == 'Sobota' or dzien == 'Niedziela':
             continue
-        planJSON[dzien] = {}
+        planJSON[dzien] = {'weekdaysshort': shorted_days.get(dzien)}
         for lessonNumber in range(2, 12):
             planJSON[dzien][str(lessonNumber-1)] = []
             if 'c_' + str(lessonNumber) not in day:
