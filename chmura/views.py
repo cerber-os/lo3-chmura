@@ -58,6 +58,14 @@ def substitutionList(request):
     now = str(now.year) + '-' + str(now.month).zfill(2) + '-' + str(now.day).zfill(2)
     date = request.GET.get('date', now)
 
+    try:
+        date_diff = (datetime.datetime.strptime(date, '%Y-%m-%d') - datetime.datetime.strptime(now, '%Y-%m-%d')).days
+        print(date_diff)
+        if date_diff < 0 or date_diff > 7:
+            raise Http404
+    except ValueError:
+        raise Http404
+
     zastepstwa = get_substitution(date)
 
     con = {'zastepstwa': zastepstwa['dane'],
