@@ -31,7 +31,7 @@
 
 {% if notka|length > 0 %}
 <h2>Uwagi</h2>
-<p class="notka">{% autoescape off %}{{ notka }}{% endautoescape %}</p>
+<div class="notka">{% autoescape off %}{{ notka }}{% endautoescape %}</div>
 {% endif %}
 
 {% if zastepstwa|length == 0 %}

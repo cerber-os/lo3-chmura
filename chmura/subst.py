@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from .utils import *
 from time import sleep
 import chmura.log as log
+import enchant
 
 
 def save_dict(name, obj):
@@ -63,6 +64,38 @@ def regenerate_pass():
     log.info('New gpid, gsh and cookie', gpid + ' ' + gsh + ' ' + cookie)
 
 
+def spell_checker(note):
+    if not enchant.dict_exists("pl"):
+        log.error("Polish dictionary is not installed.")
+        return note
+
+    exceptions = {'gaa', 'gmm', 'lm', 'lp', 'lmm', 'lpp', 'la', 'laa', 'lbb', 'lcc', 'lb', 'lc'}
+    changes = {'lekcjia': 'lekcja', 'godznie': 'godzinie', 'stoje': 'stroje', 'wyładzie': 'wykładzie',
+               'kordynatorem': 'koordynatorem', 'geografi': 'geografii'}
+
+    d = enchant.Dict("pl")
+    result = ""
+    for word in note.split():
+        if not word:
+            continue
+        if not word[0].isalpha() or word[0].isupper():
+            result += word + " "
+            continue
+        end = ""
+        if not word[-1].isalpha():
+            end = word[-1]
+            word = word[:-1]
+        if d.check(word) or len(d.suggest(word)) == 0 or word in exceptions:
+            result += word + " "
+            continue
+
+        fix = d.suggest(word)[0] if word not in changes else changes[word]
+        word = '<div class="tooltip">%s<span class="tooltiptext">%s</span></div>%s ' % (fix, word, end)
+        result += word
+
+    return result
+
+
 def download_subst(date):
     settings = Settings.objects.all()[0]
     params = {'gpid': settings.gpid,
@@ -100,6 +133,8 @@ def download_subst(date):
         note = note.replace('\\n', '')
         note = note.replace('\\"', '"')
         note = note.replace('<br /> <br />', '<br />')
+
+        note = spell_checker(note)
     except ValueError:
         note = ""
 
