@@ -22,8 +22,8 @@
 	<table id="timetable">
 		<tr>
 			<th></th>
-			{% for hour in breaks %}
-				<th>{{forloop.counter0}}<br>{% autoescape off %}{{ hour }}{% endautoescape %}</th>
+			{% for hour in break_range %}
+				<th>{% if begin %}{{forloop.counter}}{% else %}{{ forloop.counter0 }}{% endif %}<br>{% autoescape off %}{{ hour }}{% endautoescape %}</th>
 			{% endfor %}
 		</tr>
 		

@@ -141,6 +141,7 @@ def genTimeTable(uid='-22', selector='trieda', credentials=None):
                     continue
 
     create_color_files()
+    planJSON = clean_timetable(planJSON)
     return planJSON
 
 
@@ -156,6 +157,28 @@ def getteachername(card, teachers):
         ret += teachers.get(t, {}).get('firstname')[0] + '. ' + teachers.get(t, {}).get('lastname') + ', '
     ret = ret[:-2]
     return ret
+
+
+def clean_column(plan, number):
+    emptyCol = True
+    effect = False
+    for day in plan:
+        if plan[day][str(number)]:
+            emptyCol = False
+    if emptyCol:
+        for day in plan:
+            del(plan[day][str(number)])
+        effect = True
+    return plan, effect
+
+
+def clean_timetable(plan):
+    for i in range(14, 1, -1):
+        (plan, cont) = clean_column(plan, i)
+        if not cont:
+            break
+    (plan, cont) = clean_column(plan, 0)
+    return plan
 
 
 def download_and_regenerate_timetable(uid, typ, credentials=None):

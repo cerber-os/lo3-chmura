@@ -45,6 +45,15 @@ def index(request):
         raise Http404
     con['timetable'] = get_timetable(uid=uid, selector=selector)
     con['target_uid'] = uid
+    begin = 0 if '0' in con['timetable']['Poniedziałek'] else 1
+    con['begin'] = begin
+    try:
+        end = con['timetable']['Poniedziałek'].keys()
+        end = [int(e) for e in end]
+        end = int(sorted(end)[-1])
+    except ValueError:
+        end = 9
+    con['break_range'] = [con['breaks'][i] for i in range(begin, end + 1)]
 
     return render(request, 'chmura/index.html', con)
 
