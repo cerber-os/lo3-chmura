@@ -34,7 +34,6 @@
 	color: inherit;
 }
 #timetable .hiddenlesson { display: none !important; }
-#timetable span.mobileweekday { display: none; }
 
 #overlaycontent .compactlesson { padding: 12px; }
 #overlaycontent .compactlesson:not(:last-child) { margin-bottom: 2px; }

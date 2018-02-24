@@ -29,10 +29,9 @@
 		
 		{% for weekday, blocks in timetable.items %}
 		<tr>
-			<th><span>{{ weekday }}</span><span class="mobileweekday">{{ blocks.weekdaysshort }}</span></th>
+			<th>{{ weekday }}</th>
 			
 			{% for hour, block in blocks.items %}
-			{% if hour != "weekdaysshort" %}
 			
 			{% if block|length == 0 %}
 			<td></td>
@@ -78,7 +77,6 @@
 			</td>
 			{% endif %}
 			
-			{% endif %}
 			{% endfor %}
 		</tr>
 		{% endfor %}
