@@ -23,7 +23,7 @@
 		<tr>
 			<th></th>
 			{% for hour in breaks %}
-				<th>{{forloop.counter}}<br>{% autoescape off %}{{ hour }}{% endautoescape %}</th>
+				<th>{{forloop.counter0}}<br>{% autoescape off %}{{ hour }}{% endautoescape %}</th>
 			{% endfor %}
 		</tr>
 		
@@ -32,7 +32,6 @@
 			<th>{{ weekday }}</th>
 			
 			{% for hour, block in blocks.items %}
-			
 			{% if block|length == 0 %}
 			<td></td>
 			{% elif block|length == 1 %}

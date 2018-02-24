@@ -82,7 +82,8 @@ def save_ids(ids):
 
 def load_ids(typ):
     if typ == 'breaks':
-        return ["7<sup>45</sup> - 8<sup>30</sup>",
+        return ["7<sup>00</sup> - 7<sup>45</sup>",
+                "7<sup>45</sup> - 8<sup>30</sup>",
                 "8<sup>40</sup> - 9<sup>25</sup>",
                 "9<sup>35</sup> - 10<sup>20</sup>",
                 "10<sup>30</sup> - 11<sup>15</sup>",
@@ -92,6 +93,8 @@ def load_ids(typ):
                 "14<sup>25</sup> - 15<sup>10</sup>",
                 "15<sup>15</sup> - 16<sup>00</sup>",
                 "16<sup>05</sup> - 16<sup>50</sup>",
+                "16<sup>55</sup> - 17<sup>40</sup>",
+                "17<sup>45</sup> - 18<sup>30</sup>",
                 ]
     return load_dict(typ)
 
