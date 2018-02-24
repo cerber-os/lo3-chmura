@@ -56,10 +56,23 @@
 #overlaycontent p { margin-bottom: -6px; }
 #overlaycontent select { margin-top: 6px; }
 
+#mobiletimetableselect {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	
+	text-align: center;
+	padding-bottom: 24px;
+	
+	display: none;
+}
+
 @media screen and (max-width: 1000px) {
 	body {
 		margin-top: -50px;
 	}
+	
 	#timetablewrapper {
 		position: fixed;
 		top: 50px;
@@ -68,5 +81,34 @@
 		right: 0;
 		
 		overflow: auto;
+	}
+	#timetable {
+		font-size: 0.6em;
+		
+		margin: 2px;
+		margin-bottom: 43px;
+	}
+	#timetable td {
+		min-width: 87px;
+		max-width: 87px;
+	}
+	#timetable .lesson {
+		padding: 8px 4px;
+	}
+	#overlaycontent .compactlesson p { font-size: 0.6em; }
+	
+	#mobiletimetableselect { display: inline-block; }
+	#overlaywindow { padding: 6pt; }
+	#overlaytitlebar { margin: 0 0 6pt; }
+	#overlaytitlebar { font-size: inherit; }
+	#overlayclose { height: 15px; }
+	#overlaycontent { max-height: 250px; }
+}
+@media screen and (max-width: 500px) {
+	#mobiletimetableselect {
+		padding-bottom: 4px;
+	}
+	#timetable {
+		margin-bottom: 36px;
 	}
 }

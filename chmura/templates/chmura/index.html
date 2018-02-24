@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block secondaryheaderselect %}
-<select id="timetableselect" data-previousselectedindex="0" onchange="handleTimetableSelectUpdate(this)">
+<select class="timetableselect" data-previousselectedindex="0" onchange="handleTimetableSelectUpdate(this)">
 	<option data-type="{{ type }}" data-uid="{{ target_uid }}">{{ target }}</option>
 	<option>Wybierz...</option>
 </select>
@@ -131,5 +131,12 @@
 		{% endfor %}
 		<p class="buttonholder"><input type="submit" value="Wybierz" onclick="setLastSettings(this)"></p>
 	</form>
+</div>
+
+<div id="mobiletimetableselect">
+	<select class="timetableselect" data-previousselectedindex="0" onchange="handleTimetableSelectUpdate(this)">
+		<option data-type="{{ type }}" data-uid="{{ target_uid }}">{{ target }}</option>
+		<option>Wybierz...</option>
+	</select>
 </div>
 {% endblock %}

@@ -86,56 +86,60 @@ function setLastSettings(submit) {
 		}
 }
 function displayLastSettings() {
-	var select = document.getElementById("timetableselect");
+	var selects = document.getElementsByClassName("timetableselect");
 	
-	var defaultOption = select.children[0];
-	var defaultType = select.children[0].getAttribute("data-type");
-	var defaultValue = select.children[0].innerText;
-	
-	var chooseOption = select.children[select.children.length - 1];
-	select.removeChild(chooseOption);
-	
-	var defaultIsCurrentClass = defaultType == "Klasa" && defaultValue == getCookie("lastclass");
-	var defaultIsCurrentStudent = defaultType == "Uczeń" && defaultValue == getCookie("laststudent");
-	var defaultIsCurrentTeacher = defaultType == "Nauczyciel" && defaultValue == getCookie("lastteacher");
-	
-	var typeDictionary = {
-		"Klasa": "trieda",
-		"Uczeń": "student",
-		"Nauczyciel": "ucitel"
-	};
-	defaultOption.setAttribute("data-type", typeDictionary[defaultOption.getAttribute("data-type")]);
-	
-	if (!defaultIsCurrentClass && getCookie("lastclass")) {
-		var option = document.createElement("option");
-		option.setAttribute("data-type", "trieda");
-		option.setAttribute("data-uid", getCookie("lastclassuid"));
-		option.innerText = getCookie("lastclass");
-		select.appendChild(option);
+	for (var i = 0; i < selects.length; i++) {
+		var select = selects[i];
+		
+		var defaultOption = select.children[0];
+		var defaultType = select.children[0].getAttribute("data-type");
+		var defaultValue = select.children[0].innerText;
+		
+		var chooseOption = select.children[select.children.length - 1];
+		select.removeChild(chooseOption);
+		
+		var defaultIsCurrentClass = defaultType == "Klasa" && defaultValue == getCookie("lastclass");
+		var defaultIsCurrentStudent = defaultType == "Uczeń" && defaultValue == getCookie("laststudent");
+		var defaultIsCurrentTeacher = defaultType == "Nauczyciel" && defaultValue == getCookie("lastteacher");
+		
+		var typeDictionary = {
+			"Klasa": "trieda",
+			"Uczeń": "student",
+			"Nauczyciel": "ucitel"
+		};
+		defaultOption.setAttribute("data-type", typeDictionary[defaultOption.getAttribute("data-type")]);
+		
+		if (!defaultIsCurrentClass && getCookie("lastclass")) {
+			var option = document.createElement("option");
+			option.setAttribute("data-type", "trieda");
+			option.setAttribute("data-uid", getCookie("lastclassuid"));
+			option.innerText = getCookie("lastclass");
+			select.appendChild(option);
+		}
+		
+		if (!defaultIsCurrentStudent && getCookie("laststudent")) {
+			var option = document.createElement("option");
+			option.setAttribute("data-type", "student");
+			option.setAttribute("data-uid", getCookie("laststudentuid"));
+			option.innerText = getCookie("laststudent");
+			select.appendChild(option);
+		}
+		else if (defaultIsCurrentStudent)
+			select.appendChild(select.removeChild(defaultOption));
+		
+		if (!defaultIsCurrentTeacher && getCookie("lastteacher")) {
+			var option = document.createElement("option");
+			option.setAttribute("data-type", "ucitel");
+			option.setAttribute("data-uid", getCookie("lastteacheruid"));
+			option.innerText = getCookie("lastteacher");
+			select.appendChild(option);
+		}
+		else if (defaultIsCurrentTeacher)
+			select.appendChild(select.removeChild(defaultOption));
+		
+		select.appendChild(chooseOption);
+		select.setAttribute("data-previousselectedindex", select.selectedIndex);
 	}
-	
-	if (!defaultIsCurrentStudent && getCookie("laststudent")) {
-		var option = document.createElement("option");
-		option.setAttribute("data-type", "student");
-		option.setAttribute("data-uid", getCookie("laststudentuid"));
-		option.innerText = getCookie("laststudent");
-		select.appendChild(option);
-	}
-	else if (defaultIsCurrentStudent)
-		select.appendChild(select.removeChild(defaultOption));
-	
-	if (!defaultIsCurrentTeacher && getCookie("lastteacher")) {
-		var option = document.createElement("option");
-		option.setAttribute("data-type", "ucitel");
-		option.setAttribute("data-uid", getCookie("lastteacheruid"));
-		option.innerText = getCookie("lastteacher");
-		select.appendChild(option);
-	}
-	else if (defaultIsCurrentTeacher)
-		select.appendChild(select.removeChild(defaultOption));
-	
-	select.appendChild(chooseOption);
-	select.setAttribute("data-previousselectedindex", select.selectedIndex);
 }
 
 function showDetails(a) {
