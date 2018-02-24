@@ -95,6 +95,8 @@ def load_ids(typ):
                 "16<sup>05</sup> - 16<sup>50</sup>",
                 "16<sup>55</sup> - 17<sup>40</sup>",
                 "17<sup>45</sup> - 18<sup>30</sup>",
+                "18<sup>35</sup> - 19<sup>20</sup>",
+                "19<sup>25</sup> - 20<sup>10</sup>",
                 ]
     return load_dict(typ)
 
