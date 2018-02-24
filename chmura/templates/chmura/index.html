@@ -18,68 +18,70 @@
 {% endblock %}
 
 {% block content %}
-<table id="timetable">
-	<tr>
-		<th></th>
-		{% for hour in breaks %}
-			<th>{{forloop.counter}}<br>{% autoescape off %}{{ hour }}{% endautoescape %}</th>
+<div id="timetablewrapper">
+	<table id="timetable">
+		<tr>
+			<th></th>
+			{% for hour in breaks %}
+				<th>{{forloop.counter}}<br>{% autoescape off %}{{ hour }}{% endautoescape %}</th>
+			{% endfor %}
+		</tr>
+		
+		{% for weekday, blocks in timetable.items %}
+		<tr>
+			<th>{{ weekday }}</th>
+			
+			{% for hour, block in blocks.items %}
+			
+			{% if block|length == 0 %}
+			<td></td>
+			{% elif block|length == 1 %}
+			<td class="lesson" data-lessonname="{{ block.0.subject }}">
+				<p>{{ block.0.subject }}</p>
+				<p>{{ block.0.teacher }}{% for class in block.0.classes %}{{ class }}{% if block.0.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
+				<p>{{ block.0.classroom }}</p>
+			</td>
+			{% elif block|length <= 3 %}
+			<td>
+				<div class="lessonholder">
+					{% for lesson in block %}
+					<div>
+						<div class="lesson" data-lessonname="{{ lesson.subject }}">
+							<p>{{ lesson.subject }}</p>
+							<p>{{ lesson.teacher }}{% for class in lesson.classes %}{{ class }}{% if lesson.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
+							<p>{{ lesson.classroom }}</p>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			</td>
+			{% else %}
+			<td>
+				<div class="lessonholder">
+					<div class="detailslesson">
+						<div class="lesson" data-lessonname="_RÓŻNE">
+							<p>Różne</p>
+							<a href="javascript:void(0)" onclick="showDetails(this)">Szczegóły</a>
+						</div>
+					</div>
+					{% for lesson in block %}
+					<div class="hiddenlesson">
+						<div class="lesson" data-lessonname="{{ lesson.subject }}">
+							<p>{{ lesson.subject }}</p>
+							<p>{{ lesson.teacher }}{% for class in lesson.classes %}{{ class }}{% if lesson.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
+							<p>{{ lesson.classroom }}</p>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			</td>
+			{% endif %}
+			
+			{% endfor %}
+		</tr>
 		{% endfor %}
-	</tr>
-	
-	{% for weekday, blocks in timetable.items %}
-	<tr>
-		<th>{{ weekday }}</th>
-		
-		{% for hour, block in blocks.items %}
-		
-		{% if block|length == 0 %}
-		<td></td>
-		{% elif block|length == 1 %}
-		<td class="lesson" data-lessonname="{{ block.0.subject }}">
-			<p>{{ block.0.subject }}</p>
-			<p>{{ block.0.teacher }}{% for class in block.0.classes %}{{ class }}{% if block.0.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
-			<p>{{ block.0.classroom }}</p>
-		</td>
-		{% elif block|length <= 3 %}
-		<td>
-			<div class="lessonholder">
-				{% for lesson in block %}
-				<div>
-					<div class="lesson" data-lessonname="{{ lesson.subject }}">
-						<p>{{ lesson.subject }}</p>
-						<p>{{ lesson.teacher }}{% for class in lesson.classes %}{{ class }}{% if lesson.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
-						<p>{{ lesson.classroom }}</p>
-					</div>
-				</div>
-				{% endfor %}
-			</div>
-		</td>
-		{% else %}
-		<td>
-			<div class="lessonholder">
-				<div class="detailslesson">
-					<div class="lesson" data-lessonname="_RÓŻNE">
-						<p>Różne</p>
-						<a href="javascript:void(0)" onclick="showDetails(this)">Szczegóły</a>
-					</div>
-				</div>
-				{% for lesson in block %}
-				<div class="hiddenlesson">
-					<div class="lesson" data-lessonname="{{ lesson.subject }}">
-						<p>{{ lesson.subject }}</p>
-						<p>{{ lesson.teacher }}{% for class in lesson.classes %}{{ class }}{% if lesson.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
-						<p>{{ lesson.classroom }}</p>
-					</div>
-				</div>
-				{% endfor %}
-			</div>
-		</td>
-		{% endif %}
-		
-		{% endfor %}
-	</tr>
-	{% endfor %}
-</table>
+	</table>
+</div>
 
 <div id="overlay">
 	<div>

@@ -55,3 +55,18 @@
 
 #overlaycontent p { margin-bottom: -6px; }
 #overlaycontent select { margin-top: 6px; }
+
+@media screen and (max-width: 1000px) {
+	body {
+		margin-top: -50px;
+	}
+	#timetablewrapper {
+		position: fixed;
+		top: 50px;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		
+		overflow: auto;
+	}
+}
