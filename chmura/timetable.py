@@ -11,15 +11,15 @@ from chmura.colors import get_color, create_color_files
 
 def save_dict(name, obj):
     name = name.replace('*', '#')
-    with open(get_cur_path() + '/timetables/' + name + '.tt', 'wb') as f:
+    with open(get_cur_path() + '/../cache/timetables/' + name + '.tt', 'wb') as f:
         pickle.dump(obj, f, 2)
 
 
 def load_dict(selector, uid):
-    if not os.path.exists(get_cur_path() + '/timetables'):
-        os.makedirs(get_cur_path() + '/timetables')
+    if not os.path.exists(get_cur_path() + '/../cache/timetables'):
+        os.makedirs(get_cur_path() + '/../cache/timetables')
     try:
-        with open(get_cur_path() + '/timetables/' + selector + uid.replace('*', '#') + '.tt', 'rb') as f:
+        with open(get_cur_path() + '/../cache/timetables/' + selector + uid.replace('*', '#') + '.tt', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
         plan = download_and_regenerate_timetable(uid, selector)
@@ -201,7 +201,7 @@ def timetableJob():
         return
 
     connection_count = 0
-    for filename in os.listdir(get_cur_path() + '/timetables'):
+    for filename in os.listdir(get_cur_path() + '/../cache/timetables'):
         name = os.path.splitext(filename)[0]
         typ = name.replace('#', '-').split('-')
         uid = typ[1]

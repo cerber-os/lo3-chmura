@@ -11,15 +11,15 @@ import chmura.log as log
 
 
 def save_dict(name, obj):
-    with open(get_cur_path() + '/substitution/' + name + '.sbt', 'wb') as f:
+    with open(get_cur_path() + '/../cache/substitution/' + name + '.sbt', 'wb') as f:
         pickle.dump(obj, f, 2)
 
 
 def load_dict(date):
-    if not os.path.exists(get_cur_path() + '/substitution'):
-        os.makedirs(get_cur_path() + '/substitution')
+    if not os.path.exists(get_cur_path() + '/../cache/substitution'):
+        os.makedirs(get_cur_path() + '/../cache/substitution')
     try:
-        with open(get_cur_path() + '/substitution/' + date + '.sbt', 'rb') as f:
+        with open(get_cur_path() + '/../cache/substitution/' + date + '.sbt', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
         zast = download_and_regenerate_subst(date)
@@ -223,11 +223,11 @@ def download_subst(date):
 def updateJob():
     create_new_session()
     now = datetime.now()
-    for filename in os.listdir(get_cur_path() + '/substitution'):
+    for filename in os.listdir(get_cur_path() + '/../cache/substitution'):
         name = os.path.splitext(filename)[0]
         if datetime.strptime(name, '%Y-%m-%d').date() < now.date():
             log.info('Deleting old substitution cache')
-            os.remove(get_cur_path() + '/substitution/' + filename)
+            os.remove(get_cur_path() + '/../cache/substitution/' + filename)
 
     continueDownloading = True
     for i in range(0, 7):

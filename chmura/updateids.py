@@ -7,20 +7,20 @@ import chmura.log as log
 
 
 def save_dict(name, obj):
-    with open(get_cur_path() + '/ids/' + name + '.id', 'wb') as f:
+    with open(get_cur_path() + '/../cache/ids/' + name + '.id', 'wb') as f:
         pickle.dump(obj, f, 2)
 
 
 def load_dict(name):
-    if not os.path.exists(get_cur_path() + '/ids'):
-        os.makedirs(get_cur_path() + '/ids')
+    if not os.path.exists(get_cur_path() + '/../cache/ids'):
+        os.makedirs(get_cur_path() + '/../cache/ids')
     try:
-        with open(get_cur_path() + '/ids/' + name + '.id', 'rb') as f:
+        with open(get_cur_path() + '/../cache/ids/' + name + '.id', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
         log.warning('Ids file not found. Downloading new and returning "null"')
         save_ids(download_ids())
-        with open(get_cur_path() + '/ids/' + name + '.id', 'rb') as f:
+        with open(get_cur_path() + '/../cache/ids/' + name + '.id', 'rb') as f:
             return pickle.load(f)
 
 

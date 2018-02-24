@@ -5,15 +5,15 @@ import chmura.log as log
 
 
 def save_dict(obj):
-    with open(get_cur_path() + '/newsF/news.nw', 'wb') as f:
+    with open(get_cur_path() + '/../cache/newsF/news.nw', 'wb') as f:
         pickle.dump(obj, f, 2)
 
 
 def load_dict():
-    if not os.path.exists(get_cur_path() + '/newsF'):
-        os.makedirs(get_cur_path() + '/newsF')
+    if not os.path.exists(get_cur_path() + '/../cache/newsF'):
+        os.makedirs(get_cur_path() + '/../cache/newsF')
     try:
-        with open(get_cur_path() + '/newsF/news.nw', 'rb') as f:
+        with open(get_cur_path() + '/../cache/newsF/news.nw', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
         news = download_news()

@@ -7,15 +7,15 @@ import chmura.log as log
 
 
 def save_dict(obj):
-    with open(get_cur_path() + '/agendaF/agenda.ag', 'wb') as f:
+    with open(get_cur_path() + '/../cache/agendaF/agenda.ag', 'wb') as f:
         pickle.dump(obj, f, 2)
 
 
 def load_dict():
-    if not os.path.exists(get_cur_path() + '/agendaF'):
-        os.makedirs(get_cur_path() + '/agendaF')
+    if not os.path.exists(get_cur_path() + '/../cache/agendaF'):
+        os.makedirs(get_cur_path() + '/../cache/agendaF')
     try:
-        with open(get_cur_path() + '/agendaF/agenda.ag', 'rb') as f:
+        with open(get_cur_path() + '/../cache/agendaF/agenda.ag', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
         agendaF = download_agenda()
