@@ -156,29 +156,6 @@ function showDetails(a) {
 	}
 }
 
-// Gość od frontendu przewróci się jak to zobaczy
-function removeEmptyCol(a) {
-	var trs = document.getElementsByTagName('tr');
-	var isColEmpty = true;
-	for (var i = 1; i < trs.length; i++)
-		if(trs[i].children.length > a && trs[i].children[a].innerHTML !== "")
-			isColEmpty = false;
-	if (isColEmpty) {
-        for (i = 0; i < trs.length; i++)
-            trs[i].deleteCell(a);
-        return true;
-    } else
-		return false;
-}
-
-function deleteUnnecessayCols() {
-	for (var i = 13; i > 1; i--)
-		if(!removeEmptyCol(i))
-			break;
-	removeEmptyCol(1)
-}
-
 window.onload = function() {
 	displayLastSettings();
-	deleteUnnecessayCols()
-};
+}

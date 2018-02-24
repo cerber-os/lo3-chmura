@@ -97,7 +97,7 @@
 	#overlayclose { height: 15px; }
 	#overlaycontent { max-height: 250px; }
 }
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 500px), screen and (max-height: 500px) {
 	#mobiletimetableselect {
 		padding-bottom: 4px;
 	}
