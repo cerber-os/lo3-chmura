@@ -97,7 +97,7 @@
 	#overlaywindow { padding: 6pt; }
 	#overlaytitlebar { margin: 0 0 6pt; }
 	#overlaytitlebar { font-size: inherit; }
-	#overlayclose { height: 15px; }
+	#overlayclose { height: 15px; width: auto; }
 	#overlaycontent { max-height: 250px; }
 }
 @media screen and (max-width: 500px), screen and (max-height: 500px) {

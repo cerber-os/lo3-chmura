@@ -1,6 +1,6 @@
 {% spaceless %}
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 	<head>
 		<title>{% block title %}{% endblock %} - III LO w Gdyni</title>
 
@@ -23,7 +23,7 @@
 		<header id="header">
 			<p>
 				<span>III LO w Gdyni</span>
-				<img id="headerhamburger" src="/static/img/hamburger.png" onclick="toggleHeaderMenu()">
+				<img id="headerhamburger" src="/static/img/hamburger.png" onclick="toggleHeaderMenu()" width="30" height="30" alt="Menu">
 			</p>
 			<select onchange="handleLocationSelectUpdate(this)">
 				<option value="/" {% if request.path == "/" %}selected{%endif%}>Plan lekcji</option>
