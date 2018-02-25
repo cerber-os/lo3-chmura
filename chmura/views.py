@@ -26,7 +26,7 @@ def index(request):
     lastuid = request.COOKIES.get('last' + lasttype + 'uid', '-22')
 
     uid = request.GET.get('uid', lastuid)
-    selector = request.GET.get('sel', types[lasttype])
+    selector = types[request.GET.get('sel', lasttype)]
 
     if not re.match(r'^[*-]?\d{1,3}$', uid):
         log.info('Incorrect uid was given')
