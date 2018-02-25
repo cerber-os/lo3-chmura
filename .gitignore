@@ -2,3 +2,5 @@
 *.tt
 *.sbt
 *.sqlite3
+timetablecolors.css
+*.id
