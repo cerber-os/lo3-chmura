@@ -105,7 +105,7 @@
 					{% for subject in entry.new_przedmiot %}{{subject.name}}{% if entry.new_przedmiot|length > forloop.counter %}, {% endif %}{% endfor %}
 				</p>
 				{% endif %}
-				{% if entry.old_nauczyciel|length != 0 %}
+				{% if entry.nauczyciel|length != 0 %}
 				<p>
 					{% for teacher in entry.nauczyciel %}
 						{% if teacher in entry.old_nauczyciel %}<s>{% endif %}{{ teacher.name }}{% if teacher in entry.old_nauczyciel %}</s>{% endif %}{% if entry.nauczyciel|length > forloop.counter %}, {% endif %}
@@ -114,16 +114,16 @@
 					{% for teacher in entry.new_nauczyciel %}{{ teacher.name }}{% if entry.new_nauczyciel|length > forloop.counter %}, {% endif %}{% endfor %}
 				</p>
 				{% endif %}
-				{% if entry.sala|length != 0 and entry.new_sala|length != 0 %}
+				{% if entry.sala|length != 0 %}
 				<p>
 					{% for room in entry.sala %}
 						{% if room in entry.old_sala %}<s>{% endif %}{{ room.name }}{% if room in entry.old_sala %}</s>{% endif %}{% if entry.sala|length > forloop.counter %}, {% endif %}
 					{% endfor %}
-					&rarr;
+					{% if entry.sala|length != 0 and entry.new_sala|length != 0 %}&rarr;{% endif %}
 					{% for room in entry.new_sala %}{{ room.name }}{% if entry.new_sala|length > forloop.counter %}, {% endif %}{% endfor %}
 				</p>
 				{% endif %}
-				{% if entry.typ.name != "pl" or entry.anulowano %}
+				{% if entry.typ.name != "pl" and entry.typ.short|length != 0 or entry.anulowano %}
 				<p>
 					{% if entry.anulowano %}Anulowano{% endif %}
 					{{ entry.typ.short }}
