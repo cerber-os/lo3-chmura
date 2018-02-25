@@ -47,6 +47,13 @@ body {
 	background-color: #22252D;
 }
 
+#footer {
+	color: #9E9E9E;
+	font-size: 9pt;
+	
+	margin: 8px;
+}
+
 #overlay {
 	position: fixed;
 	top: 0;
@@ -129,6 +136,9 @@ button, input[type="submit"] {
 	
 	padding: 8px;
 }
+a {
+	color: inherit;
+}
 
 p.buttonholder {
 	margin: 0;
@@ -169,4 +179,9 @@ p.buttonholder {
 	}
 	#header > select { display: none; }
 	#headerhamburger { display: inline-block; }
+	
+	#footer { margin-top: 4px; }
+}
+@media screen and (max-width: 500px), screen and (max-height: 500px) {
+	#footer { font-size: 6pt; }
 }

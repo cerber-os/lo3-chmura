@@ -56,8 +56,10 @@
 	right: 0;
 	
 	text-align: center;
-	padding-bottom: 24px;
-	
+	margin-bottom: 18px;
+	padding: 4px 0;
+	background-color: rgba(0, 0, 0, 0.5);
+
 	display: none;
 }
 
@@ -74,12 +76,13 @@
 		right: 0;
 		
 		overflow: auto;
+		
+		padding-bottom: 38px;
 	}
 	#timetable {
 		font-size: 0.6em;
 		
 		margin: 2px;
-		margin-bottom: 43px;
 	}
 	#timetable td {
 		min-width: 87px;
@@ -98,10 +101,6 @@
 	#overlaycontent { max-height: 250px; }
 }
 @media screen and (max-width: 500px), screen and (max-height: 500px) {
-	#mobiletimetableselect {
-		padding-bottom: 4px;
-	}
-	#timetable {
-		margin-bottom: 36px;
-	}
+	#mobiletimetableselect { margin-bottom: 0; }
+	#timetablewrapper { padding-bottom: 36px; }
 }
