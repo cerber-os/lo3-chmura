@@ -21,7 +21,7 @@ function handleTimetableSelectUpdate(select) {
 	setCookie(uidDictionary[select.selectedOptions[0].getAttribute("data-type")], select.selectedOptions[0].getAttribute("data-uid"), 31536000000);
 	setCookie(nameDictionary[select.selectedOptions[0].getAttribute("data-type")], select.selectedOptions[0].innerText, 31536000000);
 	
-	window.location = "/?sel=" + select.selectedOptions[0].getAttribute("data-type") + "&uid=" + encodeURIComponent(select.selectedOptions[0].getAttribute("data-uid"));
+	window.location = "/?sel=" + typeDictionary[select.selectedOptions[0].getAttribute("data-type")] + "&uid=" + encodeURIComponent(select.selectedOptions[0].getAttribute("data-uid"));
 }
 function handleTimetableTypeSelectUpdate(select) {
 	for (var i = 2; i < select.parentElement.children.length - 1; i++) {
