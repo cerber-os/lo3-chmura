@@ -13,9 +13,9 @@ function handleTimetableSelectUpdate(select) {
 	
 	select.setAttribute("data-previousselectedindex", select.selectedIndex);
 	
-	var typeDictionary = {"trieda": "class", "student": "student", "ucitel": "teacher"};
-	var uidDictionary = {"trieda": "lastclassuid", "student": "laststudentuid", "ucitel": "lastteacheruid"};
-	var nameDictionary = {"trieda": "lastclass", "student": "laststudent", "ucitel": "lastteacher"};
+	var typeDictionary = {"class": "class", "student": "student", "teacher": "teacher"};
+	var uidDictionary = {"class": "lastclassuid", "student": "laststudentuid", "teacher": "lastteacheruid"};
+	var nameDictionary = {"class": "lastclass", "student": "laststudent", "teacher": "lastteacher"};
 	
 	setCookie("lasttype", typeDictionary[select.selectedOptions[0].getAttribute("data-type")], 31536000000);
 	setCookie(uidDictionary[select.selectedOptions[0].getAttribute("data-type")], select.selectedOptions[0].getAttribute("data-uid"), 31536000000);
@@ -103,15 +103,15 @@ function displayLastSettings() {
 		var defaultIsCurrentTeacher = defaultType == "Nauczyciel" && defaultValue == getCookie("lastteacher");
 		
 		var typeDictionary = {
-			"Klasa": "trieda",
+			"Klasa": "class",
 			"Uczeń": "student",
-			"Nauczyciel": "ucitel"
+			"Nauczyciel": "teacher"
 		};
 		defaultOption.setAttribute("data-type", typeDictionary[defaultOption.getAttribute("data-type")]);
 		
 		if (!defaultIsCurrentClass && getCookie("lastclass")) {
 			var option = document.createElement("option");
-			option.setAttribute("data-type", "trieda");
+			option.setAttribute("data-type", "class");
 			option.setAttribute("data-uid", getCookie("lastclassuid"));
 			option.innerText = getCookie("lastclass");
 			select.appendChild(option);
@@ -129,7 +129,7 @@ function displayLastSettings() {
 		
 		if (!defaultIsCurrentTeacher && getCookie("lastteacher")) {
 			var option = document.createElement("option");
-			option.setAttribute("data-type", "ucitel");
+			option.setAttribute("data-type", "teacher");
 			option.setAttribute("data-uid", getCookie("lastteacheruid"));
 			option.innerText = getCookie("lastteacher");
 			select.appendChild(option);

@@ -110,9 +110,9 @@
 	<form>
 		<p>Pokaż plan</p>
 		<select name="sel" onchange="handleTimetableTypeSelectUpdate(this)">
-			<option value="trieda">Klasy</option>
+			<option value="class">Klasy</option>
 			<option value="student">Ucznia</option>
-			<option value="ucitel">Nauczyciela</option>
+			<option value="teacher">Nauczyciela</option>
 		</select>
 		<select name="uid" data-selecttype="class">
 			{% for class, uid in classes.items %}
