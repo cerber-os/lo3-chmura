@@ -8,6 +8,7 @@ from time import sleep
 import chmura.log as log
 from chmura.colors import get_color, create_color_files
 from chmura.updateids import load_ids
+import shutil
 
 
 def save_dict(name, obj):
@@ -73,7 +74,6 @@ def download_gcall(uid='-22', selector='trieda', credentials=None):
               'jscid': credentials['jscid'],
               'gsh': credentials['gsh'],
               'action': 'reload',
-              'num': '141',
               'oblast': selector,
               'id': uid,
               '_LJSL': '2048'}
@@ -207,6 +207,8 @@ def timetableJob():
     connection_count = 0
 
     if not DEBUG:
+        shutil.rmtree(get_cur_path() + '/../cache/timetables')
+
         targets = {'classes':  'trieda',
                    'teachers': 'ucitel',
                    'students': 'student'}
