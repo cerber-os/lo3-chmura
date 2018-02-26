@@ -7,6 +7,7 @@ from .utils import *
 from time import sleep
 import chmura.log as log
 from chmura.colors import get_color, create_color_files
+from chmura.updateids import load_ids
 
 
 def save_dict(name, obj):
@@ -22,8 +23,11 @@ def load_dict(selector, uid):
         with open(get_cur_path() + '/../cache/timetables/' + selector + uid.replace('*', '#') + '.tt', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
-        plan = download_and_regenerate_timetable(uid, selector)
-        save_dict(selector + uid, plan)
+        if DEBUG:
+            plan = download_and_regenerate_timetable(uid, selector)
+            save_dict(selector + uid, plan)
+        else:
+            raise Http404
         return plan
 
 
@@ -201,27 +205,48 @@ def timetableJob():
         return
 
     connection_count = 0
-    for filename in os.listdir(get_cur_path() + '/../cache/timetables'):
-        name = os.path.splitext(filename)[0]
-        typ = name.replace('#', '-').split('-')
-        uid = typ[1]
-        typ = typ[0]
 
-        if '#' in name:
-            uid = '#' + str(uid)
-        elif '-' in name:
-            uid = '-' + str(uid)
-        else:
-            log.error('Could not determine uid. Omitting update for: ' + name)
-            continue
+    if not DEBUG:
+        targets = {'classes':  'trieda',
+                   'teachers': 'ucitel',
+                   'students': 'student'}
 
-        log.info('Downloading timetable: ' + name)
-        plan = download_and_regenerate_timetable(uid, typ, credentials)
-        save_dict(name, plan)
-        connection_count += 1
-        if connection_count % 10 == 0:
-            create_new_session()
-            credentials = retrieve_pass()
-            if credentials is None:
-                return
-        sleep(2)
+        for typ in targets.keys():
+            ids = load_ids(typ)
+            for pk in ids:
+                log.info('Downloading timetable: ' + pk)
+                plan = download_and_regenerate_timetable(pk, targets[typ], credentials)
+                save_dict(targets[typ] + pk.replace('#', '-'), plan)
+                connection_count += 1
+                if connection_count % 5 == 0:
+                    create_new_session()
+                    credentials = retrieve_pass()
+                    if credentials is None:
+                        return
+                sleep(3)
+
+    if DEBUG:
+        for filename in os.listdir(get_cur_path() + '/../cache/timetables'):
+            name = os.path.splitext(filename)[0]
+            typ = name.replace('#', '-').split('-')
+            uid = typ[1]
+            typ = typ[0]
+
+            if '#' in name:
+                uid = '*' + str(uid)
+            elif '-' in name:
+                uid = '-' + str(uid)
+            else:
+                log.error('Could not determine uid. Omitting update for: ' + name)
+                continue
+
+            log.info('Downloading timetable: ' + name)
+            plan = download_and_regenerate_timetable(uid, typ, credentials)
+            save_dict(name, plan)
+            connection_count += 1
+            if connection_count % 10 == 0:
+                create_new_session()
+                credentials = retrieve_pass()
+                if credentials is None:
+                    return
+            sleep(2)
