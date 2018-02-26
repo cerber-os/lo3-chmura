@@ -10,3 +10,4 @@ numpy==1.14.1
 pytz==2018.3
 six==1.11.0
 webencodings==0.5.1
+stem==1.6.0

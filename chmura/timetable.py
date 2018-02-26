@@ -12,6 +12,8 @@ import shutil
 
 
 def save_dict(name, obj):
+    if not os.path.exists(get_cur_path() + '/../cache/timetables'):
+        os.makedirs(get_cur_path() + '/../cache/timetables')
     name = name.replace('*', '#')
     with open(get_cur_path() + '/../cache/timetables/' + name + '.tt', 'wb') as f:
         pickle.dump(obj, f, 2)
@@ -24,7 +26,7 @@ def load_dict(selector, uid):
         with open(get_cur_path() + '/../cache/timetables/' + selector + uid.replace('*', '#') + '.tt', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
-        if DEBUG:
+        if DEBUG or selector == 'student':
             plan = download_and_regenerate_timetable(uid, selector)
             save_dict(selector + uid, plan)
         else:
@@ -76,7 +78,8 @@ def download_gcall(uid='-22', selector='trieda', credentials=None):
               'action': 'reload',
               'oblast': selector,
               'id': uid,
-              '_LJSL': '2048'}
+              '_LJSL': '2048',
+              'num': '153'}
     serverResponse = url_request('https://lo3gdynia.edupage.org/gcall',
                                  {'Cookie': 'PHPSESSID=' + credentials['cookie']},
                                  params).read().decode('UTF-8')
@@ -207,25 +210,29 @@ def timetableJob():
     connection_count = 0
 
     if not DEBUG:
-        shutil.rmtree(get_cur_path() + '/../cache/timetables')
+        if os.path.exists(get_cur_path() + '/cache'):
+            shutil.rmtree(get_cur_path() + '/../cache/timetables')
 
         targets = {'classes':  'trieda',
-                   'teachers': 'ucitel',
-                   'students': 'student'}
+                   'teachers': 'ucitel'}
 
         for typ in targets.keys():
             ids = load_ids(typ)
-            for pk in ids:
-                log.info('Downloading timetable: ' + pk)
-                plan = download_and_regenerate_timetable(pk, targets[typ], credentials)
-                save_dict(targets[typ] + pk.replace('#', '-'), plan)
-                connection_count += 1
-                if connection_count % 5 == 0:
-                    create_new_session()
-                    credentials = retrieve_pass()
-                    if credentials is None:
-                        return
-                sleep(3)
+            for pk in list(ids.values()):
+                try:
+                    log.info('Downloading timetable: ' + pk)
+                    plan = download_and_regenerate_timetable(pk, targets[typ], credentials)
+                    save_dict(targets[typ] + pk.replace('#', '-'), plan)
+                    connection_count += 1
+                    if connection_count % 5 == 0:
+                        create_new_session()
+                        credentials = retrieve_pass()
+                        if credentials is None:
+                            return
+                    sleep(3)
+                except Exception as e:
+                    print(e)
+                    continue
 
     if DEBUG:
         for filename in os.listdir(get_cur_path() + '/../cache/timetables'):

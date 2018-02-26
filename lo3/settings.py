@@ -127,7 +127,7 @@ STATIC_URL = '/static/'
 # https://github.com/kraiz/django-crontab
 
 CRONJOBS = [
-    ('0 0 */1 * *', 'chmura.timetable.timetableJob'),
+    ('0 0 */2 * *', 'chmura.timetable.timetableJob'),
     # ('0 */1 * * *', 'chmura.news.newsJob'),
     # ('0 0 */10 * *', 'chmura.news.agendaJob'),
     ('0 */2 * * *', 'chmura.subst.updateJob'),
