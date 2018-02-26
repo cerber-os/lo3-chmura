@@ -18,6 +18,15 @@
 		
 		<script src="/static/js/global.js" defer></script>
 		{% block localjs %}{% endblock %}
+		
+		<script src="https://www.googletagmanager.com/gtag/js?id=UA-114781544-1" async></script>
+		<script type="text/javascript">
+			window.dataLayer = window.dataLayer || [];
+			
+			function gtag() { dataLayer.push(arguments); }
+			gtag("js", new Date());
+			gtag("config", "UA-114781544-1");
+		</script>
 	</head>
 	<body>
 		<header id="header">
