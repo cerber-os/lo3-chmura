@@ -9,6 +9,7 @@ from .utils import *
 import datetime
 import re
 import chmura.log as log
+from django.shortcuts import redirect
 
 
 def index(request):
@@ -73,13 +74,15 @@ def substitutionList(request):
 
     try:
         date_diff = (datetime.datetime.strptime(date, '%Y-%m-%d') - datetime.datetime.strptime(now, '%Y-%m-%d')).days
-        print(date_diff)
         if date_diff < 0 or date_diff > 7:
-            raise Http404
+            return redirect('/substitution/')
     except ValueError:
-        raise Http404
+        return redirect('/substitution/')
 
-    zastepstwa = get_substitution(date)
+    try:
+        zastepstwa = get_substitution(date)
+    except Http404:
+        return redirect('/substitution/')
 
     con = {'zastepstwa': zastepstwa['dane'],
            'notka': zastepstwa['notka'],
