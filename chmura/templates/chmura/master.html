@@ -47,6 +47,61 @@
 		
 		{% block content %}{% endblock %}
 		
+		{% if not request.COOKIES.seenhello %}
+		{% block hellooverlay %}
+		<div id="hellooverlay">
+			<div>
+				<div>
+				
+					<div id="hellooverlaycontent">
+						<h1>Cześć!</h1>
+						<p>
+							Witaj na nowej stronie planu lekcji!
+						</p>
+						<p>
+							Nasza strona jest jeszcze w budowie, ale jesteśmy już blisko jej ukończenia.
+						</p>
+						<p>
+							Coś nie działa?
+							<a href="https://docs.google.com/forms/u/0/d/1crfIHHFgJh8a26Snn9wLvZP2OyYGu-K9zxKhoKr0TKA/viewform" target="_blank" rel="noopener">Daj nam znać</a>,
+							a zajmiemy się tym tak szybko, jak tylko możemy.
+						</p>
+						<p>
+							Link do formularza znajdziesz zawsze na dole strony.
+						</p>
+						<p>
+							Z góry dziękujemy za pomoc! 🙂
+						</p>
+						<p>
+							<a href="javascript:void()" onclick="closeHello()">Zamknij</a>
+						</p>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			function adjustHello() {
+				var hello = document.getElementById("hellooverlaycontent");
+				
+				if (hello.clientHeight > window.innerHeight)
+					hello.className = "compacthello";
+				else
+					hello.className = "";
+			}
+			function closeHello() {
+				var overlay = document.getElementById("hellooverlay");
+				overlay.parentElement.removeChild(overlay);
+				
+				setCookie("seenhello", "true", 31536000000);
+			}
+			
+			window.onresize = adjustHello;
+			adjustHello();
+		</script>
+		{% endblock %}
+		{% endif %}
+		
 		{% block footer %}
 		{% include "chmura/footer.html" %}
 		{% endblock %}
