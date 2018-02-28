@@ -133,7 +133,7 @@
 		{% for class, studentlist in students.items %}
 		<select style="display: none" data-class="{{ class }}">
 			{% for student in studentlist %}
-			<option value="{{ student.id }}">{{ student.firstname }} {{ student.lastname }}</option>
+			<option value="{{ student.id }}">{{ student.lastname }} {{ student.firstname }}</option>
 			{% endfor %}
 		</select>
 		{% endfor %}
