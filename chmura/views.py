@@ -60,9 +60,9 @@ def index(request):
         end = 9
     con['break_range'] = [con['breaks'][i] for i in range(begin, end + 1)]
 
-    if 'Chrome' in request.META['HTTP_USER_AGENT']:
+    if 'Chrome' in request.user_agent.browser.family:
         con['device'] = 'Chrome'
-    elif 'Safari' in request.META['HTTP_USER_AGENT']:
+    elif 'Safari' in request.user_agent.browser.family:
         con['device'] = 'Safari'
     else:
         con['device'] = 'Other'
