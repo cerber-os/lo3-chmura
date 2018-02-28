@@ -27,9 +27,7 @@
 #timetable a {
 	text-transform: uppercase;
 	font-size: 0.8em;
-	text-decoration: dashed;
-	
-    text-decoration-line: underline;
+	text-decoration: none;
 	color: inherit;
 }
 #timetable .hiddenlesson { display: none !important; }
@@ -68,7 +66,7 @@
 	}
 	
 	#timetablewrapper {
-		position: fixed;
+		position: absolute;
 		top: 50px;
 		left: 0;
 		bottom: 0;
@@ -80,6 +78,10 @@
 	}
 	#timetable {
 		font-size: 0.6em;
+	}
+	
+	#header {
+		position: absolute;
 	}
 	
 	#mobiletimetableselect { display: inline-block; }

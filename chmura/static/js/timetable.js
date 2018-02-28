@@ -154,6 +154,14 @@ function showDetails(a) {
 		entry.className = "compactlesson";
 		document.getElementById("overlaycontent").appendChild(entry);
 	}
+	
+	zoomOut();
+}
+
+function zoomOut() {
+	var viewport = document.getElementById("viewport");
+	viewport.content = "width=device-width, initial-scale=1";
+	setTimeout(function() { viewport.content = "width=device-width"; }, 1)
 }
 
 window.onload = function() {

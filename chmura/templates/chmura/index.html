@@ -3,11 +3,11 @@
 {% block title %}Plan lekcji{% endblock %}
 
 {% block localcss %}
-<link rel="stylesheet" href="/static/css/timetable.css?1">
+<link rel="stylesheet" href="/static/css/timetable.css?2">
 <link rel="stylesheet" href="/static/css/timetablecolors.css">
 {% endblock %}
 {% block localjs %}
-<script src="/static/js/timetable.js" defer></script>
+<script src="/static/js/timetable.js?1" defer></script>
 {% endblock %}
 
 {% block secondaryheaderselect %}
@@ -60,7 +60,7 @@
 					<div class="detailslesson">
 						<div class="lesson" data-lessonname="_RÓŻNE">
 							<p>Różne</p>
-							<a href="javascript:void(0)" onclick="showDetails(this)">Szczegóły</a>
+							<a href="javascript:void(0)" onclick="showDetails(this)">Rozwiń</a>
 						</div>
 					</div>
 					{% for lesson in block %}
