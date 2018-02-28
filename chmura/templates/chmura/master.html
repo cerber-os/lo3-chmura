@@ -1,4 +1,3 @@
-{% spaceless %}
 <!DOCTYPE html>
 <html lang="pl">
 	<head>
@@ -45,7 +44,9 @@
 			</div>
 		</header>
 		
+		{% spaceless %}
 		{% block content %}{% endblock %}
+		{% endspaceless %}
 		
 		{% if not request.COOKIES.seenhello %}
 		{% block hellooverlay %}
@@ -108,4 +109,3 @@
 		{% endblock %}
 	</body>
 </html>
-{% endspaceless %}
