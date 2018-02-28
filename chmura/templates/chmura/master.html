@@ -36,11 +36,13 @@
 			<select onchange="handleLocationSelectUpdate(this)">
 				<option value="/" {% if request.path == "/" %}selected{%endif%}>Plan lekcji</option>
 				<option value="/substitution/" {% if request.path == "/substitution/" %}selected{% endif %}>Zastępstwa</option>
+				<option value="/changelog/" {% if request.path == "/changelog/" %}selected{% endif %}>Changelog</option>
 			</select>
 			{% block secondaryheaderselect %}{% endblock %}
 			<div id="headermenu" style="display: none">
 				<a href="/" {% if request.path == "/" %}class="current"{% endif %}>Plan lekcji</a>
 				<a href="/substitution/" {% if request.path == "/substitution/" %}class="current"{% endif %}>Zastępstwa</a>
+				<a href="/changelog/" {% if request.path == "/changelog/" %}class="current"{% endif %}>Changelog</a>
 			</div>
 		</header>
 		

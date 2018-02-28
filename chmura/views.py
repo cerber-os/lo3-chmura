@@ -107,3 +107,6 @@ def newsPage(request):
 def agenda(request):
     con = {'terminarz': get_agenda()}
     return render(request, 'chmura/agenda.html', con)
+
+def changelog(request):
+    return render(request, 'chmura/changelog.html')
