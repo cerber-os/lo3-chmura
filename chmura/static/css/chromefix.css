@@ -1,5 +1,5 @@
 @media screen and (max-width: 500px), screen and (max-height: 500px) {
-	#timetable div.lessonholder > div:last-of-type > div.lesson {
+	#timetable div.lessonholder div.lesson {
 		padding-bottom: 3px;
 	}
 	#timetable div.lesson > p {
