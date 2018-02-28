@@ -2,20 +2,19 @@
 	color: #666;
 	font-size: 0.9em;
 	
-	margin: 8px;
-	
+	margin: 0.5em;
 	height: 1px;
 }
 #timetable td {
 	text-align: center;
 	
-	min-width: 130px;
-	max-width: 130px;
+	min-width: 9em;
+	max-width: 9em;
 	box-sizing: border-box;
 	padding: 0;
 	height: 100%;
 }
-#timetable .lesson { padding: 12px 6px; }
+#timetable .lesson { padding: 0.83em 0.42em; }
 #timetable div.lessonholder { display: table; border-collapse: collapse; height: 100%; width: 100%; }
 #timetable div.lessonholder > div { display: table-row; }
 #timetable div.lesson { display: table-cell; vertical-align: middle; margin-bottom: 2px; }
@@ -35,7 +34,7 @@
 }
 #timetable .hiddenlesson { display: none !important; }
 
-#overlaycontent .compactlesson { padding: 12px; }
+#overlaycontent .compactlesson { padding: 0.77em; }
 #overlaycontent .compactlesson:not(:last-child) { margin-bottom: 2px; }
 #overlaycontent .compactlesson p {
 	color: #666;
@@ -81,19 +80,10 @@
 	}
 	#timetable {
 		font-size: 0.6em;
-		
-		margin: 2px;
-	}
-	#timetable td {
-		min-width: 87px;
-		max-width: 87px;
-	}
-	#timetable .lesson {
-		padding: 8px 4px;
 	}
 	
 	#mobiletimetableselect { display: inline-block; }
-	#overlaycontent .compactlesson p { font-size: 0.6em; }
+	#overlaycontent .compactlesson { font-size: 0.6em; }
 	#overlaywindow { padding: 6pt; }
 	#overlaytitlebar { margin: 0 0 6pt; }
 	#overlaytitlebar { font-size: inherit; }
@@ -101,6 +91,11 @@
 	#overlaycontent { max-height: 250px; }
 }
 @media screen and (max-width: 500px), screen and (max-height: 500px) {
+	#timetable {
+		font-size: 0.2em;
+		border-spacing: 1px;
+	}
+	
 	#mobiletimetableselect { margin-bottom: 0; }
 	#timetablewrapper { padding-bottom: 36px; }
 }
