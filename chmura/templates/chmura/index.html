@@ -5,7 +5,9 @@
 {% block localcss %}
 <link rel="stylesheet" href="/static/css/timetable.css?2">
 <link rel="stylesheet" href="/static/css/timetablecolors.css">
+{% if device == "Chrome" %}<link rel="stylesheet" href="/static/css/chromefix.css" defer>{% endif %}
 {% endblock %}
+
 {% block localjs %}
 <script src="/static/js/timetable.js?1" defer></script>
 {% endblock %}
