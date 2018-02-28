@@ -60,6 +60,13 @@ def index(request):
         end = 9
     con['break_range'] = [con['breaks'][i] for i in range(begin, end + 1)]
 
+    if 'Chrome' in request.META['HTTP_USER_AGENT']:
+        con['device'] = 'Chrome'
+    elif 'Safari' in request.META['HTTP_USER_AGENT']:
+        con['device'] = 'Safari'
+    else:
+        con['device'] = 'Other'
+
     return render(request, 'chmura/index.html', con)
 
 
