@@ -73,8 +73,8 @@ def save_ids(ids):
         d = {}
         for uczen in ids['students']:
             nazwisko = re.search(r'(?<=[.[|])([A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ,]+)', uczen['lastname'])
-            nazwisko = nazwisko.replace(',', ' ')
             nazwisko = nazwisko.group(0) if nazwisko is not None else ""
+            nazwisko = nazwisko.replace(',', ' ')
             d.setdefault(klasy.get(uczen['classid'], '0'), []).append({'firstname': uczen['firstname'],
                                                                        'lastname': nazwisko,
                                                                        'id': uczen['id']})
