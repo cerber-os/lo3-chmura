@@ -1,0 +1,42 @@
+section {
+	margin: 8px;
+	padding: 8px;
+	
+	max-width: 1000px;
+	box-sizing: border-box;
+	
+	background-color: #EEEEEE;
+}
+section > h2 {
+	margin: 0;
+}
+section > p {
+	text-align: justify;
+}
+section > *:last-child {
+	margin-bottom: 0;
+}
+
+h1 {
+	margin: 8px;
+	line-height: 1.2em;
+}
+input[type="text"], input[type="password"] {
+	background-color: #FFFFFF;
+}
+
+p.error { color: #E53935; margin: 0 8px; }
+
+#loginform { display: inline-block; }
+#loginform form.desktoplogin label { margin-right: 5em; }
+#loginform form.mobilelogin { display: none; }
+#loginform form.mobilelogin input[type="text"], #loginform form.mobilelogin input[type="password"] { width: 100%; }
+#loginform form.mobilelogin label { display: block; text-align: center; line-height: 2em; }
+#loginform form.mobilelogin p.buttonholder { margin-top: 0.5em; }
+
+@media screen and (max-width: 500px) {
+	#loginform { display: block; }
+	form.desktoplogin { display: none; }
+	form.mobilelogin { display: unset !important; }
+	p.error { text-align: center; }
+}

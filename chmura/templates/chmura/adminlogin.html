@@ -1,24 +1,38 @@
-<!doctype html>
-<html lang="pl">
-<head>
-    <meta charset="utf-8">
-    <title>Logowanie - III LO w Gdyni</title>
-</head>
-<body>
-    <h2>Logowanie</h2>
-    {% if incorrect_login %}<p style="color: red;">Błędny login lub hasło</p>{% endif %}
-    <form method="post">
-        <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
-        <label for="login">Login: </label>
-        <input type="text" name="login" id="login">
-        <br />
+{% extends "chmura/master.html" %}
 
-        <label for="password">Hasło: </label>
-        <input type="password" name="password" id="password">
-        <br />
+{% block title %}Zaloguj{% endblock %}
 
-        <input type="submit" value="Zaloguj się">
-    </form>
-</body>
+{% block localcss %}
+<link rel="stylesheet" href="/static/css/admin.css">
+{% endblock %}
 
-</html>
+{% block content %}
+
+<h1>Logowanie do panelu administracyjnego</h1>
+{% if incorrect_login %}<p class="error">Błędny login lub hasło</p>{% endif %}
+<section id="loginform">
+	<form method="post" class="desktoplogin">
+		<input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+		<table>
+			<tr>
+				<td><label>Login:</label></td>
+				<td><input type="text" name="login"></td>
+			</tr>
+			<tr>
+				<td><label>Hasło:</label></td>
+				<td><input type="password" name="password"></td>
+			</tr>
+		</table>
+		<input type="submit" value="Zaloguj się">
+	</form>
+	<form method="post" class="mobilelogin">
+		<input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+		<label>Login</label>
+		<input type="text" name="login">
+		<label>Hasło</label>
+		<input type="password" name="password">
+		<p class="buttonholder"><input type="submit" value="Zaloguj się"></p>
+	</form>
+</section>
+
+{% endblock %}
