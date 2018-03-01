@@ -82,12 +82,14 @@ def announcement(request):
 
 def substitutionList(request):
     now = datetime.datetime.now()
+    if now.hour > 17:
+        now = now + datetime.timedelta(days=1)
     now = str(now.year) + '-' + str(now.month).zfill(2) + '-' + str(now.day).zfill(2)
     date = request.GET.get('date', now)
 
     try:
         date_diff = (datetime.datetime.strptime(date, '%Y-%m-%d') - datetime.datetime.strptime(now, '%Y-%m-%d')).days
-        if date_diff < 0 or date_diff > 7:
+        if date_diff < -1 or date_diff > 7:
             return redirect('/substitution/')
     except ValueError:
         return redirect('/substitution/')
