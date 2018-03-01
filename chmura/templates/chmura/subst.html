@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="/static/css/substitution.css">
 {% endblock %}
 {% block localjs %}
-<script src="/static/js/substitution.js" defer></script>
+<script src="/static/js/substitution.js?1" defer></script>
 {% endblock %}
 
 {% block secondaryheaderselect %}
@@ -39,11 +39,16 @@
 {% else %}
 <p id="groupselectwrapper">
 	Pokaż zastępstwa dla:
-	<select class="substitutiongroupselect" onchange="handleGroupSelectUpdate(this)">
-		<option value="*">Wszystkie klasy</option>
-		<option>Bez klasy</option>
+	<select class="substitutiongroupselect" onchange="handleFilterSelectUpdate(this)">
+		<option value="*">Wszystkie zastępstwa</option>
+		<option disabled>Klasy</option>
+		<option data-type="class">Bez klasy</option>
 		{% for class in classes %}
-		<option>{{ class }}</option>
+		<option data-type="class">{{ class }}</option>
+		{% endfor %}
+		<option disabled>Nauczyciele</option>
+		{% for teacher, id in teachers.items %}
+		<option data-type="teacher" value="{{ id }}">{{ teacher }}</option>
 		{% endfor %}
 	</select>
 </p>
@@ -51,7 +56,9 @@
 
 {% for group, groupdata in zastepstwa.items %}
 
-<div class="substitutiontablewrapper" data-group="{% if group|length > 0 %}{{ group }}{% else %}Bez klasy{% endif %}">
+<div class="substitutiontablewrapper"
+	data-group="{% if group|length > 0 %}{{ group }}{% else %}Bez klasy{% endif %}"
+	data-teachers="{% for entry in groupdata %}{% for teacher in entry.nauczyciel %} {{ teacher.id }} {% endfor %}{% for teacher in entry.new_nauczyciel %} {{ teacher.id }} {% endfor %}{% endfor %}">
 	<h2>{% if group|length > 0 %}{% autoescape off %}{{ groupdata.0.displayname }}{% endautoescape %}{% else %}Bez klasy{% endif %}</h2>
 	
 	<table class="substitutiontable">

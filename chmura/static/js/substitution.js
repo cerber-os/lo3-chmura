@@ -29,21 +29,19 @@ function handleSubstitutionDaySelectUpdate(select) {
 	window.location.search = "?date=" + date;
 }
 
-function selectSavedGroup() {
-	var group = getCookie("lastsubstitutiongroup");
+function selectSavedFilterIndex() {
+	var index = getCookie("lastsubstitutionfilterindex");
+	if (index == null) return;
 	
 	var selects = document.getElementsByClassName("substitutiongroupselect");
 	if (selects.length == 0) return;
 	
 	for (var i = 0; i < selects.length; i++)
-		for (var j = 0; j < selects[i].options.length; j++)
-			if (selects[i].options[j].value == group) {
-				selects[i].selectedIndex = j;
-				handleGroupSelectUpdate(selects[0]);
-				break;
-			}
+		selects[i].selectedIndex = Number(index);
+	
+	handleFilterSelectUpdate(selects[0]);
 }
-function handleGroupSelectUpdate(updatedSelect) {
+function handleFilterSelectUpdate(updatedSelect) {
 	var selects = document.getElementsByClassName("substitutiongroupselect");
 	if (selects.length == 0) return;
 	
@@ -64,11 +62,25 @@ function handleGroupSelectUpdate(updatedSelect) {
 			continue;
 		}
 		
-		var groups = wrappers[i].getAttribute("data-group").split(", ");
-		if (groups.indexOf(select.value) != -1) wrappers[i].style.display = "";
+		if (select.selectedOptions[0].getAttribute("data-type") == "class") {
+			
+			var groups = wrappers[i].getAttribute("data-group").split(", ");
+			if (groups.indexOf(select.value) != -1) wrappers[i].style.display = "";
+			else {
+				wrappers[i].style.display = "none";
+				hiddenWrappers++;
+			}
+			
+		}
 		else {
-			wrappers[i].style.display = "none";
-			hiddenWrappers++;
+			
+			var groups = wrappers[i].getAttribute("data-teachers").split(" ");
+			if (groups.indexOf(select.value) != -1) wrappers[i].style.display = "";
+			else {
+				wrappers[i].style.display = "none";
+				hiddenWrappers++;
+			}
+			
 		}
 	}
 	
@@ -77,10 +89,10 @@ function handleGroupSelectUpdate(updatedSelect) {
 	else
 		document.getElementById("nochosensubstitution").style.display = "none";
 	
-	setCookie("lastsubstitutiongroup", select.value, 31536000000);
+	setCookie("lastsubstitutionfilterindex", select.selectedIndex, 31536000000);
 }
 
 window.onload = function() {
 	populateDaySelect();
-	selectSavedGroup();
+	selectSavedFilterIndex();
 }
