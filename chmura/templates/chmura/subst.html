@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="/static/css/substitution.css">
 {% endblock %}
 {% block localjs %}
-<script src="/static/js/substitution.js?1" defer></script>
+<script src="/static/js/substitution.js?2" defer></script>
 {% endblock %}
 
 {% block secondaryheaderselect %}
@@ -154,5 +154,6 @@
 
 {% endfor %}
 
-<p id="nochosensubstitution" style="display: none">Brak zastępstw dla wybranej klasy.</p>
+<p class="nosubstitution" data-type="class" style="display: none">Brak zastępstw dla wybranej klasy.</p>
+<p class="nosubstitution" data-type="teacher" style="display: none">Brak zastępstw dla wybranego nauczyciela.</p>
 {% endblock %}

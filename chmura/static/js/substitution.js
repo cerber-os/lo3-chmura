@@ -84,10 +84,20 @@ function handleFilterSelectUpdate(updatedSelect) {
 		}
 	}
 	
-	if (hiddenWrappers == wrappers.length && wrappers.length > 0)
-		document.getElementById("nochosensubstitution").style.display = "block";
-	else
-		document.getElementById("nochosensubstitution").style.display = "none";
+	var noSubstitutionDialogs = document.getElementsByClassName("nosubstitution");
+	
+	if (hiddenWrappers != wrappers.length || wrappers.length == 0) {
+		for (var i = 0; i < noSubstitutionDialogs.length; i++)
+			noSubstitutionDialogs[i].style.display = "none";
+		
+		return;
+	}
+	
+	for (var i = 0; i < noSubstitutionDialogs.length; i++)
+		if (noSubstitutionDialogs[i].getAttribute("data-type") == select.selectedOptions[0].getAttribute("data-type"))
+			noSubstitutionDialogs[i].style.display = "block";
+		else
+			noSubstitutionDialogs[i].style.display = "none";
 	
 	setCookie("lastsubstitutionfilterindex", select.selectedIndex, 31536000000);
 }
