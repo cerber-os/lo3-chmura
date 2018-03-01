@@ -4,12 +4,12 @@ colormath==3.0.0
 decorator==4.2.1
 Django==2.0.2
 django-crontab==0.7.1
-html5lib==1.0.1
+html5lib
 networkx==2.1
 numpy==1.14.1
 pytz==2018.3
 six==1.11.0
-webencodings==0.5.1
+webencodings
 stem==1.6.0
 ua_parser==0.7.3
 user-agents=1.1.0

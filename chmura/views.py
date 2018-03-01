@@ -95,7 +95,8 @@ def substitutionList(request):
            'notka': zastepstwa['notka'],
            'data': date,
            'data_now': now,
-           'classes': load_ids('classes')}
+           'classes': load_ids('classes'),
+           'teachers': load_ids('teachers')}
     return render(request, 'chmura/subst.html', con)
 
 
@@ -107,6 +108,7 @@ def newsPage(request):
 def agenda(request):
     con = {'terminarz': get_agenda()}
     return render(request, 'chmura/agenda.html', con)
+
 
 def changelog(request):
     return render(request, 'chmura/changelog.html')
