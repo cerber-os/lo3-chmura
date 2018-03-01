@@ -124,20 +124,20 @@ def loginPage(request):
     username = request.POST.get('login', None)
     password = request.POST.get('password', None)
     if username is None or password is None:
-        return render(request, 'chmura/loginPage.html')
+        return render(request, 'chmura/adminlogin.html')
 
     user = authenticate(request, username=username, password=password)
     if user is not None:
         # Zalogowany(szef_prezesa, tajnehaslo1) - jeśli sądzisz, że na produkcji są te same dane, to lepiej zmień zawód
         login(request, user)
-        return redirect('/adminPanel/')
+        return redirect('/admin/')
     else:
-        return render(request, 'chmura/loginPage.html', {'incorrect_login': True})
+        return render(request, 'chmura/adminlogin.html', {'incorrect_login': True})
 
 
 def adminPanel(request):
     if not request.user.is_authenticated:
-        return redirect('/login/')
+        return redirect('/adminlogin/')
     con = {'classes': load_ids('classes'),
            'subjects': [i.name for i in Subject.objects.all()],
            'is_debug': DEBUG,
@@ -151,12 +151,12 @@ def adminPanel(request):
                 del(con['classes'][c])
     con['classes'] = sorted(con['classes'])
     con['subjects'] = sorted(con['subjects'])
-    return render(request, 'chmura/adminPanel.html', con)
+    return render(request, 'chmura/admin.html', con)
 
 
 def adminChangePassword(request):
     if not request.user.is_authenticated:
-        return redirect('/login/')
+        return redirect('/adminlogin/')
     u = User.objects.get(username=request.user.username)
     newpassword = request.POST.get('new_password', '1')
     if u.check_password(request.POST.get('old_password', None)):
@@ -165,33 +165,33 @@ def adminChangePassword(request):
                 u.set_password(newpassword)
                 u.save()
                 logout(request)
-                return redirect('/login/')
+                return redirect('/adminlogin/')
             else:
                 error = 'Hasło jest za krótkie, bądź nie zawiera conajmniej jednej cyfry'
         else:
             error = 'Hasła nie są jednakowe'
     else:
         error = 'Wprowadzono błędne stare hasło'
-    return redirect('/adminPanel?error=' + error)
+    return redirect('/admin?error=' + error)
 
 
 def adminClearCache(request):
     if not request.user.is_authenticated:
-        return redirect('/login/')
+        return redirect('/adminlogin/')
     if not DEBUG:
-        return redirect('/adminPanel/?info=Opcja dostępna wyłącznie w trybie DEBUG')
+        return redirect('/admin/?info=Opcja dostępna wyłącznie w trybie DEBUG')
     if os.path.exists(get_cur_path() + '/../cache'):
         shutil.rmtree(get_cur_path() + '/../cache/')
 
     # Usuwanie kolorów
     Subject.objects.all().delete()
 
-    return redirect('/adminPanel?info=' + 'Pomyślnie wyczyszczono cache')
+    return redirect('/admin?info=' + 'Pomyślnie wyczyszczono cache')
 
 
 def adminModifyAliases(request):
     if not request.user.is_authenticated:
-        return redirect('/login/')
+        return redirect('/adminlogin/')
 
     for name, alias in request.POST.items():
         if name.startswith('class$'):
@@ -211,11 +211,11 @@ def adminModifyAliases(request):
             a = Alias(orig=name, alias=alias, selector=selector)
         a.alias = alias
         a.save()
-    return redirect('/adminPanel?info=Pomyślnie zmodyfikowano aliasy')
+    return redirect('/admin?info=Pomyślnie zmodyfikowano aliasy')
 
 
 def adminLogout(request):
     if not request.user.is_authenticated:
-        return redirect('/login/')
+        return redirect('/adminlogin/')
     logout(request)
     return redirect('/')
