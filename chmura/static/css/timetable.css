@@ -104,3 +104,12 @@
 	#mobiletimetableselect { margin-bottom: 0; }
 	#timetablewrapper { padding-bottom: 36px; }
 }
+@media print {
+	#timetable {
+		font-size: 0.5em;
+		border-spacing: 3px;
+	}
+	
+	#timetable .hiddenlesson { display: table-row !important; }
+	div.variouslessons { display: none !important; }
+}
