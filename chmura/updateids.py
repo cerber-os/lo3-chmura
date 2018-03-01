@@ -6,6 +6,7 @@ from .utils import *
 import chmura.log as log
 from chmura.models import Alias
 from django.core.exceptions import ObjectDoesNotExist
+import unicodedata
 
 
 def save_dict(name, obj):
@@ -76,7 +77,7 @@ def save_ids(ids):
         for t in ids[i]:
             d[get_fields(i, t)] = t['id']
         if i == 'teachers':
-            save_dict(i, dict(sorted(d.items())))
+            save_dict(i, dict(sorted(d.items(), key=lambda x: unicodedata.normalize('NFKD', x[0]).encode('ascii', 'ignore'))))
         else:
             save_dict(i, d)
 
@@ -92,6 +93,8 @@ def save_ids(ids):
             d.setdefault(klasy.get(uczen['classid'], '0'), []).append({'firstname': uczen['firstname'],
                                                                        'lastname': nazwisko,
                                                                        'id': uczen['id']})
+        for group in d:
+            d[group] = sorted(d[group], key=lambda x: unicodedata.normalize('NFKD', x['lastname']).encode('ascii', 'ignore'))
         save_dict('students', d)
 
 
