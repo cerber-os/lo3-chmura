@@ -4,8 +4,7 @@ function populateDaySelect() {
 	var day = new Date();
 	var dayNames = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
 	
-	var urlDate = getHttpGetParameter("date");
-	var selectedDate = urlDate ? new Date(getHttpGetParameter("date")) : new Date();
+	var selectedDate = new Date(document.getElementById("maindayselect").getAttribute("data-date")) || new Date();
 	
 	for (var i = 0; i <= 7; i++) {
 		var dayString = ("0" + day.getDate()).substr(-2);

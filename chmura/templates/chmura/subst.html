@@ -6,11 +6,11 @@
 <link rel="stylesheet" href="/static/css/substitution.css">
 {% endblock %}
 {% block localjs %}
-<script src="/static/js/substitution.js?2" defer></script>
+<script src="/static/js/substitution.js?3" defer></script>
 {% endblock %}
 
 {% block secondaryheaderselect %}
-<select class="dayselect" onchange="handleSubstitutionDaySelectUpdate(this)"></select>
+<select class="dayselect" onchange="handleSubstitutionDaySelectUpdate(this)" id="maindayselect" data-date="{{ data }}"></select>
 {% endblock %}
 
 {% block content %}
