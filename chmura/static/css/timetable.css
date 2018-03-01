@@ -24,9 +24,12 @@
 	line-height: 1.1em;
 }
 #timetable .lesson p:nth-of-type(1), #timetable .lesson p:nth-of-type(3) { font-weight: bold; }
-#timetable a {
+#timetable p.detailslink {
 	text-transform: uppercase;
 	font-size: 0.8em;
+	margin-top: 1em;
+}
+#timetable p.detailslink a {
 	text-decoration: none;
 	color: inherit;
 }

@@ -1,8 +1,9 @@
 ﻿function showTimetableSelect() {
 	document.getElementById("overlay").style.visibility = "visible";
 	document.getElementById("overlaytitle").innerText = "Wybierz plan";
-	
 	document.getElementById("overlaycontent").innerHTML = document.getElementById("timetableselectdialog").innerHTML;
+	
+	zoomOut();
 }
 function handleTimetableSelectUpdate(select) {
 	if (select.selectedIndex == select.children.length - 1) {
@@ -147,7 +148,7 @@ function showDetails(a) {
 	document.getElementById("overlaytitle").innerText = "Szczegóły";
 	document.getElementById("overlaycontent").innerHTML = "";
 	
-	var lessonContainer = a.parentElement.parentElement.parentElement;
+	var lessonContainer = a.parentElement.parentElement.parentElement.parentElement;
 	
 	for (var i = 1; i < lessonContainer.children.length; i++) {
 		var entry = lessonContainer.children[i].children[0].cloneNode(true);
