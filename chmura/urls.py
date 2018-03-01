@@ -17,4 +17,5 @@ urlpatterns = [
         url(r'^adminPanel/clearCache/$', views.adminClearCache, name='adminClearCache'),
         url(r'^adminPanel/changePass/$', views.adminChangePassword, name='adminChangePassword'),
         url(r'^adminPanel/modifyAliases/$', views.adminModifyAliases, name='adminModifyAliases'),
+        url(r'^adminPanel/logout/$', views.adminLogout, name='adminLogout'),
 ]

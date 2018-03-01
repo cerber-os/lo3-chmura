@@ -205,3 +205,10 @@ def adminModifyAliases(request):
         a.alias = alias
         a.save()
     return redirect('/adminPanel?info=Pomyślnie zmodyfikowano aliasy')
+
+
+def adminLogout(request):
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+    logout(request)
+    return redirect('/')
