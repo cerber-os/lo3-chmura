@@ -83,6 +83,8 @@ function handleFilterSelectUpdate(updatedSelect) {
 		}
 	}
 	
+	setCookie("lastsubstitutionfilterindex", select.selectedIndex, 31536000000);
+	
 	var noSubstitutionDialogs = document.getElementsByClassName("nosubstitution");
 	
 	if (hiddenWrappers != wrappers.length || wrappers.length == 0) {
@@ -97,8 +99,6 @@ function handleFilterSelectUpdate(updatedSelect) {
 			noSubstitutionDialogs[i].style.display = "block";
 		else
 			noSubstitutionDialogs[i].style.display = "none";
-	
-	setCookie("lastsubstitutionfilterindex", select.selectedIndex, 31536000000);
 }
 
 window.onload = function() {
