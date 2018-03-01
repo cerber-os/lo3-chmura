@@ -178,7 +178,6 @@ def adminClearCache(request):
 
     # Usuwanie kolorów
     Subject.objects.all().delete()
-    Alias.objects.all().delete()
 
     return redirect('/adminPanel?info=' + 'Pomyślnie wyczyszczono cache')
 
