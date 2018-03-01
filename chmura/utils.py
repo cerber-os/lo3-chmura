@@ -3,6 +3,7 @@ import urllib.request
 import urllib.parse
 import chmura.log as log
 from lo3.settings import DEFAULT_USER_AGENT, ENABLE_TOR, ENABLE_AGGRESSIVE_IP_CHANGE, DEBUG
+from chmura.models import Settings
 
 
 if DEBUG:
@@ -18,6 +19,11 @@ if ENABLE_AGGRESSIVE_IP_CHANGE:
     from stem.control import Controller
 
     log.warning('Aggressive IP changing is active!')
+
+
+if len(Settings.objects.all()) == 0:
+    unikalnanazwazmiennej = Settings()
+    unikalnanazwazmiennej.save()
 
 
 def get_cur_path():

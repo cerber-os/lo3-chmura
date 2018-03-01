@@ -42,10 +42,10 @@ def get_color(nazwa, hex_color):
         return hex_color
 
 
-def create_color_files():
-    txt_file = ""
-    with open(get_cur_path() + '/static/css/timetablecolors.css', 'w', encoding='utf-8') as newfile:
-        for color in Subject.objects.all():
-            txt_file += '[data-lessonname="' + color.name + '"] {background-color: ' + \
-                        color.color + '; }'
-        newfile.write(txt_file)
+# def create_color_files():
+#     txt_file = ""
+#     with open(get_cur_path() + '/static/css/timetablecolors.css', 'w', encoding='utf-8') as newfile:
+#         for color in Subject.objects.all():
+#             txt_file += '[data-lessonname="' + color.name + '"] {background-color: ' + \
+#                         color.color + '; }'
+#         newfile.write(txt_file)

@@ -4,6 +4,8 @@ import pickle
 import re
 from .utils import *
 import chmura.log as log
+from chmura.models import Alias
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def save_dict(name, obj):
@@ -45,11 +47,23 @@ def download_ids():
     return ids
 
 
+def getClass(c, sel):
+    if sel == 'classes':
+        sel = 'class'
+    else:
+        return c
+    try:
+        a = Alias.objects.get(orig=c, selector=sel)
+        return a.alias
+    except ObjectDoesNotExist:
+        return c
+
+
 def get_fields(typ, obj):
     if typ in ['teachers', 'students']:
         return obj['lastname'] + ' ' + obj['firstname']
     elif typ in ['classes', 'groups', 'classrooms']:
-        return obj['name']
+        return getClass(obj['name'], typ)
     else:
         return 'None'
 

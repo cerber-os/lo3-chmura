@@ -1,6 +1,6 @@
 from io import StringIO
 from django.http import Http404
-from chmura.models import Settings
+from chmura.models import Alias
 import pickle
 import re
 import json
@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from .utils import *
 from time import sleep
 import chmura.log as log
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def save_dict(name, obj):
@@ -139,9 +140,9 @@ def download_subst(date):
                     status['lekcja'] = periods.get(zastepstwo[key], 'None')
 
             elif key == 'subjectid':
-                status['przedmiot'] = [subjects[str(zastepstwo[key])]]
+                status['przedmiot'] = [getSubject(subjects[str(zastepstwo[key])])]
             elif key == 'subjectids':
-                status['przedmiot'] = [subjects[str(s)] for s in zastepstwo[key]]
+                status['przedmiot'] = [getSubject(subjects[str(s)]) for s in zastepstwo[key]]
 
             elif key == 'teacherid':
                 status['nauczyciel'] = [teachers[str(zastepstwo[key])]]
@@ -149,9 +150,9 @@ def download_subst(date):
                 status['nauczyciel'] = [teachers[str(s)] for s in zastepstwo[key]]
 
             elif key == 'classid':
-                status['klasa'] = [classes[str(zastepstwo[key])]]
+                status['klasa'] = [getClass(classes[str(zastepstwo[key])])]
             elif key == 'classids':
-                status['klasa'] = [classes[str(s)] for s in zastepstwo[key]]
+                status['klasa'] = [getClass(classes[str(s)]) for s in zastepstwo[key]]
 
             elif key == 'classroomid':
                 status['sala'] = [classrooms[str(zastepstwo[key])]]
@@ -172,15 +173,15 @@ def download_subst(date):
                         if s not in [None, '']:
                             status['new_sala'].append(s)
                     elif z['column'] == 'subjectid' or z['column'] == 'subjectids':
-                        status['old_przedmiot'].append(subjects[str(z.get('old'))])
+                        status['old_przedmiot'].append(getSubject(subjects[str(z.get('old'))]))
 
-                        p = subjects.get(str(z.get('new')))
+                        p = getSubject(subjects.get(str(z.get('new'))))
                         if p not in [None, '']:
                             status['new_przedmiot'].append(p)
                     elif z['column'] == 'classid' or z['column'] == 'classids':
-                        status['old_klasa'].append(classes[str(z.get('old'))])
+                        status['old_klasa'].append(getClass(classes[str(z.get('old'))]))
 
-                        c = classes.get(str(z.get('new')))
+                        c = getClass(classes.get(str(z.get('new'))))
                         if c is not None:
                             status['new_klasa'].append(c)
 
@@ -218,6 +219,25 @@ def download_subst(date):
             zastepstwa[k] = [status]
     posortowane = dict(sorted(zastepstwa.items()))
     return {'dane': posortowane, 'notka': note}
+
+
+def getClass(c):
+    return getAlias(c, 'class')
+
+
+def getSubject(x):
+    return getAlias(x, 'subject')
+
+
+def getAlias(c, sel):
+    if c == "":
+        return c
+    try:
+        a = Alias.objects.get(orig=c['name'], selector=sel)
+        c['name'] = a.alias
+        return c
+    except ObjectDoesNotExist:
+        return c
 
 
 def updateJob():

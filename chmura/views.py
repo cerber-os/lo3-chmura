@@ -10,6 +10,12 @@ import datetime
 import re
 import chmura.log as log
 from django.shortcuts import redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from lo3.settings import DEBUG
+import shutil
+from chmura.models import Subject, Alias
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def index(request):
@@ -112,3 +118,91 @@ def agenda(request):
 
 def changelog(request):
     return render(request, 'chmura/changelog.html')
+
+
+def loginPage(request):
+    username = request.POST.get('login', None)
+    password = request.POST.get('password', None)
+    if username is None or password is None:
+        return render(request, 'chmura/loginPage.html')
+
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        # Zalogowany(szef_prezesa, tajnehaslo1) - jeśli sądzisz, że na produkcji są te same dane, to lepiej zmień zawód
+        login(request, user)
+        return redirect('/adminPanel/')
+    else:
+        return render(request, 'chmura/loginPage.html', {'incorrect_login': True})
+
+
+def adminPanel(request):
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+    con = {'classes': load_ids('classes'),
+           'subjects': [i.name for i in Subject.objects.all()],
+           'is_debug': DEBUG,
+           'error': request.GET.get('error', ''),
+           'info': request.GET.get('info', ''),
+           'aliases': {i.orig: i.alias for i in Alias.objects.all()}}
+    return render(request, 'chmura/adminPanel.html', con)
+
+
+def adminChangePassword(request):
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+    u = User.objects.get(username=request.user.username)
+    newpassword = request.POST.get('new_password', '1')
+    if u.check_password(request.POST.get('old_password', None)):
+        if newpassword == request.POST.get('newer_password', '0'):
+            if len(newpassword) >= 8 and any(i.isdigit() for i in newpassword):
+                u.set_password(newpassword)
+                u.save()
+                logout(request)
+                return redirect('/login/')
+            else:
+                error = 'Hasło jest za krótkie, bądź nie zawiera conajmniej jednej cyfry'
+        else:
+            error = 'Hasła nie są jednakowe'
+    else:
+        error = 'Wprowadzono błędne stare hasło'
+    return redirect('/adminPanel?error=' + error)
+
+
+def adminClearCache(request):
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+    if not DEBUG:
+        return redirect('/adminPanel/?info=Opcja dostępna wyłącznie w trybie DEBUG')
+    if os.path.exists(get_cur_path() + '/../cache'):
+        shutil.rmtree(get_cur_path() + '/../cache/')
+
+    # Usuwanie kolorów
+    Subject.objects.all().delete()
+    Alias.objects.all().delete()
+
+    return redirect('/adminPanel?info=' + 'Pomyślnie wyczyszczono cache')
+
+
+def adminModifyAliases(request):
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    for name, alias in request.POST.items():
+        if name.startswith('class$'):
+            selector = 'class'
+            name = name[len('class$'):]
+        elif name.startswith('subject$'):
+            selector = 'subject'
+            name = name[len('subject$'):]
+        else:
+            continue
+        if len(alias) == 0 or len(alias.replace(' ', '')) == 0:
+            continue
+
+        try:
+            a = Alias.objects.get(orig=name)
+        except ObjectDoesNotExist:
+            a = Alias(orig=name, alias=alias, selector=selector)
+        a.alias = alias
+        a.save()
+    return redirect('/adminPanel?info=Pomyślnie zmodyfikowano aliasy')

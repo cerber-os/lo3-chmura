@@ -4,7 +4,7 @@
 
 {% block localcss %}
 <link rel="stylesheet" href="/static/css/timetable.css?4">
-<link rel="stylesheet" href="/static/css/timetablecolors.css">
+{#<link rel="stylesheet" href="/static/css/timetablecolors.css">#}
 {% if device == "Chrome" %}<link rel="stylesheet" href="/static/css/timetablechromefix.css">{% endif %}
 {% endblock %}
 
@@ -37,7 +37,7 @@
 			{% if block|length == 0 %}
 			<td></td>
 			{% elif block|length == 1 %}
-			<td class="lesson" data-lessonname="{{ block.0.subject }}">
+			<td class="lesson" style="background-color: {{ block.0.color }};">
 				<p>{{ block.0.subject }}</p>
 				<p>{{ block.0.teacher }}{% for class in block.0.classes %}{{ class }}{% if block.0.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
 				<p>{{ block.0.classroom }}</p>
@@ -47,7 +47,7 @@
 				<div class="lessonholder">
 					{% for lesson in block %}
 					<div>
-						<div class="lesson" data-lessonname="{{ lesson.subject }}">
+						<div class="lesson" style="background-color: {{ lesson.color }};">
 							<p>{{ lesson.subject }}</p>
 							<p>{{ lesson.teacher }}{% for class in lesson.classes %}{{ class }}{% if lesson.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
 							<p>{{ lesson.classroom }}</p>
@@ -60,14 +60,14 @@
 			<td>
 				<div class="lessonholder">
 					<div class="detailslesson">
-						<div class="lesson variouslessons">
+						<div class="lesson variouslessons" style="background-color: white;">
 							<p>Różne</p>
 							<p class="detailslink"><a href="javascript:void(0)" onclick="showDetails(this)">Rozwiń</a></p>
 						</div>
 					</div>
 					{% for lesson in block %}
 					<div class="hiddenlesson">
-						<div class="lesson" data-lessonname="{{ lesson.subject }}">
+						<div class="lesson" style="background-color: {{ lesson.color }}">
 							<p>{{ lesson.subject }}</p>
 							<p>{{ lesson.teacher }}{% for class in lesson.classes %}{{ class }}{% if lesson.classes|length > forloop.counter %}, {% endif %}{% endfor %}</p>
 							<p>{{ lesson.classroom }}</p>

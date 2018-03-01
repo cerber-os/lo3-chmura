@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8">
+    <title>Logowanie - III LO w Gdyni</title>
+</head>
+<body>
+    <h2>Logowanie</h2>
+    {% if incorrect_login %}<p style="color: red;">Błędny login lub hasło</p>{% endif %}
+    <form action="/login/" method="post">
+        <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+        <label for="login">Login: </label>
+        <input type="text" name="login" id="login">
+        <br />
+
+        <label for="password">Hasło: </label>
+        <input type="password" name="password" id="password">
+        <br />
+
+        <input type="submit" value="Zaloguj się">
+    </form>
+</body>
+
+</html>

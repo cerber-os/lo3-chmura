@@ -138,7 +138,7 @@ CRONJOBS = [
 
 # Connection settings
 
-DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows; U; Win 9x 4.90; de-DE; rv:0.9.2) Gecko/20010726 Netscape6/6.1'
+DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows; U; Win 9x 4.90; de-DE; rv:0.9.2) Gecko/20010726 Netscape7/6.1'
 ENABLE_TOR = False
 ENABLE_AGGRESSIVE_IP_CHANGE = False
 

@@ -6,9 +6,11 @@ from random import randint
 from .utils import *
 from time import sleep
 import chmura.log as log
-from chmura.colors import get_color, create_color_files
+from chmura.colors import get_color
 from chmura.updateids import load_ids
 import shutil
+from django.core.exceptions import ObjectDoesNotExist
+from chmura.models import Alias
 
 
 def save_dict(name, obj):
@@ -132,14 +134,14 @@ def genTimeTable(uid='-22', selector='trieda', credentials=None):
                 try:
                     if selector == 'ucitel':
                         planJSON[dzien][str(lessonNumber-1)].append({
-                                            'subject': subjects[card['subjects'][0]]['name'],
+                                            'subject': getSubject(subjects[card['subjects'][0]]['name']),
                                             'color': get_color(subjects[card['subjects'][0]]['name'],
                                                                subjects[card['subjects'][0]]['color']),
-                                            'classes': [classes[c]['name'] for c in card['classes']],
+                                            'classes': [getClass(classes[c]['name']) for c in card['classes']],
                                             'classroom': getclassroom(card['classrooms'], classrooms)})
                     else:
                         planJSON[dzien][str(lessonNumber-1)].append({
-                                            'subject': subjects[card['subjects'][0]]['name'],
+                                            'subject': getSubject(subjects[card['subjects'][0]]['name']),
                                             'color': get_color(subjects[card['subjects'][0]]['name'],
                                                                subjects[card['subjects'][0]]['color']),
                                             'teacher': getteachername(card, teachers),
@@ -147,9 +149,26 @@ def genTimeTable(uid='-22', selector='trieda', credentials=None):
                 except KeyError:
                     continue
 
-    create_color_files()
     planJSON = clean_timetable(planJSON)
     return planJSON
+
+
+def getClass(c):
+    return getAlias(c, 'class')
+
+
+def getSubject(x):
+    return getAlias(x, 'subject')
+
+
+def getAlias(c, sel):
+    if c == "":
+        return c
+    try:
+        a = Alias.objects.get(orig=c, selector=sel)
+        return a.alias
+    except ObjectDoesNotExist:
+        return c
 
 
 def getclassroom(value, classrooms):
@@ -210,7 +229,7 @@ def timetableJob():
     connection_count = 0
 
     if not DEBUG:
-        if os.path.exists(get_cur_path() + '/cache'):
+        if os.path.exists(get_cur_path() + '/../cache'):
             shutil.rmtree(get_cur_path() + '/../cache/timetables')
 
         targets = {'classes':  'trieda',
