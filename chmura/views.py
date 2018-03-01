@@ -144,6 +144,13 @@ def adminPanel(request):
            'error': request.GET.get('error', ''),
            'info': request.GET.get('info', ''),
            'aliases': {i.orig: i.alias for i in Alias.objects.all()}}
+    for i in Alias.objects.all():
+        for c in con['classes']:
+            if i.alias == c:
+                con['classes'][i.orig] = con['classes'][c]
+                del(con['classes'][c])
+    con['classes'] = sorted(con['classes'])
+    con['subjects'] = sorted(con['subjects'])
     return render(request, 'chmura/adminPanel.html', con)
 
 
