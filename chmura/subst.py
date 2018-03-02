@@ -89,7 +89,7 @@ def download_subst(date):
     subType = jsdb.get('substitution_types', {})
     breaks = jsdb.get('breaks', {})
 
-    for i in ['teachers', 'classes', 'subjects', 'classrooms', 'periods', 'breaks']:
+    for i in ['teachers', 'classes', 'subjects', 'classrooms', 'breaks']:
         exec(i + '["None"] = ""')
 
     # Pobieranie czerwonej notatki

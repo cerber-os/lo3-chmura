@@ -41,7 +41,7 @@ def getReversedStudent(dictionary, key):
     for d in dictionary:
         for k in dictionary[d]:
             if k['id'] == key:
-                return k['firstname'] + ' ' + k['lastname']
+                return k['lastname'] + ' ' + k['firstname']
     return "null"
 
 
