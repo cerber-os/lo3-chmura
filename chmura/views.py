@@ -205,6 +205,11 @@ def adminModifyAliases(request):
         else:
             continue
         if len(alias) == 0 or len(alias.replace(' ', '')) == 0:
+            try:
+                a = Alias.objects.get(orig=name)
+                a.delete()
+            except ObjectDoesNotExist:
+                continue
             continue
 
         try:
