@@ -11,6 +11,7 @@ section > h2 {
 	margin: 0;
 }
 section > p {
+	margin: 8px 0;
 	text-align: justify;
 }
 section > *:last-child {
@@ -25,7 +26,32 @@ input[type="text"], input[type="password"] {
 	background-color: #FFFFFF;
 }
 
+div.tablescroller {
+	margin: 8px 0;
+	height: 200px;
+	
+	overflow-y: scroll;
+}
+div.tablescroller table {
+	width: 100%;
+	max-width: 500px;
+	table-layout: fixed;
+}
+div.tablescroller input {
+	width: 100%;
+}
+
 p.error { color: #E53935; margin: 0 8px; }
+form.nonsectionui {
+	display: block;
+	margin: 8px;
+}
+
+form.desktopchangepassword label { margin-right: 5em; }
+form.mobilechangepassword { display: none; }
+form.mobilechangepassword input[type="password"] { width: 100%; }
+form.mobilechangepassword label { display: block; }
+form.mobilechangepassword input[type="submit"] { margin-top: 0.5em; }
 
 #loginform { display: inline-block; }
 #loginform form.desktoplogin label { margin-right: 5em; }
@@ -39,4 +65,6 @@ p.error { color: #E53935; margin: 0 8px; }
 	form.desktoplogin { display: none; }
 	form.mobilelogin { display: unset !important; }
 	p.error { text-align: center; }
+	form.desktopchangepassword { display: none; }
+	form.mobilechangepassword { display: unset !important; }
 }

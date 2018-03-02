@@ -1,65 +1,96 @@
-{% load tags_extra %}
-<!doctype html>
-<html lang="pl">
-<head>
-    <meta charset="utf-8">
-    <title>Ustawienia - III LO w Gdyni</title>
-</head>
-<body>
-    <h2>Panel Samorządu uczniowskiego</h2>
-    <h4>{{ info }}</h4>
-    <form action="/admin/logout"><input type="submit" value="Wyloguj"></form>
-    <br>
-    <h6>{{ update_state }}</h6>
-    <p>Usuń zbuforowane dane i pobierz je na nowo ze strony Edupage</p>
-    <p style="color: red;">Proces może potrwać nawet 30 minut. W tym czasie strona będzie niedostępna.</p>
-    <form action="/admin/updatecache/" method="POST">
-        {% csrf_token %}
-        <input type="submit" value="Aktualizuj cache">
-    </form>
-    {% if is_debug %}<form action="/admin/clearcache/" method="POST">{% csrf_token %}<input type="submit" value="Wyczyść cache (DEBUG)"></form>{% endif %}
-    <hr>
+{% extends "chmura/master.html" %}
 
-    <p>Zmień hasło do panelu administracyjnego</p>
-    <p style="color: red;">Hasło musi mieć conajmniej 8 znaków, w tym minimum jedną cyfrę i jeden znak specjalny</p>
-    <p style="color: red;">{{ error }}</p>
-    <form action="/admin/changepass/" method="POST">
-        {% csrf_token %}
-        <label>Stare hasło: </label><input type="password" name="old_password"><br>
-        <label>Nowe hasło: </label><input type="password" name="new_password"><br>
-        <label>Powtórz hasło: </label><input type="password" name="newer_password"><br>
-        <input type="submit" value="Zmień hasło">
-    </form>
-    <hr>
+{% block title %}Panel administracyjny{% endblock %}
 
-    <p>Aliasy klas i przedmiotów</p>
-    <p style="color: red;">Aby zmiany weszły w życie, po ich zapisaniu <b>wymagana jest aktualizacja cache</b></p>
-    <form method="POST" action="/admin/modifyaliases/">
-    {% csrf_token %}
-    <div style="height: 300px; overflow-y: scroll; border: black 1px solid;">
-        <table>
-            {% for class in classes %}
-                <tr>
-                    <td><b>{{ class }}</b></td>
-                    <td><input type="text" value="{{ aliases|get_item:class }}" name="class${{ class }}"></td>
-                </tr>
-            {% endfor %}
-        </table>
-    </div>
-    <br><br>
-    <div style="height: 300px; overflow-y: scroll; border: black 1px solid;">
-        <table>
-            {% for subject in subjects %}
-                <tr>
-                    <td><b>{{ subject }}</b></td>
-                    <td><input type="text" value="{{ aliases|get_item:subject }}" name="subject${{ subject }}"></td>
-                </tr>
-            {% endfor %}
-        </table>
-    </div>
-    <input type="submit" value="Zapisz">
-    </form>
-    <hr>
-</body>
+{% block localcss %}
+<link rel="stylesheet" href="/static/css/admin.css">
+{% endblock %}
 
-</html>
+{% block content %}
+
+<h1>Panel administracyjny</h1>
+
+<section>
+	<h2>Aliasy klas</h2>
+	<div class="tablescroller">
+		<table>
+			{% for class in classes %}
+			<tr>
+				<td>{{ class }}</td>
+				<td><input type="text" value="{{ aliases|get_item:class }}" name="class${{ class }}"></td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+	<form method="post" action="/admin/modifyaliases/"><input type="submit" value="Zapisz">{% csrf_token %}</form>
+</section>
+<section>
+	<h2>Aliasy przedmiotów</h2>
+	<div class="tablescroller">
+		<table>
+			{% for subject in subjects %}
+			<tr>
+				<td>{{ subject }}</td>
+				<td><input type="text" value="{{ aliases|get_item:subject }}" name="subject${{ subject }}"></td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+	<form method="post" action="/admin/modifyaliases/"><input type="submit" value="Zapisz">{% csrf_token %}</form>
+</section>
+<section>
+	<h2>Pamięć podręczna</h2>
+	{% if update_state|length > 0 %}
+	<p>
+		{{ update_state }}
+	</p>
+	{% endif %}
+	<p>
+		Usuń zbuforowane dane i pobierz je na nowo. Uwaga: proces może potrwać nawet 30 minut i wstrzymuje pracę serwera.
+	</p>
+	<form method="post" action="/admin/updatecache/"><input type="submit" value="Pobierz pamięć od nowa">{% csrf_token %}</form>
+	{% if is_debug %}
+	<p>
+		Usuń zbuforowane dane bez pobierania.
+	</p>
+	<form method="post" action="/admin/clearcache/"><input type="submit" value="Wyczyść pamięć">{% csrf_token %}</form>
+	{% endif %}
+</section>
+<section>
+	<h2>Hasło do panelu</h2>
+	<p>Hasło musi mieć co najmniej 8 znaków, w tym przynajmniej jedną cyfrę i jeden znak specjalny.</p>
+	<form method="post" action="/admin/changepass/" class="desktopchangepassword">
+		{% csrf_token %}
+		<table>
+			<tr>
+				<td><label>Stare hasło:</label></td>
+				<td><input type="password" name="old_password"></td>
+			</tr>
+			<tr>
+				<td><label>Nowe hasło:</label></td>
+				<td><input type="password" name="new_password"></td>
+			</tr>
+			<tr>
+				<td><label>Powtórz hasło:</label></td>
+				<td><input type="password" name="newer_password"></td>
+			</tr>
+		</table>
+		<input type="submit" value="Zmień hasło">
+	</form>
+	<form method="post" action="/admin/changepass/" class="mobilechangepassword">
+		<label>Stare hasło:</label>
+		<input type="password" name="old_password">
+		<label>Nowe hasło:</label>
+		<input type="password" name="new_password">
+		<label>Powtórz hasło:</label>
+		<input type="password" name="newer_password">
+		
+		<input type="submit" value="Zmień hasło">
+	</form>
+</section>
+
+<form action="/admin/logout" class="nonsectionui">
+	<input type="submit" value="Wyloguj">
+</form>
+
+{% endblock %}
