@@ -16,6 +16,7 @@ from lo3.settings import DEBUG
 import shutil
 from chmura.models import Subject, Alias
 from django.core.exceptions import ObjectDoesNotExist
+import threading
 
 
 def index(request):
@@ -145,9 +146,11 @@ def adminPanel(request):
            'is_debug': DEBUG,
            'error': request.GET.get('error', ''),
            'info': request.GET.get('info', ''),
-           'aliases': {i.orig: i.alias for i in Alias.objects.all()}}
+           'aliases': {i.orig: i.alias for i in Alias.objects.all()},
+           'update_state': adminGetState()}
     for i in Alias.objects.all():
-        for c in con['classes']:
+        classes = con['classes']
+        for c in classes:
             if i.alias == c:
                 con['classes'][i.orig] = con['classes'][c]
                 del(con['classes'][c])
@@ -226,3 +229,31 @@ def adminLogout(request):
         return redirect('/adminlogin/')
     logout(request)
     return redirect('/')
+
+
+def adminUpdateCache(request):
+    if not request.user.is_authenticated:
+        return redirect('/adminlogin/')
+    if os.name == 'nt':
+        return redirect('/admin?info=Ta funkcja nie działa w systemie Windows')
+    if os.path.isfile('/tmp/updateProcess') and open('/tmp/updateProcess', 'r').read(8) != 'finished':
+        return redirect('/admin?info=Aktualizacja jeszcze trwa')
+
+    t = threading.Thread(target=updateCache)
+    t.setDaemon(True)
+    t.start()
+
+    return redirect('/admin?info=Pomyślnie rozpoczęto aktualizację cache')
+
+
+def adminGetState():
+    if os.path.isfile('/tmp/updateProcess'):
+        if open('/tmp/updateProcess', 'r').read(8) == 'updating':
+            return 'Aktualizacja w trakcie'
+        elif open('/tmp/updateProcess', 'r').read(8) == 'error---':
+            return 'Wystąpił błąd. Spróbuj ponownie'
+    return 'Aktualizacja ukończona'
+
+
+def updateCache(request):
+    return

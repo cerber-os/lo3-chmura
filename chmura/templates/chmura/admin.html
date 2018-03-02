@@ -10,6 +10,7 @@
     <h4>{{ info }}</h4>
     <form action="/admin/logout"><input type="submit" value="Wyloguj"></form>
     <br>
+    <h6>{{ update_state }}</h6>
     <p>Usuń zbuforowane dane i pobierz je na nowo ze strony Edupage</p>
     <p style="color: red;">Proces może potrwać nawet 30 minut. W tym czasie strona będzie niedostępna.</p>
     <form action="/admin/updatecache/" method="POST">
