@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import Http404
-from .timetable import get_timetable
-from .subst import get_substitution
-from .updateids import load_ids
+from .timetable import get_timetable, timetableJob
+from .subst import get_substitution, updateJob
+from .updateids import load_ids, updateid
 from .news import get_news
 from .agenda import get_agenda
 from .utils import *
@@ -17,6 +17,7 @@ import shutil
 from chmura.models import Subject, Alias
 from django.core.exceptions import ObjectDoesNotExist
 import threading
+from django.core.mail import EmailMessage
 
 
 def index(request):
@@ -251,9 +252,25 @@ def adminGetState():
         if open('/tmp/updateProcess', 'r').read(8) == 'updating':
             return 'Aktualizacja w trakcie'
         elif open('/tmp/updateProcess', 'r').read(8) == 'error---':
+            open('/tmp/updateProcess', 'w').write('finished')
             return 'Wystąpił błąd. Spróbuj ponownie'
     return 'Aktualizacja ukończona'
 
 
-def updateCache(request):
+def updateCache():
+    open('/tmp/updateProcess', 'w').write('updating')
+    try:
+        updateid()
+        timetableJob()
+        updateJob()
+    except Exception as e:
+        try:
+            open('/tmp/updateProcess', 'w').write('error---')
+            log.error(e)
+            email = EmailMessage('Blad przy aktualizacji cache!!!', 'Treść błędu: ' + str(e), to=['cerber@cerberos.pl'])
+            email.send()
+        except Exception as e:
+            log.crititcal('Double error!!!: ' + str(e))
+            return
+    open('/tmp/updateProcess', 'w').write('finished')
     return

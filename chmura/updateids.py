@@ -7,9 +7,9 @@ import chmura.log as log
 from chmura.models import Alias
 from django.core.exceptions import ObjectDoesNotExist
 import locale
-import platform
+import os
 
-if platform.system() != 'Windows':
+if os.name == 'nt:':
     locale.setlocale(locale.LC_COLLATE, "pl_PL.UTF-8")
 
 

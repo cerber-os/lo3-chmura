@@ -12,6 +12,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 def save_dict(name, obj):
+    if not os.path.exists(get_cur_path() + '/../cache/substitution'):
+        os.makedirs(get_cur_path() + '/../cache/substitution')
     with open(get_cur_path() + '/../cache/substitution/' + name + '.sbt', 'wb') as f:
         pickle.dump(obj, f, 2)
 
@@ -243,6 +245,8 @@ def getAlias(c, sel):
 def updateJob():
     create_new_session()
     now = datetime.now()
+    if not os.path.exists(get_cur_path() + '/../cache/substitution'):
+        os.makedirs(get_cur_path() + '/../cache/substitution')
     for filename in os.listdir(get_cur_path() + '/../cache/substitution'):
         name = os.path.splitext(filename)[0]
         if datetime.strptime(name, '%Y-%m-%d').date() < now.date():
