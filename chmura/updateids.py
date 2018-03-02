@@ -7,8 +7,10 @@ import chmura.log as log
 from chmura.models import Alias
 from django.core.exceptions import ObjectDoesNotExist
 import locale
+import platform
 
-locale.setlocale(locale.LC_COLLATE, "pl_PL.UTF-8")
+if platform.system() != 'Windows':
+    locale.setlocale(locale.LC_COLLATE, "pl_PL.UTF-8")
 
 
 def save_dict(name, obj):
