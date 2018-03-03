@@ -37,16 +37,16 @@
 				<option value="/" {% if request.path == "/" %}selected{%endif%}>Plan lekcji</option>
 				<option value="/substitution/" {% if request.path == "/substitution/" %}selected{% endif %}>Zastępstwa</option>
 				<option value="/changelog/" {% if request.path == "/changelog/" %}selected{% endif %}>Changelog</option>
-				{% if request.path == "/adminlogin/" %} <option selected>Logowanie</option> {% endif %}
-				{% if request.path == "/admin/" %} <option selected>Panel administracyjny</option> {% endif %}
+				{% if request.path == "/adminlogin/" %}<option value="/adminlogin/" selected>Logowanie</option> {% endif %}
+				{% if user.is_authenticated %}<option value="/admin/" {% if request.path == "/admin/" %}selected{% endif %}>Panel administracyjny</option>{% endif %}
 			</select>
 			{% block secondaryheaderselect %}{% endblock %}
 			<div id="headermenu" style="display: none">
 				<a href="/" {% if request.path == "/" %}class="current"{% endif %}>Plan lekcji</a>
 				<a href="/substitution/" {% if request.path == "/substitution/" %}class="current"{% endif %}>Zastępstwa</a>
 				<a href="/changelog/" {% if request.path == "/changelog/" %}class="current"{% endif %}>Changelog</a>
-				{% if request.path == "/adminlogin/" %} <a href="/changelog/" class="current">Logowanie</a> {% endif %}
-				{% if request.path == "/admin/" %} <a href="/changelog/" class="current">Panel administracyjny</a> {% endif %}
+				{% if request.path == "/adminlogin/" %} <a href="/adminlogin/" class="current">Logowanie</a> {% endif %}
+				{% if user.is_authenticated %}<a href="/changelog/" {% if request.path == "/admin/" %}class="current"{% endif %}>Panel administracyjny</a>{% endif %}
 			</div>
 		</header>
 		
