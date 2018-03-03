@@ -13,8 +13,9 @@
 
 <section>
 	<h2>Aliasy klas</h2>
-	<form method="post" action="/admin/modifyaliases/">
+	<form method="post" action="/admin/modifyaliases/?aliastype=class">
 		<div class="tablescroller">
+			{% if classes|length > 0 %}
 			<table>
 				{% for class in classes %}
 				<tr>
@@ -23,15 +24,20 @@
 				</tr>
 				{% endfor %}
 			</table>
+			{% else %}
+			Brak klas w bazie danych.
+			{% endif %}
 		</div>
+		{% if status == "2" and alias_type == "class" %}<p class="success">Aliasy zapisane.</p>{% endif %}
 		<input type="submit" value="Zapisz">
 		{% csrf_token %}
 	</form>
 </section>
 <section>
 	<h2>Aliasy przedmiotów</h2>
-	<form method="post" action="/admin/modifyaliases/">
+	<form method="post" action="/admin/modifyaliases/?aliastype=subject">
 		<div class="tablescroller">
+			{% if subjects|length > 0 %}
 			<table>
 				{% for subject in subjects %}
 				<tr>
@@ -40,26 +46,49 @@
 				</tr>
 				{% endfor %}
 			</table>
+			{% else %}
+			Brak przedmiotów w bazie danych.
+			{% endif %}
 		</div>
+		{% if status == "2" and alias_type == "subject" %}<p class="success">Aliasy zapisane.</p>{% endif %}
 		<input type="submit" value="Zapisz">
 		{% csrf_token %}
 	</form>
 </section>
 <section>
 	<h2>Pamięć podręczna</h2>
-	{% if update_state|length > 0 %}
-	<p>
-		{{ update_state }}
-	</p>
-	{% endif %}
 	<p>
 		Usuń zbuforowane dane i pobierz je na nowo. Uwaga: proces może potrwać nawet 30 minut i wstrzymuje pracę serwera.
 	</p>
+	<p>
+		Status ostatniej aktualizacji:
+		{% if update_state == 1 %}
+		Aktualizacja w toku
+		{% elif update_state == 2 %}
+		Aktualizacja ukończona pomyślnie
+		{% elif update_state == -1 %}
+		Błąd
+		{% else %}
+		Stan nieznany
+		{% endif %}
+	</p>
+	{% if status == "3" %}
+	<p class="success">Aktualizacja rozpoczęta.</p>
+	{% elif status == "-5" %}
+	<p class="error">Funkcja nieobsługiwana w systemie Windows.</p>
+	{% elif status == "-6" %}
+	<p class="error">Aktualizacja już jest w toku.</p>
+	{% endif %}
 	<form method="post" action="/admin/updatecache/"><input type="submit" value="Pobierz pamięć od nowa">{% csrf_token %}</form>
-	{% if is_debug %}
+	{% if is_debug or status == "-4" %}
 	<p>
 		Usuń zbuforowane dane bez pobierania.
 	</p>
+	{% if status == "1" %}
+	<p class="success">Pamięć podręczna wyczyszczona pomyślnie.</p>
+	{% elif status == "-4" %}
+	<p class="error">Funkcja dostępna tylko w trybie debug.</p>
+	{% endif %}
 	<form method="post" action="/admin/clearcache/"><input type="submit" value="Wyczyść pamięć">{% csrf_token %}</form>
 	{% endif %}
 </section>
@@ -82,6 +111,15 @@
 				<td><input type="password" name="newer_password"></td>
 			</tr>
 		</table>
+		
+		{% if status == "-1" %}
+		<p class="error">Hasło nie spełnia wymogów bezpieczeństwa.</p>
+		{% elif status == "-2" %}
+		<p class="error">Hasła nie są jednakowe.</p>
+		{% elif status == "-3" %}
+		<p class="error">Stare hasło jest niepoprawne.</p>
+		{% endif %}
+		
 		<input type="submit" value="Zmień hasło">
 	</form>
 	<form method="post" action="/admin/changepass/" class="mobilechangepassword">
@@ -91,6 +129,14 @@
 		<input type="password" name="new_password">
 		<label>Powtórz hasło:</label>
 		<input type="password" name="newer_password">
+		
+		{% if status == "-1" %}
+		<p class="error">Hasło nie spełnia wymogów bezpieczeństwa.</p>
+		{% elif status == "-2" %}
+		<p class="error">Hasła nie są jednakowe.</p>
+		{% elif status == "-3" %}
+		<p class="error">Stare hasło jest niepoprawne.</p>
+		{% endif %}
 		
 		<input type="submit" value="Zmień hasło">
 	</form>

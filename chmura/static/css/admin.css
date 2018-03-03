@@ -41,7 +41,9 @@ div.tablescroller input {
 	width: 100%;
 }
 
-p.error { color: #E53935; margin: 0 8px; }
+.loginerror { margin: 0 8px; color: #E53935; }
+.error { color: #E53935; }
+.success { color: #2E7D32; }
 form.nonsectionui {
 	display: block;
 	margin: 8px;

@@ -145,8 +145,8 @@ def adminPanel(request):
     con = {'classes': load_ids('classes'),
            'subjects': [i.name for i in Subject.objects.all()],
            'is_debug': DEBUG,
-           'error': request.GET.get('error', ''),
-           'info': request.GET.get('info', ''),
+           'status': request.GET.get('status', ''),
+           'alias_type': request.GET.get('aliastype', ''),
            'aliases': {i.orig: i.alias for i in Alias.objects.all()},
            'update_state': adminGetState()}
     for i in Alias.objects.all():
@@ -158,6 +158,28 @@ def adminPanel(request):
     con['classes'] = sorted(con['classes'])
     con['subjects'] = sorted(con['subjects'])
     return render(request, 'chmura/admin.html', con)
+
+# Słownik statusów panelu admina
+#
+# STATUS	ZNACZENIE
+# 1			Pomyślnie wyczyszczono cache
+# 2			Pomyślnie zmodyfikowano aliasy
+# 3			Aktualizacja cache rozpoczęta
+#
+# -1		Hasło nie spełnia wymagań
+# -2		Nowe hasła nie są jednakowe
+# -3		Błędne stare hasło
+# -4		Opcja dostępna w trybie debug
+# -5		Brak obsługi aktualizacji dla systemu Windows
+# -6		Aktualizacja w toku
+#
+# Słownik statusów aktualizacji
+#
+# STATUS	ZNACZENIE
+# 1			Aktualizacja w toku
+# 2			Aktualizacja ukończona
+#
+# -1		Błąd
 
 
 def adminChangePassword(request):
@@ -173,26 +195,25 @@ def adminChangePassword(request):
                 logout(request)
                 return redirect('/adminlogin/')
             else:
-                error = 'Hasło jest za krótkie, bądź nie zawiera conajmniej jednej cyfry'
+                error = '-1' # Hasło nie spełnia wymagań
         else:
-            error = 'Hasła nie są jednakowe'
+            error = '-2' # Nowe hasła nie są jednakowe
     else:
-        error = 'Wprowadzono błędne stare hasło'
-    return redirect('/admin?error=' + error)
-
+        error = '-3' # Błędne stare hasło
+    return redirect('/admin?status=' + error)
 
 def adminClearCache(request):
     if not request.user.is_authenticated:
         return redirect('/adminlogin/')
     if not DEBUG:
-        return redirect('/admin/?info=Opcja dostępna wyłącznie w trybie DEBUG')
+        return redirect('/admin/?status=-4') # Opcja dostępna w trybie debug
     if os.path.exists(get_cur_path() + '/../cache'):
         shutil.rmtree(get_cur_path() + '/../cache/')
 
     # Usuwanie kolorów
     Subject.objects.all().delete()
 
-    return redirect('/admin?info=' + 'Pomyślnie wyczyszczono cache')
+    return redirect('/admin?status=1') # Pomyślnie wyczyszczono cache
 
 
 def adminModifyAliases(request):
@@ -222,7 +243,7 @@ def adminModifyAliases(request):
             a = Alias(orig=name, alias=alias, selector=selector)
         a.alias = alias
         a.save()
-    return redirect('/admin?info=Pomyślnie zmodyfikowano aliasy')
+    return redirect('/admin?status=2&aliastype=' + request.GET.get("aliastype")) # Pomyślnie zmodyfikowano aliasy
 
 
 def adminLogout(request):
@@ -236,25 +257,25 @@ def adminUpdateCache(request):
     if not request.user.is_authenticated:
         return redirect('/adminlogin/')
     if os.name == 'nt':
-        return redirect('/admin?info=Ta funkcja nie działa w systemie Windows')
+        return redirect('/admin?status=-5') # Brak obsługi aktualizacji dla systemu Windows
     if os.path.isfile('/tmp/updateProcess') and open('/tmp/updateProcess', 'r').read(8) != 'finished':
-        return redirect('/admin?info=Aktualizacja jeszcze trwa')
+        return redirect('/admin?status=-6') # Aktualizacja w toku
 
     t = threading.Thread(target=updateCache)
     t.setDaemon(True)
     t.start()
 
-    return redirect('/admin?info=Pomyślnie rozpoczęto aktualizację cache')
+    return redirect('/admin?status=3')
 
 
 def adminGetState():
     if os.path.isfile('/tmp/updateProcess'):
         if open('/tmp/updateProcess', 'r').read(8) == 'updating':
-            return 'Aktualizacja w trakcie'
+            return 1 # Aktualizacja w toku
         elif open('/tmp/updateProcess', 'r').read(8) == 'error---':
             open('/tmp/updateProcess', 'w').write('finished')
-            return 'Wystąpił błąd. Spróbuj ponownie'
-    return 'Aktualizacja ukończona'
+            return -1 # Błąd
+    return 2 # Aktualizacja zakończona
 
 
 def updateCache():

@@ -9,7 +9,7 @@
 {% block content %}
 
 <h1>Logowanie do panelu administracyjnego</h1>
-{% if incorrect_login %}<p class="error">Błędny login lub hasło</p>{% endif %}
+{% if incorrect_login %}<p class="loginerror">Błędny login lub hasło</p>{% endif %}
 <section id="loginform">
 	<form method="post" class="desktoplogin">
 		<input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
