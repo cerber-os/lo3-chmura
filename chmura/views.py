@@ -195,25 +195,26 @@ def adminChangePassword(request):
                 logout(request)
                 return redirect('/adminlogin/')
             else:
-                error = '-1' # Hasło nie spełnia wymagań
+                error = '-1'  # Hasło nie spełnia wymagań
         else:
-            error = '-2' # Nowe hasła nie są jednakowe
+            error = '-2'  # Nowe hasła nie są jednakowe
     else:
-        error = '-3' # Błędne stare hasło
+        error = '-3'  # Błędne stare hasło
     return redirect('/admin?status=' + error)
+
 
 def adminClearCache(request):
     if not request.user.is_authenticated:
         return redirect('/adminlogin/')
     if not DEBUG:
-        return redirect('/admin/?status=-4') # Opcja dostępna w trybie debug
+        return redirect('/admin/?status=-4')  # Opcja dostępna w trybie debug
     if os.path.exists(get_cur_path() + '/../cache'):
         shutil.rmtree(get_cur_path() + '/../cache/')
 
     # Usuwanie kolorów
     Subject.objects.all().delete()
 
-    return redirect('/admin?status=1') # Pomyślnie wyczyszczono cache
+    return redirect('/admin?status=1')  # Pomyślnie wyczyszczono cache
 
 
 def adminModifyAliases(request):
@@ -243,7 +244,7 @@ def adminModifyAliases(request):
             a = Alias(orig=name, alias=alias, selector=selector)
         a.alias = alias
         a.save()
-    return redirect('/admin?status=2&aliastype=' + request.GET.get("aliastype")) # Pomyślnie zmodyfikowano aliasy
+    return redirect('/admin?status=2&aliastype=' + request.GET.get("aliastype"))  # Pomyślnie zmodyfikowano aliasy
 
 
 def adminLogout(request):
@@ -257,9 +258,9 @@ def adminUpdateCache(request):
     if not request.user.is_authenticated:
         return redirect('/adminlogin/')
     if os.name == 'nt':
-        return redirect('/admin?status=-5') # Brak obsługi aktualizacji dla systemu Windows
+        return redirect('/admin?status=-5')  # Brak obsługi aktualizacji dla systemu Windows
     if os.path.isfile('/tmp/updateProcess') and open('/tmp/updateProcess', 'r').read(8) != 'finished':
-        return redirect('/admin?status=-6') # Aktualizacja w toku
+        return redirect('/admin?status=-6')  # Aktualizacja w toku
 
     t = threading.Thread(target=updateCache)
     t.setDaemon(True)
@@ -271,11 +272,11 @@ def adminUpdateCache(request):
 def adminGetState():
     if os.path.isfile('/tmp/updateProcess'):
         if open('/tmp/updateProcess', 'r').read(8) == 'updating':
-            return 1 # Aktualizacja w toku
+            return 1  # Aktualizacja w toku
         elif open('/tmp/updateProcess', 'r').read(8) == 'error---':
             open('/tmp/updateProcess', 'w').write('finished')
-            return -1 # Błąd
-    return 2 # Aktualizacja zakończona
+            return -1  # Błąd
+    return 2  # Aktualizacja zakończona
 
 
 def updateCache():

@@ -180,7 +180,7 @@ def getclassroom(value, classrooms):
 def getteachername(card, teachers):
     ret = ""
     for t in card['teachers']:
-        ret += teachers.get(t, {}).get('firstname')[0] + '. ' + teachers.get(t, {}).get('lastname') + ', '
+        ret += (teachers.get(t, {}).get('firstname')[0:1] or '') + '. ' + teachers.get(t, {}).get('lastname') + ', '
     ret = ret[:-2]
     return ret
 
