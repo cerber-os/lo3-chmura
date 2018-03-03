@@ -31,6 +31,7 @@ div.tablescroller {
 	height: 200px;
 	
 	overflow-y: scroll;
+	resize: vertical;
 }
 div.tablescroller table {
 	width: 100%;
