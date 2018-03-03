@@ -1,4 +1,5 @@
 {% extends "chmura/master.html" %}
+{% load tags_extra %}
 
 {% block title %}Panel administracyjny{% endblock %}
 
@@ -12,31 +13,37 @@
 
 <section>
 	<h2>Aliasy klas</h2>
-	<div class="tablescroller">
-		<table>
-			{% for class in classes %}
-			<tr>
-				<td>{{ class }}</td>
-				<td><input type="text" value="{{ aliases|get_item:class }}" name="class${{ class }}"></td>
-			</tr>
-			{% endfor %}
-		</table>
-	</div>
-	<form method="post" action="/admin/modifyaliases/"><input type="submit" value="Zapisz">{% csrf_token %}</form>
+	<form method="post" action="/admin/modifyaliases/">
+		<div class="tablescroller">
+			<table>
+				{% for class in classes %}
+				<tr>
+					<td>{{ class }}</td>
+					<td><input type="text" value="{{ aliases|get_item:class }}" name="class${{ class }}"></td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<input type="submit" value="Zapisz">
+		{% csrf_token %}
+	</form>
 </section>
 <section>
 	<h2>Aliasy przedmiotów</h2>
-	<div class="tablescroller">
-		<table>
-			{% for subject in subjects %}
-			<tr>
-				<td>{{ subject }}</td>
-				<td><input type="text" value="{{ aliases|get_item:subject }}" name="subject${{ subject }}"></td>
-			</tr>
-			{% endfor %}
-		</table>
-	</div>
-	<form method="post" action="/admin/modifyaliases/"><input type="submit" value="Zapisz">{% csrf_token %}</form>
+	<form method="post" action="/admin/modifyaliases/">
+		<div class="tablescroller">
+			<table>
+				{% for subject in subjects %}
+				<tr>
+					<td>{{ subject }}</td>
+					<td><input type="text" value="{{ aliases|get_item:subject }}" name="subject${{ subject }}"></td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<input type="submit" value="Zapisz">
+		{% csrf_token %}
+	</form>
 </section>
 <section>
 	<h2>Pamięć podręczna</h2>
