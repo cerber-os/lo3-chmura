@@ -8,9 +8,9 @@ from time import sleep
 import chmura.log as log
 from chmura.colors import get_color
 from chmura.updateids import load_ids
-import shutil
+# import shutil
 from django.core.exceptions import ObjectDoesNotExist
-from chmura.models import Alias
+from chmura.models import Alias, Settings
 
 
 def save_dict(name, obj):
@@ -29,6 +29,8 @@ def load_dict(selector, uid):
             return pickle.load(f)
     except FileNotFoundError:
         if DEBUG or selector == 'student':
+            if getReversedStudent(load_ids('students'), uid) == "null":
+                raise Http404
             plan = download_and_regenerate_timetable(uid, selector)
             save_dict(selector + uid, plan)
         else:
@@ -68,12 +70,21 @@ def retrieve_pass():
         return None
 
 
-# TODO: Dodać wersje planu lekcji
+def get_timetable_newest_version():
+    serverResponse = url_request('https://lo3gdynia.edupage.org/timetable/').read().decode('UTF-8')
+    versions = serverResponse[serverResponse.index('"text":"następny tydzień",') + len('"text":"następny tydzień",'):
+                              serverResponse.index('[\n{"text":"Stara wersja",') + len('[\n{"text":"Stara wersja",')]
+    versions = versions[versions.index('}],') + len('}],'):]
+    versionStart = versions.index('"obj":') + len('"obj":')
+    version = versions[versionStart: versions.index('}', versionStart)]
+    log.info('Nowa wersja planu to: ' + str(version))
+    Settings.objects.filter().update(timetableVersion=version)
 
 
 def download_gcall(uid='-22', selector='trieda', credentials=None):
     if credentials is None:
         credentials = regenerate_pass()
+    settings = Settings.objects.all()[0]
     params = {'gadget': 'MobileTimetableBrowser',
               'jscid': credentials['jscid'],
               'gsh': credentials['gsh'],
@@ -81,7 +92,7 @@ def download_gcall(uid='-22', selector='trieda', credentials=None):
               'oblast': selector,
               'id': uid,
               '_LJSL': '2048',
-              'num': '153'}
+              'num': settings.timetableVersion}
     serverResponse = url_request('https://lo3gdynia.edupage.org/gcall',
                                  {'Cookie': 'PHPSESSID=' + credentials['cookie']},
                                  params).read().decode('UTF-8')
@@ -221,6 +232,7 @@ def get_timetable(uid, selector):
 
 def timetableJob():
     create_new_session()
+    get_timetable_newest_version()
     log.info("Updating timetable")
     credentials = retrieve_pass()
     if credentials is None:
@@ -229,8 +241,8 @@ def timetableJob():
     connection_count = 0
 
     if not DEBUG:
-        if os.path.exists(get_cur_path() + '/../cache'):
-            shutil.rmtree(get_cur_path() + '/../cache/timetables')
+        # if os.path.exists(get_cur_path() + '/../cache'):
+        #    shutil.rmtree(get_cur_path() + '/../cache/timetables')
 
         targets = {'classes':  'trieda',
                    'teachers': 'ucitel'}
