@@ -20,6 +20,7 @@ import threading
 from django.core.mail import EmailMessage
 import tempfile
 
+
 def index(request):
     types = {'class': 'trieda',
              'student': 'student',
@@ -149,7 +150,7 @@ def adminPanel(request):
            'alias_type': request.GET.get('aliastype', ''),
            'aliases': {i.orig: i.alias for i in Alias.objects.all()},
            'update_state': adminGetState(),
-           'substitution_types': ['Dyżur', 'grupa zwol. do domu', 'pl', 'Nie ma', 'lg', 'Anulowano', '->']}
+           'substitution_types': ['Dyżur', 'grupa zwol. do domu', 'pl', 'Nie ma', 'lg', 'Anulowano', '->', 'Zam.']}
     for i in Alias.objects.all():
         classes = con['classes']
         for c in classes:
@@ -299,8 +300,8 @@ def updateCache():
             log.error(e)
             email = EmailMessage('Blad przy aktualizacji cache!!!', 'Treść błędu: ' + str(e), to=['cerber@cerberos.pl'])
             email.send()
+            return
         except Exception as e:
             log.crititcal('Double error!!!: ' + str(e))
             return
     open(updateprocesspath, 'w').write('finished')
-    return
