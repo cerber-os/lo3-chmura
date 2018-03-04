@@ -23,7 +23,13 @@
 	margin: 0;
 	line-height: 1.1em;
 }
-#timetable .lesson p:nth-of-type(1), #timetable .lesson p:nth-of-type(3) { font-weight: bold; }
+#timetable .lesson p:nth-of-type(1) {
+	text-transform: uppercase;
+	font-weight: bold;
+}
+#timetable .lesson p:nth-of-type(3) {
+	font-weight: bold;
+}
 #timetable p.detailslink {
 	text-transform: uppercase;
 	font-size: 0.8em;
@@ -34,6 +40,7 @@
 	color: inherit;
 }
 #timetable .hiddenlesson { display: none !important; }
+#timetable .variouslessons p:nth-child(1) { text-transform: none; }
 
 #overlaycontent .compactlesson { padding: 0.77em; }
 #overlaycontent .compactlesson:not(:last-child) { margin-bottom: 2px; }
@@ -44,6 +51,7 @@
 	
 	margin: 0;
 }
+#overlaycontent .compactlesson p:nth-child(1) { text-transform: uppercase; }
 #overlaycontent .compactlesson p:not(:nth-child(2)) { font-weight: bold; }
 
 #overlaycontent p { margin-bottom: -6px; }
