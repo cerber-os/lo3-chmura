@@ -18,7 +18,7 @@ from chmura.models import Subject, Alias
 from django.core.exceptions import ObjectDoesNotExist
 import threading
 from django.core.mail import EmailMessage
-
+import tempfile
 
 def index(request):
     types = {'class': 'trieda',
@@ -255,11 +255,11 @@ def adminLogout(request):
 
 
 def adminUpdateCache(request):
+    updateprocesspath = tempfile.gettempdir() + '/updateProcess'
+    
     if not request.user.is_authenticated:
         return redirect('/adminlogin/')
-    if os.name == 'nt':
-        return redirect('/admin?status=-5')  # Brak obsługi aktualizacji dla systemu Windows
-    if os.path.isfile('/tmp/updateProcess') and open('/tmp/updateProcess', 'r').read(8) != 'finished':
+    if os.path.isfile(updateprocesspath) and open(updateprocesspath, 'r').read(8) != 'finished':
         return redirect('/admin?status=-6')  # Aktualizacja w toku
 
     t = threading.Thread(target=updateCache)
@@ -270,29 +270,33 @@ def adminUpdateCache(request):
 
 
 def adminGetState():
-    if os.path.isfile('/tmp/updateProcess'):
-        if open('/tmp/updateProcess', 'r').read(8) == 'updating':
+    updateprocesspath = tempfile.gettempdir() + '/updateProcess'
+    
+    if os.path.isfile(updateprocesspath):
+        if open(updateprocesspath, 'r').read(8) == 'updating':
             return 1  # Aktualizacja w toku
-        elif open('/tmp/updateProcess', 'r').read(8) == 'error---':
-            open('/tmp/updateProcess', 'w').write('finished')
+        elif open(updateprocesspath, 'r').read(8) == 'error---':
+            open(updateprocesspath, 'w').write('finished')
             return -1  # Błąd
     return 2  # Aktualizacja zakończona
 
 
 def updateCache():
-    open('/tmp/updateProcess', 'w').write('updating')
+    updateprocesspath = tempfile.gettempdir() + '/updateProcess'
+    
+    open(updateprocesspath, 'w').write('updating')
     try:
         updateid()
         timetableJob()
         updateJob()
     except Exception as e:
         try:
-            open('/tmp/updateProcess', 'w').write('error---')
+            open(updateprocesspath, 'w').write('error---')
             log.error(e)
             email = EmailMessage('Blad przy aktualizacji cache!!!', 'Treść błędu: ' + str(e), to=['cerber@cerberos.pl'])
             email.send()
         except Exception as e:
             log.crititcal('Double error!!!: ' + str(e))
             return
-    open('/tmp/updateProcess', 'w').write('finished')
+    open(updateprocesspath, 'w').write('finished')
     return
