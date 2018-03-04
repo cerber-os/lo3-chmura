@@ -84,6 +84,9 @@ def get_timetable_newest_version():
 def download_gcall(uid='-22', selector='trieda', credentials=None):
     if credentials is None:
         credentials = regenerate_pass()
+    if len(Settings.objects.all()) == 0:
+        unikalnanazwazmiennej = Settings()
+        unikalnanazwazmiennej.save()
     settings = Settings.objects.all()[0]
     params = {'gadget': 'MobileTimetableBrowser',
               'jscid': credentials['jscid'],

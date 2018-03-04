@@ -21,11 +21,6 @@ if ENABLE_AGGRESSIVE_IP_CHANGE:
     log.warning('Aggressive IP changing is active!')
 
 
-if len(Settings.objects.all()) == 0:
-    unikalnanazwazmiennej = Settings()
-    unikalnanazwazmiennej.save()
-
-
 def get_cur_path():
     return os.path.dirname(os.path.abspath(__file__))
 

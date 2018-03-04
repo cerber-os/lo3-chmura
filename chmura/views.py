@@ -148,7 +148,8 @@ def adminPanel(request):
            'status': request.GET.get('status', ''),
            'alias_type': request.GET.get('aliastype', ''),
            'aliases': {i.orig: i.alias for i in Alias.objects.all()},
-           'update_state': adminGetState()}
+           'update_state': adminGetState(),
+           'substitution_types': ['Dyżur', 'grupa zwol. do domu', 'pl', 'Nie ma', 'lg', 'Anulowano', '->']}
     for i in Alias.objects.all():
         classes = con['classes']
         for c in classes:
@@ -228,9 +229,12 @@ def adminModifyAliases(request):
         elif name.startswith('subject$'):
             selector = 'subject'
             name = name[len('subject$'):]
+        elif name.startswith('subst$'):
+            selector = 'subst'
+            name = name[len('subst$'):]
         else:
             continue
-        if len(alias) == 0 or len(alias.replace(' ', '')) == 0:
+        if len(alias.replace(' ', '')) == 0:
             try:
                 a = Alias.objects.get(orig=name)
                 a.delete()

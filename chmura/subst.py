@@ -67,7 +67,11 @@ def regenerate_pass():
 
 
 def download_subst(date):
+    if len(Settings.objects.all()) == 0:
+        unikalnanazwazmiennej = Settings()
+        unikalnanazwazmiennej.save()
     settings = Settings.objects.all()[0]
+    substitution_types_aliases = {i.orig: i.alias for i in Alias.objects.filter(selector='subst')}
     params = {'gpid': settings.gpid,
               'gsh': settings.gsh,
               'action': 'switch',
@@ -132,7 +136,9 @@ def download_subst(date):
             elif key == 'note':
                 status['notka'] = zastepstwo[key]
             elif key == 'substitution_typeid':
-                status['typ'] = subType.get(zastepstwo[key], "")
+                status['typ'] = subType.get(zastepstwo[key], {})
+                status['typ']['short'] = substitution_types_aliases.get(status['typ'].get('short', ''),
+                                                                        status['typ'].get('short', ''))
             elif key == 'period':
                 if type(periods) is list:
                     status['lekcja'] = periods[int(zastepstwo[key])]

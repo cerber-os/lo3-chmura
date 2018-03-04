@@ -56,6 +56,24 @@
 	</form>
 </section>
 <section>
+	<h2>Aliasy rodzajów zastępstw</h2>
+	<form method="post" action="/admin/modifyaliases/?aliastype=subst">
+		<div class="tablescroller">
+			<table>
+				{% for type in substitution_types %}
+				<tr>
+					<td>{{ type }}</td>
+					<td><input type="text" value="{{ aliases|get_item:type }}" name="subst${{ type }}"></td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+		{% if status == "2" and alias_type == "subst" %}<p class="success">Aliasy zapisane.</p>{% endif %}
+		<input type="submit" value="Zapisz">
+		{% csrf_token %}
+	</form>
+</section>
+<section>
 	<h2>Pamięć podręczna</h2>
 	<p>
 		Usuń zbuforowane dane i pobierz je na nowo. Uwaga: proces może potrwać nawet 30 minut.
