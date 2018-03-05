@@ -36,7 +36,7 @@
 			<select onchange="handleLocationSelectUpdate(this)">
 				<option value="/" {% if request.path == "/" %}selected{%endif%}>Plan lekcji</option>
 				<option value="/substitution/" {% if request.path == "/substitution/" %}selected{% endif %}>Zastępstwa</option>
-                <option value="/news/" {% if request.path == "/news/" %}selected{% endif %}>Aktualności</option>
+                <!--<option value="/news/" {% if request.path == "/news/" %}selected{% endif %}>Aktualności</option>-->
 				<option value="/changelog/" {% if request.path == "/changelog/" %}selected{% endif %}>Changelog</option>
 				{% if request.path == "/adminlogin/" %}<option value="/adminlogin/" selected>Logowanie</option> {% endif %}
 				{% if user.is_authenticated %}<option value="/admin/" {% if request.path == "/admin/" %}selected{% endif %}>Panel administracyjny</option>{% endif %}
