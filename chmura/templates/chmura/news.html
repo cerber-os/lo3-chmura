@@ -1,22 +1,16 @@
-{% extends 'chmura/index.html' %}
+{% extends "chmura/master.html" %}
 
-{% block header %}Aktualności{% endblock %}
+{% block title %}Terminarz{% endblock %}
+
+{% block localcss %}
+    <link rel="stylesheet" href="/static/css/changelog.css">
+{% endblock %}
 
 {% block content %}
-<section class="dashboard-counts no-padding-bottom">
-  <div class="container-fluid">
-    <div class="row bg-white has-shadow">
-      <div class="col-xl-12 col-sm-12">
-        <h1 style="width: 100%; text-align: center;">Aktualności</h1>
-        {% for message in news %}
-            <hr />
-            <b>{{message.title}}</b>
-            <div class="item align-items-center" style="overflow-x: auto;">
-              {% autoescape off %}{{ message.inner }}{% endautoescape %}
-            </div>
-        {% endfor  %}
-      </div>
-    </div>
-  </div>
-</section>
+    {% for message in news %}
+        <article>
+            <h1>{{ message.title }}</h1>
+            <div style="max-height: 500px; overflow-y: auto;">{% autoescape off %}{{ message.inner }}{% endautoescape %}</div>
+        </article>
+    {% endfor %}
 {% endblock %}

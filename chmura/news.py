@@ -1,24 +1,33 @@
 from bs4 import BeautifulSoup
+from .utils import url_request
+from lo3.settings import DEBUG, CACHE_LOCATION
+from django.http import Http404
 import pickle
-from .utils import *
 import chmura.log as log
+import os
 
 
 def save_dict(obj):
-    with open(get_cur_path() + '/../cache/newsF/news.nw', 'wb') as f:
+    if not os.path.exists(CACHE_LOCATION + 'newsF'):
+        os.makedirs(CACHE_LOCATION + 'newsF')
+    with open(CACHE_LOCATION + 'news.nw', 'wb') as f:
         pickle.dump(obj, f, 2)
 
 
 def load_dict():
-    if not os.path.exists(get_cur_path() + '/../cache/newsF'):
-        os.makedirs(get_cur_path() + '/../cache/newsF')
+    if not os.path.exists(CACHE_LOCATION + 'newsF'):
+        os.makedirs(CACHE_LOCATION + 'newsF')
     try:
-        with open(get_cur_path() + '/../cache/newsF/news.nw', 'rb') as f:
+        with open(CACHE_LOCATION + 'news.nw', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
-        news = download_news()
-        save_dict(news)
-        return news
+        if DEBUG:
+            log.info('Downloading news')
+            news = download_news()
+            save_dict(news)
+        else:
+            raise Http404
+    return news
 
 
 def download_news():

@@ -36,6 +36,7 @@
 			<select onchange="handleLocationSelectUpdate(this)">
 				<option value="/" {% if request.path == "/" %}selected{%endif%}>Plan lekcji</option>
 				<option value="/substitution/" {% if request.path == "/substitution/" %}selected{% endif %}>Zastępstwa</option>
+                <option value="/news/" {% if request.path == "/news/" %}selected{% endif %}>Aktualności</option>
 				<option value="/changelog/" {% if request.path == "/changelog/" %}selected{% endif %}>Changelog</option>
 				{% if request.path == "/adminlogin/" %}<option value="/adminlogin/" selected>Logowanie</option> {% endif %}
 				{% if user.is_authenticated %}<option value="/admin/" {% if request.path == "/admin/" %}selected{% endif %}>Panel administracyjny</option>{% endif %}
@@ -44,6 +45,7 @@
 			<div id="headermenu" style="display: none">
 				<a href="/" {% if request.path == "/" %}class="current"{% endif %}>Plan lekcji</a>
 				<a href="/substitution/" {% if request.path == "/substitution/" %}class="current"{% endif %}>Zastępstwa</a>
+                <a href="/news/" {% if request.path == "/news/" %}class="current"{% endif %}>Aktualności</a>
 				<a href="/changelog/" {% if request.path == "/changelog/" %}class="current"{% endif %}>Changelog</a>
 				{% if request.path == "/adminlogin/" %} <a href="/adminlogin/" class="current">Logowanie</a> {% endif %}
 				{% if user.is_authenticated %}<a href="/changelog/" {% if request.path == "/admin/" %}class="current"{% endif %}>Panel administracyjny</a>{% endif %}
@@ -80,7 +82,7 @@
 							Z góry dziękujemy za pomoc! 🙂
 						</p>
 						<p>
-							<a href="javascript:void()" onclick="closeHello()">Zamknij</a>
+							<a href="javascript:void(0)" onclick="closeHello()">Zamknij</a>
 						</p>
 					</div>
 					

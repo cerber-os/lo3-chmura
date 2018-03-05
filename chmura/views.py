@@ -1,24 +1,24 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import Http404
+from django.core.mail import EmailMessage
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from chmura.models import Subject, Alias
+from lo3.settings import DEBUG
 from .timetable import get_timetable, timetableJob
 from .subst import get_substitution, updateJob
 from .updateids import load_ids, updateid
-from .news import get_news
+from .news import get_news, newsJob
 from .agenda import get_agenda
-from .utils import *
+from .utils import getReversedStudent, getReversedDict, get_cur_path
 import datetime
 import re
 import chmura.log as log
-from django.shortcuts import redirect
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
-from lo3.settings import DEBUG
 import shutil
-from chmura.models import Subject, Alias
-from django.core.exceptions import ObjectDoesNotExist
 import threading
-from django.core.mail import EmailMessage
 import tempfile
+import os
 
 
 def index(request):
@@ -150,7 +150,8 @@ def adminPanel(request):
            'alias_type': request.GET.get('aliastype', ''),
            'aliases': {i.orig: i.alias for i in Alias.objects.all()},
            'update_state': adminGetState(),
-           'substitution_types': ['Dyżur', 'grupa zwol. do domu', 'pl', 'Nie ma', 'lg', 'Anulowano', '->', 'Zam.']}
+           'substitution_types': ['Dyżur', 'grupa zwol. do domu', 'pl', 'Nie ma', 'lg', 'Anulowano', '->', 'Zam.',
+                                  'grupa przychodzi później']}
     for i in Alias.objects.all():
         classes = con['classes']
         for c in classes:
@@ -294,6 +295,7 @@ def updateCache():
         updateid()
         timetableJob()
         updateJob()
+        newsJob()
     except Exception as e:
         try:
             open(updateprocesspath, 'w').write('error---')
