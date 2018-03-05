@@ -45,7 +45,7 @@
 			<div id="headermenu" style="display: none">
 				<a href="/" {% if request.path == "/" %}class="current"{% endif %}>Plan lekcji</a>
 				<a href="/substitution/" {% if request.path == "/substitution/" %}class="current"{% endif %}>Zastępstwa</a>
-                <a href="/news/" {% if request.path == "/news/" %}class="current"{% endif %}>Aktualności</a>
+                <!--<a href="/news/" {% if request.path == "/news/" %}class="current"{% endif %}>Aktualności</a>-->
 				<a href="/changelog/" {% if request.path == "/changelog/" %}class="current"{% endif %}>Changelog</a>
 				{% if request.path == "/adminlogin/" %} <a href="/adminlogin/" class="current">Logowanie</a> {% endif %}
 				{% if user.is_authenticated %}<a href="/changelog/" {% if request.path == "/admin/" %}class="current"{% endif %}>Panel administracyjny</a>{% endif %}
