@@ -85,7 +85,7 @@ def announcement(request):
 
 def substitutionList(request):
     now = datetime.datetime.now()
-    if now.hour > 17:
+    if now.hour >= 17:
         now = now + datetime.timedelta(days=1)
     now = str(now.year) + '-' + str(now.month).zfill(2) + '-' + str(now.day).zfill(2)
     date = request.GET.get('date', now)
