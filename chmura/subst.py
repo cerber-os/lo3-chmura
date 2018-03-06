@@ -148,48 +148,48 @@ def download_subst(date):
                     status['lekcja'] = periods.get(zastepstwo[key], 'None')
 
             elif key == 'subjectid':
-                status['przedmiot'] = [getSubject(subjects[str(zastepstwo[key])])]
+                status['przedmiot'] = [getSubject(subjects.get(str(zastepstwo[key]), ''))]
             elif key == 'subjectids':
-                status['przedmiot'] = [getSubject(subjects[str(s)]) for s in zastepstwo[key]]
+                status['przedmiot'] = [getSubject(subjects.get(str(s), '')) for s in zastepstwo[key]]
 
             elif key == 'teacherid':
-                status['nauczyciel'] = [teachers[str(zastepstwo[key])]]
+                status['nauczyciel'] = [teachers.get(str(zastepstwo[key]), '')]
             elif key == 'teacherids':
-                status['nauczyciel'] = [teachers[str(s)] for s in zastepstwo[key]]
+                status['nauczyciel'] = [teachers.get(str(s), '') for s in zastepstwo[key]]
 
             elif key == 'classid':
-                status['klasa'] = [getClass(classes[str(zastepstwo[key])])]
+                status['klasa'] = [getClass(classes.get(str(zastepstwo[key]), ''))]
             elif key == 'classids':
-                status['klasa'] = [getClass(classes[str(s)]) for s in zastepstwo[key]]
+                status['klasa'] = [getClass(classes.get(str(s), '')) for s in zastepstwo[key]]
 
             elif key == 'classroomid':
-                status['sala'] = [classrooms[str(zastepstwo[key])]]
+                status['sala'] = [classrooms.get(str(zastepstwo[key]), '')]
             elif key == 'classroomids':
-                status['sala'] = [classrooms[str(s)] for s in zastepstwo[key]]
+                status['sala'] = [classrooms.get(str(s), '') for s in zastepstwo[key]]
 
             elif key == 'changes':
                 for z in zastepstwo[key]:
                     if z['column'] == 'teacherid' or z['column'] == 'teacherids':
-                        status['old_nauczyciel'].append(teachers[str(z.get('old'))])
+                        status['old_nauczyciel'].append(teachers.get(str(z.get('old', '')), ''))
 
-                        n = teachers.get(str(z.get('new')))
+                        n = teachers.get(str(z.get('new', '')))
                         if n not in [None, '']:
                             status['new_nauczyciel'].append(n)
                     elif z['column'] == 'classroomid' or z['column'] == 'classroomids':
-                        status['old_sala'].append(classrooms[str(z.get('old'))])
-                        s = classrooms.get(str(z.get('new')))
+                        status['old_sala'].append(classrooms.get(str(z.get('old', '')), ''))
+                        s = classrooms.get(str(z.get('new', '')))
                         if s not in [None, '']:
                             status['new_sala'].append(s)
                     elif z['column'] == 'subjectid' or z['column'] == 'subjectids':
-                        status['old_przedmiot'].append(getSubject(subjects[str(z.get('old'))]))
+                        status['old_przedmiot'].append(getSubject(subjects.get(str(z.get('old', '')), '')))
 
-                        p = getSubject(subjects.get(str(z.get('new'))))
+                        p = getSubject(subjects.get(str(z.get('new', '')), ''))
                         if p not in [None, '']:
                             status['new_przedmiot'].append(p)
                     elif z['column'] == 'classid' or z['column'] == 'classids':
-                        status['old_klasa'].append(getClass(classes[str(z.get('old'))]))
+                        status['old_klasa'].append(getClass(classes.get(str(z.get('old', '')), '')))
 
-                        c = getClass(classes.get(str(z.get('new'))))
+                        c = getClass(classes.get(str(z.get('new', '')), ''))
                         if c is not None:
                             status['new_klasa'].append(c)
 

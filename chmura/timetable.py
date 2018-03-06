@@ -29,6 +29,7 @@ def load_dict(selector, uid):
             return pickle.load(f)
     except FileNotFoundError:
         if DEBUG or selector == 'student':
+            log.info("Downloading timetable " + selector + ':' + uid + ' on demand')
             if getReversedStudent(load_ids('students'), uid) == "null":
                 raise Http404
             plan = download_and_regenerate_timetable(uid, selector)
