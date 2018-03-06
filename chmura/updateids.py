@@ -82,6 +82,8 @@ def save_ids(ids):
             d[get_fields(i, t)] = t['id']
         if i == 'teachers':
             save_dict(i, dict(sorted(d.items(), key=lambda x: locale.strxfrm(x[0].replace('-', 'źź')))))
+        elif i == 'classes':
+            save_dict(i, dict(sorted(d.items(), key=lambda x: locale.strxfrm(x[0]))))
         else:
             save_dict(i, d)
 
@@ -91,7 +93,7 @@ def save_ids(ids):
     if 'students' in ids:
         d = {}
         for uczen in ids['students']:
-            nazwisko = re.search(r'(?<=[.[|])([A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ,]+)', uczen['lastname'])
+            nazwisko = re.search(r'(?<=[.[| ])([A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ, ]+)', uczen['lastname'])
             nazwisko = nazwisko.group(0) if nazwisko is not None else ""
             nazwisko = nazwisko.replace(',', ' ')
             d.setdefault(klasy.get(uczen['classid'], '0'), []).append({'firstname': uczen['firstname'],
@@ -99,7 +101,7 @@ def save_ids(ids):
                                                                        'id': uczen['id']})
         for group in d:
             d[group] = sorted(d[group], key=lambda x: locale.strxfrm(x['lastname']))
-        save_dict('students', d)
+        save_dict('students', dict(sorted(d.items())))
 
 
 def load_ids(typ):
