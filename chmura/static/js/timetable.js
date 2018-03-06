@@ -1,83 +1,103 @@
-﻿function showTimetableSelect() {
+﻿/*
+*	TIMETABLE SELECTION-RELATED FUNCTIONS
+*/
+function showTimetableSelect() { //show the timetable select dialog
+	//copy timetable select HTML to overlay and display it
 	document.getElementById("overlay").style.visibility = "visible";
 	document.getElementById("overlaytitle").innerText = "Wybierz plan";
 	document.getElementById("overlaycontent").innerHTML = document.getElementById("timetableselectdialog").innerHTML;
 	
+	//zoom out for mobile users
 	zoomOut();
 }
-function handleTimetableSelectUpdate(select) {
+function handleTimetableSelectUpdate(select) { //triggered when a timetable quickselect is changed, modifies the select and acts appropriately
+	//if the chosen option was the last one on the list, show timetable dialog and reset selected option
 	if (select.selectedIndex == select.children.length - 1) {
 		showTimetableSelect();
 		select.selectedIndex = select.getAttribute("data-previousselectedindex");
 		return;
 	}
 	
+	//if not, remember the selected option for the next time the last option is chosen
 	select.setAttribute("data-previousselectedindex", select.selectedIndex);
 	
-	var typeDictionary = {"class": "class", "student": "student", "teacher": "teacher"};
+	//cookie name dictionaries, different names for different data types
 	var uidDictionary = {"class": "lastclassuid", "student": "laststudentuid", "teacher": "lastteacheruid"};
 	var nameDictionary = {"class": "lastclass", "student": "laststudent", "teacher": "lastteacher"};
 	
-	setCookie("lasttype", typeDictionary[select.selectedOptions[0].getAttribute("data-type")], 31536000000);
-	setCookie(uidDictionary[select.selectedOptions[0].getAttribute("data-type")], select.selectedOptions[0].getAttribute("data-uid"), 31536000000);
-	setCookie(nameDictionary[select.selectedOptions[0].getAttribute("data-type")], select.selectedOptions[0].innerText, 31536000000);
+	//remember selected timetables using cookies
+	setCookie("lasttype", select.selectedOptions[0].getAttribute("data-type"), 31536000000); //set last selected timetable type
+	setCookie(uidDictionary[select.selectedOptions[0].getAttribute("data-type")], select.selectedOptions[0].getAttribute("data-uid"), 31536000000); //set its uid
+	setCookie(nameDictionary[select.selectedOptions[0].getAttribute("data-type")], select.selectedOptions[0].innerText, 31536000000); //set its display name
 	
-	window.location = "/?sel=" + typeDictionary[select.selectedOptions[0].getAttribute("data-type")] + "&uid=" + encodeURIComponent(select.selectedOptions[0].getAttribute("data-uid"));
+	//change window location to desired timetable
+	window.location = "/?sel=" + select.selectedOptions[0].getAttribute("data-type") + "&uid=" + encodeURIComponent(select.selectedOptions[0].getAttribute("data-uid"));
 }
-function handleTimetableTypeSelectUpdate(select) {
+function handleTimetableTypeSelectUpdate(select) { //triggered when the timetable type select in the dialog is changed
+	//hide all elements except first paragraph, type select, and submit button; prevent them from being included in the form
 	for (var i = 2; i < select.parentElement.children.length - 1; i++) {
 		select.parentElement.children[i].style.display = "none";
 		select.parentElement.children[i].removeAttribute("name");
 	}
 	
-	if (select.selectedIndex == 0) {
+	if (select.selectedOptions[0].value == "class") {
+		//show the all classes select, include it in the form
 		select.parentElement.children[2].style.display = "";
 		select.parentElement.children[2].setAttribute("name", "uid");
 	}
-	else if (select.selectedIndex == 1) {
+	else if (select.selectedOptions[0].value == "student") {
+		//show the "from class" text and the populated classes select
 		select.parentElement.children[3].style.display = "";
 		select.parentElement.children[4].style.display = "";
-		select.parentElement.children[4].selectedIndex = 0;
-		showStudentList(select.parentElement.children[4]);
+		showStudentList(select.parentElement.children[4]); //show the corresponding student list and include it in the form
 	}
-	else {
+	else if (select.selectedOptions[0].value == "teacher") {
+		//show the teacher select and include it in the form
 		select.parentElement.children[5].style.display = "";
 		select.parentElement.children[5].setAttribute("name", "uid");
 	}
 }
-function showStudentList(classSelect) {
+function showStudentList(classSelect) { //display the appropriate student list and include it in the form
+	//get the selected class name
 	var classname = classSelect.selectedOptions[0].innerText;
 	
+	//iterate over all children of the dialog, find all student selects
 	for (var i = 0; i < classSelect.parentElement.children.length - 1; i++)
-		if (classSelect.parentElement.children[i].hasAttribute("data-class"))
+		if (classSelect.parentElement.children[i].getAttribute("data-selecttype") == "student")
 			if (classSelect.parentElement.children[i].getAttribute("data-class") == classname) {
+				//if it's the matching class, reset it, show it and include it in the form
+				classSelect.parentElement.children[i].selectedIndex = 0;
 				classSelect.parentElement.children[i].style.display = "";
 				classSelect.parentElement.children[i].setAttribute("name", "uid");
-
 			}
 			else {
+				//otherwise, hide it and exclude it
 				classSelect.parentElement.children[i].style.display = "none";
 				classSelect.parentElement.children[i].removeAttribute("name");
 			}
 }
-
-function setLastSettings(submit) {
+function setLastSettings(submit) { //triggered on timetable select form submission, remember choice
+	//get all form elements
 	var formElements = submit.parentElement.parentElement.children;
 	
+	//iterate over them and find the one containing the currently selected uid (of unknown timetable type)
 	for (var i = 0; i < formElements.length; i++)
 		if (formElements[i].getAttribute("name") == "uid") {
 			
-			if (formElements[i].hasAttribute("data-class")) {
+			if (formElements[i].getAttribute("data-selecttype") == "student") {
+				//current timetable type is student
 				setCookie("lasttype", "student", 31536000000);
 				setCookie("laststudent", formElements[i].selectedOptions[0].innerText, 31536000000);
 				setCookie("laststudentuid", formElements[i].selectedOptions[0].value, 31536000000);
 			}
 			else if (formElements[i].getAttribute("data-selecttype") == "class") {
+				//current timetable type is class
 				setCookie("lasttype", "class", 31536000000);
 				setCookie("lastclass", formElements[i].selectedOptions[0].innerText, 31536000000);
 				setCookie("lastclassuid", formElements[i].selectedOptions[0].value, 31536000000);
 			}
-			else {
+			else if (formElements[i].getAttribute("data-selecttype") == "teacher") {
+				//current timetable type is teacher
 				setCookie("lasttype", "teacher", 31536000000);
 				setCookie("lastteacher", formElements[i].selectedOptions[0].innerText, 31536000000);
 				setCookie("lastteacheruid", formElements[i].selectedOptions[0].value, 31536000000);
@@ -86,23 +106,29 @@ function setLastSettings(submit) {
 			return;
 		}
 }
-function displayLastSettings() {
+function displayLastSettings() { //called on document load, fills the timetable quickselect
+	//find all timetable selects in the document
 	var selects = document.getElementsByClassName("timetableselect");
 	
+	//for each one of them, do
 	for (var i = 0; i < selects.length; i++) {
 		var select = selects[i];
 		
+		//select the pre-filled option
 		var defaultOption = select.children[0];
 		var defaultType = select.children[0].getAttribute("data-type");
 		var defaultValue = select.children[0].innerText;
 		
+		//save the "choose option" and temporatily remove it
 		var chooseOption = select.children[select.children.length - 1];
 		select.removeChild(chooseOption);
 		
+		//determine whether the pre-filled option matches one of the saved options
 		var defaultIsCurrentClass = defaultType == "Klasa" && defaultValue == getCookie("lastclass");
 		var defaultIsCurrentStudent = defaultType == "Uczeń" && defaultValue == getCookie("laststudent");
 		var defaultIsCurrentTeacher = defaultType == "Nauczyciel" && defaultValue == getCookie("lastteacher");
 		
+		//convert the pre-filled option type value from display name to type id
 		var typeDictionary = {
 			"Klasa": "class",
 			"Uczeń": "student",
@@ -111,6 +137,7 @@ function displayLastSettings() {
 		defaultOption.setAttribute("data-type", typeDictionary[defaultOption.getAttribute("data-type")]);
 		
 		if (!defaultIsCurrentClass && getCookie("lastclass")) {
+			//if there is a remembered class and the pre-filled option wasn't a class, add an option to show the remembered class
 			var option = document.createElement("option");
 			option.setAttribute("data-type", "class");
 			option.setAttribute("data-uid", getCookie("lastclassuid"));
@@ -119,6 +146,7 @@ function displayLastSettings() {
 		}
 		
 		if (!defaultIsCurrentStudent && getCookie("laststudent")) {
+			//if there is a remembered student and the pre-filled option wasn't a student, add an option to show the remembered student
 			var option = document.createElement("option");
 			option.setAttribute("data-type", "student");
 			option.setAttribute("data-uid", getCookie("laststudentuid"));
@@ -126,9 +154,10 @@ function displayLastSettings() {
 			select.appendChild(option);
 		}
 		else if (defaultIsCurrentStudent)
-			select.appendChild(select.removeChild(defaultOption));
+			select.appendChild(select.removeChild(defaultOption)); //otherwise, if the pre-filled option was a student, move it to the bottom
 		
 		if (!defaultIsCurrentTeacher && getCookie("lastteacher")) {
+			//if there is a remembered teacher and the pre-filled option wasn't a teacher, add an option to show the remembered teacher
 			var option = document.createElement("option");
 			option.setAttribute("data-type", "teacher");
 			option.setAttribute("data-uid", getCookie("lastteacheruid"));
@@ -136,35 +165,46 @@ function displayLastSettings() {
 			select.appendChild(option);
 		}
 		else if (defaultIsCurrentTeacher)
-			select.appendChild(select.removeChild(defaultOption));
+			select.appendChild(select.removeChild(defaultOption)); //otherwise, if the pre-filled option was a teacher, move it to the bottom
 		
+		//re-add the "choose" option and remember the currently selected index
 		select.appendChild(chooseOption);
 		select.setAttribute("data-previousselectedindex", select.selectedIndex);
 	}
 }
+function zoomOut() { //zooms the page out on mobile devices
+	//change the meta name="viewport" and set the initial scale to 1
+	var viewport = document.getElementById("viewport");
+	viewport.content = "width=device-width, initial-scale=1";
+	setTimeout(function() { viewport.content = "width=device-width"; }, 1) //after the DOM is updated, remove the initial-scale value to allow immediate change on next attempt
+}
 
-function showDetails(a) {
+/*
+*	TIMETABLE-RELATED FUNCTIONS
+*/
+function showDetails(a) { //show the lesson details dialog, triggered when the "expand" link is clicked
+	//show the overlay and clear its contents
 	document.getElementById("overlay").style.visibility = "visible";
 	document.getElementById("overlaytitle").innerText = "Szczegóły";
 	document.getElementById("overlaycontent").innerHTML = "";
 	
+	//get the lessonholder
 	var lessonContainer = a.parentElement.parentElement.parentElement.parentElement;
 	
+	//for each of the elements in the lessonholder, clone the element's only child, change its class to compact and append it to the overlay
 	for (var i = 1; i < lessonContainer.children.length; i++) {
 		var entry = lessonContainer.children[i].children[0].cloneNode(true);
 		entry.className = "compactlesson";
 		document.getElementById("overlaycontent").appendChild(entry);
 	}
 	
+	//zoom out on mobile devices
 	zoomOut();
 }
 
-function zoomOut() {
-	var viewport = document.getElementById("viewport");
-	viewport.content = "width=device-width, initial-scale=1";
-	setTimeout(function() { viewport.content = "width=device-width"; }, 1)
-}
-
+/*
+*	ONLOAD CODE
+*/
 window.onload = function() {
-	displayLastSettings();
+	displayLastSettings(); //update the quickselect to show remembered options
 }

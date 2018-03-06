@@ -122,18 +122,18 @@
 			{% endfor %}
 		</select>
 		<p style="display: none" class="nonspaced">Z klasy</p>
-		<select style="display: none" onchange="showStudentList(this)">
+		<select style="display: none" data-selecttype="populatedclass" onchange="showStudentList(this)">
 			{% for class, studentlist in students.items %}
 			<option>{{ class }}</option>
 			{% endfor %}
 		</select>
-		<select style="display: none" data-selcttype="teacher">
+		<select style="display: none" data-selecttype="teacher">
 			{% for name, uid in teachers.items %}
 			<option value="{{ uid }}">{{ name }}</option>
 			{% endfor %}
 		</select>
 		{% for class, studentlist in students.items %}
-		<select style="display: none" data-class="{{ class }}">
+		<select style="display: none" data-selecttype="student" data-class="{{ class }}">
 			{% for student in studentlist %}
 			<option value="{{ student.id }}">{{ student.lastname }} {{ student.firstname }}</option>
 			{% endfor %}
