@@ -4,7 +4,7 @@ from django.core.mail import EmailMessage
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from chmura.models import Subject, Alias, PriorityClass
+from chmura.models import Subject, Alias, PriorityClass, SubstitutionType
 from lo3.settings import DEBUG
 from .timetable import get_timetable, timetableJob
 from .subst import get_substitution, updateJob
@@ -150,8 +150,7 @@ def adminPanel(request):
            'alias_type': request.GET.get('aliastype', ''),
            'aliases': {i.orig: i.alias for i in Alias.objects.all()},
            'update_state': adminGetState(),
-           'substitution_types': ['Dyżur', 'grupa zwol. do domu', 'pl', 'Nie ma', 'lg', 'Anulowano', '->', 'Zam.',
-                                  'grupa przychodzi później'],
+           'substitution_types': [i.name for i in SubstitutionType.objects.all()],
            'priority_classes': {}}
     for i in load_ids('classes'):
         if len(PriorityClass.objects.filter(name=i)) > 0:

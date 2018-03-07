@@ -23,3 +23,7 @@ class Alias(models.Model):
 class PriorityClass(models.Model):
     name = models.CharField(max_length=100)
     is_priority = models.BooleanField()
+
+
+class SubstitutionType(models.Model):
+    name = models.CharField(max_length=100)

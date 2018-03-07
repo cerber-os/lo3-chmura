@@ -1,28 +1,30 @@
-from io import StringIO
 from django.http import Http404
-from chmura.models import Alias
+from django.core.exceptions import ObjectDoesNotExist
+from io import StringIO
+from lo3.settings import CACHE_LOCATION
+from chmura.models import Alias, Settings, SubstitutionType
+from .utils import url_request, create_new_session
+from datetime import datetime, timedelta
+from time import sleep
+import chmura.log as log
 import pickle
 import re
 import json
-from datetime import datetime, timedelta
-from .utils import *
-from time import sleep
-import chmura.log as log
-from django.core.exceptions import ObjectDoesNotExist
+import os
 
 
 def save_dict(name, obj):
-    if not os.path.exists(get_cur_path() + '/../cache/substitution'):
-        os.makedirs(get_cur_path() + '/../cache/substitution')
-    with open(get_cur_path() + '/../cache/substitution/' + name + '.sbt', 'wb') as f:
+    if not os.path.exists(CACHE_LOCATION + 'substitution'):
+        os.makedirs(CACHE_LOCATION + 'substitution')
+    with open(CACHE_LOCATION + 'substitution/' + name + '.sbt', 'wb') as f:
         pickle.dump(obj, f, 2)
 
 
 def load_dict(date):
-    if not os.path.exists(get_cur_path() + '/../cache/substitution'):
-        os.makedirs(get_cur_path() + '/../cache/substitution')
+    if not os.path.exists(CACHE_LOCATION + 'substitution'):
+        os.makedirs(CACHE_LOCATION + 'substitution')
     try:
-        with open(get_cur_path() + '/../cache/substitution/' + date + '.sbt', 'rb') as f:
+        with open(CACHE_LOCATION + 'substitution/' + date + '.sbt', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
         zast = download_and_regenerate_subst(date)
@@ -139,6 +141,9 @@ def download_subst(date):
                 status['typ'] = subType.get(zastepstwo[key], {})
                 status['typ']['short'] = substitution_types_aliases.get(status['typ'].get('short', ''),
                                                                         status['typ'].get('short', ''))
+                if status['typ'].get('short', '') != '' and \
+                        not SubstitutionType.objects.filter(name=status['typ'].get('short', '')).exists():
+                    SubstitutionType(name=status['typ'].get('short', '')).save()
             elif key == 'period':
                 if type(periods) is list:
                     status['lekcja'] = periods[int(zastepstwo[key])]
@@ -251,13 +256,13 @@ def getAlias(c, sel):
 def updateJob():
     create_new_session()
     now = datetime.now()
-    if not os.path.exists(get_cur_path() + '/../cache/substitution'):
-        os.makedirs(get_cur_path() + '/../cache/substitution')
-    for filename in os.listdir(get_cur_path() + '/../cache/substitution'):
+    if not os.path.exists(CACHE_LOCATION + 'substitution'):
+        os.makedirs(CACHE_LOCATION + 'substitution')
+    for filename in os.listdir(CACHE_LOCATION + 'substitution'):
         name = os.path.splitext(filename)[0]
         if datetime.strptime(name, '%Y-%m-%d').date() < now.date():
             log.info('Deleting old substitution cache')
-            os.remove(get_cur_path() + '/../cache/substitution/' + filename)
+            os.remove(CACHE_LOCATION + 'substitution/' + filename)
 
     continueDownloading = True
     for i in range(0, 7):
