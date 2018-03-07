@@ -10,7 +10,7 @@ import os
 def save_dict(obj):
     if not os.path.exists(CACHE_LOCATION + 'newsF'):
         os.makedirs(CACHE_LOCATION + 'newsF')
-    with open(CACHE_LOCATION + 'news.nw', 'wb') as f:
+    with open(CACHE_LOCATION + '/newsF/news.nw', 'wb') as f:
         pickle.dump(obj, f, 2)
 
 
@@ -18,7 +18,7 @@ def load_dict():
     if not os.path.exists(CACHE_LOCATION + 'newsF'):
         os.makedirs(CACHE_LOCATION + 'newsF')
     try:
-        with open(CACHE_LOCATION + 'news.nw', 'rb') as f:
+        with open(CACHE_LOCATION + '/newsF/news.nw', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
         if DEBUG:

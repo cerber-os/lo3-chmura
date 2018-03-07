@@ -1,9 +1,8 @@
+from django.core.exceptions import ObjectDoesNotExist
 from colormath.color_objects import sRGBColor, LabColor
 from colormath.color_diff import delta_e_cie2000 as delta_e
 from colormath.color_conversions import convert_color
 from chmura.models import Subject
-from django.core.exceptions import ObjectDoesNotExist
-from chmura.utils import get_cur_path
 
 material_palette = ['#FFCDD2', '#F8BBD0', '#E1BEE7', '#D1C4E9', '#C5CAE9', '#BBDEFB', '#B3E5FC', '#B2EBF2', '#B2DFDB',
                     '#C8E6C9', '#DCEDC8', '#F0F4C3', '#FFF9C4', '#FFECB3', '#FFE0B2', '#FFCCBC', '#D7CCC8', '#F5F5F5',
@@ -40,12 +39,3 @@ def get_color(nazwa, hex_color):
         color = Subject(name=nazwa, color=hex_color)
         color.save()
         return hex_color
-
-
-# def create_color_files():
-#     txt_file = ""
-#     with open(get_cur_path() + '/static/css/timetablecolors.css', 'w', encoding='utf-8') as newfile:
-#         for color in Subject.objects.all():
-#             txt_file += '[data-lessonname="' + color.name + '"] {background-color: ' + \
-#                         color.color + '; }'
-#         newfile.write(txt_file)
