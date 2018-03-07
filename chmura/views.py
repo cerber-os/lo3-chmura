@@ -336,7 +336,12 @@ def adminModifyPriority(request):
         else:
             continue
 
-        PriorityClass(name=name, is_priority=True).save()
+        try:
+            p = PriorityClass.objects.get(name=name)
+        except ObjectDoesNotExist:
+            p = PriorityClass(name=name)
+        p.is_priority = True
+        p.save()
     return redirect('/admin?status=2&aliastype=priority')  # Pomyślnie zmodyfikowano priorytety klas
 
 
