@@ -41,6 +41,14 @@ div.tablescroller table {
 div.tablescroller input {
 	width: 100%;
 }
+div.tablescroller.checktable td:nth-child(2) {
+	width: 20px;
+}
+div.tablescroller.checktable input[type="checkbox"] {
+	width: auto;
+	transform: scale(2);
+	margin: 0;
+}
 
 .loginerror { margin: 0 8px; color: #E53935; }
 .error { color: #E53935; }

@@ -74,11 +74,10 @@
 	</form>
 </section>
 <section>
-	<h2>Priorytetowe klasy</h2>
-    <p>Zaznacz klasy, które mają pojawiać się jako pierwsze na planie lekcji.</p>
-    <p>Po tej operacji wymagana jest aktualizacja ID</p>
+	<h2>Klasy priorytetowe</h2>
+	<p>Wybierz klasy, które będą pojawiać się na listach w pierwszej kolejności.</p>
 	<form method="post" action="/admin/modifypriority/">
-		<div class="tablescroller">
+		<div class="tablescroller checktable">
 			<table>
 				{% for class in priority_classes %}
 				<tr>
@@ -118,6 +117,15 @@
 	<p class="error">Aktualizacja już jest w toku.</p>
 	{% endif %}
 	<form method="post" action="/admin/updatecache/"><input type="submit" value="Pobierz pamięć od nowa">{% csrf_token %}</form>
+	
+	<p>
+		Wyczyść bufor identyfikatorów - pozwala szybko odświeżyć widoki, które nie są przechowywane w pamięci podręcznej.
+	</p>
+	{% if status == "4" %}
+	<p class="success">Bufor wyczyszczony pomyślnie.</p>
+	{% endif %}
+	<form method="post" action="/admin/adminupdateID/"><input type="submit" value="Wyczyść bufor identyfikatorów">{% csrf_token %}</form>
+	
 	{% if is_debug or status == "-4" %}
 	<p>
 		Usuń zbuforowane dane bez pobierania.
@@ -129,13 +137,6 @@
 	{% endif %}
 	<form method="post" action="/admin/clearcache/"><input type="submit" value="Wyczyść pamięć">{% csrf_token %}</form>
 	{% endif %}
-    <p>
-		Aktualizuj pamięć ID
-	</p>
-    <form method="post" action="/admin/adminupdateID/"><input type="submit" value="Aktualizuj ID">{% csrf_token %}</form>
-    {% if status == "4" %}
-        <p class="success">Aktualizacja ID ukończona pomyślnie.</p>
-    {% endif %}
 </section>
 <section>
 	<h2>Hasło do panelu</h2>
