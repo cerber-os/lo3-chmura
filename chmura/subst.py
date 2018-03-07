@@ -138,12 +138,13 @@ def download_subst(date):
             elif key == 'note':
                 status['notka'] = zastepstwo[key]
             elif key == 'substitution_typeid':
-                status['typ'] = subType.get(zastepstwo[key], {})
-                status['typ']['short'] = substitution_types_aliases.get(status['typ'].get('short', ''),
-                                                                        status['typ'].get('short', ''))
+                status['typ'] = subType.get(zastepstwo[key], {}).copy()
                 if status['typ'].get('short', '') != '' and \
                         not SubstitutionType.objects.filter(name=status['typ'].get('short', '')).exists():
                     SubstitutionType(name=status['typ'].get('short', '')).save()
+
+                status['typ']['short'] = substitution_types_aliases.get(status['typ'].get('short', ''),
+                                                                        status['typ'].get('short', ''))
             elif key == 'period':
                 if type(periods) is list:
                     status['lekcja'] = periods[int(zastepstwo[key])]
