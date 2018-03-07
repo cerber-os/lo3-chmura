@@ -4,7 +4,7 @@ from django.core.mail import EmailMessage
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from chmura.models import Subject, Alias
+from chmura.models import Subject, Alias, PriorityClass
 from lo3.settings import DEBUG
 from .timetable import get_timetable, timetableJob
 from .subst import get_substitution, updateJob
@@ -151,7 +151,14 @@ def adminPanel(request):
            'aliases': {i.orig: i.alias for i in Alias.objects.all()},
            'update_state': adminGetState(),
            'substitution_types': ['Dyżur', 'grupa zwol. do domu', 'pl', 'Nie ma', 'lg', 'Anulowano', '->', 'Zam.',
-                                  'grupa przychodzi później']}
+                                  'grupa przychodzi później'],
+           'priority_classes': {}}
+    for i in load_ids('classes'):
+        if len(PriorityClass.objects.filter(name=i)) > 0:
+            con['priority_classes'][i] = PriorityClass.objects.filter(name=i)[0].is_priority
+        else:
+            con['priority_classes'][i] = False
+
     for i in Alias.objects.all():
         classes = con['classes']
         for c in classes:
@@ -168,6 +175,7 @@ def adminPanel(request):
 # 1			Pomyślnie wyczyszczono cache
 # 2			Pomyślnie zmodyfikowano aliasy
 # 3			Aktualizacja cache rozpoczęta
+# 4         Pomyślnie zaktualizowano ID
 #
 # -1		Hasło nie spełnia wymagań
 # -2		Nowe hasła nie są jednakowe
@@ -261,6 +269,8 @@ def adminLogout(request):
 
 
 def adminUpdateCache(request):
+    if not request.user.is_authenticated:
+        return redirect('/adminlogin/')
     updateprocesspath = tempfile.gettempdir() + '/updateProcess'
     
     if not request.user.is_authenticated:
@@ -307,3 +317,32 @@ def updateCache():
             log.crititcal('Double error!!!: ' + str(e))
             return
     open(updateprocesspath, 'w').write('finished')
+
+
+def adminModifyPriority(request):
+    if not request.user.is_authenticated:
+        return redirect('/adminlogin/')
+    classes = load_ids('classes')
+
+    for priority in PriorityClass.objects.all():
+        if 'priority$' + priority.name not in request.POST:
+            priority.is_priority = False
+            priority.save()
+        if priority.name not in classes:
+            priority.delete()
+    for priority in request.POST:
+        if priority.startswith('priority$'):
+            name = priority[len('priority$'):]
+        else:
+            continue
+
+        PriorityClass(name=name, is_priority=True).save()
+    return redirect('/admin?status=2&aliastype=priority')  # Pomyślnie zmodyfikowano priorytety klas
+
+
+def adminUpdateID(request):
+    if not request.user.is_authenticated:
+        return redirect('/adminlogin/')
+
+    updateid()
+    return redirect('/admin?status=4')  # Pomyślnie zmodyfikowano priorytety klas

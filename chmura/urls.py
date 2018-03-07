@@ -19,4 +19,6 @@ urlpatterns = [
         url(r'^admin/modifyaliases/$', views.adminModifyAliases, name='adminModifyAliases'),
         url(r'^admin/logout/$', views.adminLogout, name='adminLogout'),
         url(r'^admin/updatecache/$', views.adminUpdateCache, name='adminUpdateCache'),
+        url(r'^admin/modifypriority/$', views.adminModifyPriority, name='adminModifyPriority'),
+        url(r'^admin/adminupdateID/$', views.adminUpdateID, name='adminUpdateID')
 ]

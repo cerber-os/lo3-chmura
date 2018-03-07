@@ -1,15 +1,15 @@
+from django.core.exceptions import ObjectDoesNotExist
 from io import StringIO
+from chmura.models import Alias, PriorityClass
+from .utils import get_cur_path, url_request
 import json
 import pickle
 import re
-from .utils import *
 import chmura.log as log
-from chmura.models import Alias
-from django.core.exceptions import ObjectDoesNotExist
 import locale
 import os
 
-if os.name == 'nt:':
+if os.name != 'nt':
     locale.setlocale(locale.LC_COLLATE, "pl_PL.UTF-8")
 
 
@@ -76,6 +76,8 @@ def get_fields(typ, obj):
 def save_ids(ids):
     for i in ids:
         d = {}
+        group_priority = {}
+        group_normal = {}
         if i == 'students':
             continue
         for t in ids[i]:
@@ -83,7 +85,14 @@ def save_ids(ids):
         if i == 'teachers':
             save_dict(i, dict(sorted(d.items(), key=lambda x: locale.strxfrm(x[0].replace('-', 'źź')))))
         elif i == 'classes':
-            save_dict(i, dict(sorted(d.items(), key=lambda x: locale.strxfrm(x[0]))))
+            for t in d:
+                if PriorityClass.objects.filter(name=t).exists() and \
+                   PriorityClass.objects.filter(name=t)[0].is_priority:
+                    group_priority[t] = d[t]
+                else:
+                    group_normal[t] = d[t]
+            save_dict(i, {**dict(sorted(group_priority.items(), key=lambda x: locale.strxfrm(x[0]))),
+                          **dict(sorted(group_normal  .items(), key=lambda x: locale.strxfrm(x[0])))})
         else:
             save_dict(i, d)
 

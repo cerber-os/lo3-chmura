@@ -74,6 +74,26 @@
 	</form>
 </section>
 <section>
+	<h2>Priorytetowe klasy</h2>
+    <p>Zaznacz klasy, które mają pojawiać się jako pierwsze na planie lekcji.</p>
+    <p>Po tej operacji wymagana jest aktualizacja ID</p>
+	<form method="post" action="/admin/modifypriority/">
+		<div class="tablescroller">
+			<table>
+				{% for class in priority_classes %}
+				<tr>
+					<td>{{ class }}</td>
+					<td><input type="checkbox" {% if priority_classes|get_item:class %} checked {% endif %} name="priority${{ class }}"></td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+		{% if status == "2" and alias_type == "priority" %}<p class="success">Priorytety zapisane.</p>{% endif %}
+		<input type="submit" value="Zapisz">
+		{% csrf_token %}
+	</form>
+</section>
+<section>
 	<h2>Pamięć podręczna</h2>
 	<p>
 		Usuń zbuforowane dane i pobierz je na nowo. Uwaga: proces może potrwać nawet 30 minut.
@@ -109,6 +129,13 @@
 	{% endif %}
 	<form method="post" action="/admin/clearcache/"><input type="submit" value="Wyczyść pamięć">{% csrf_token %}</form>
 	{% endif %}
+    <p>
+		Aktualizuj pamięć ID
+	</p>
+    <form method="post" action="/admin/adminupdateID/"><input type="submit" value="Aktualizuj ID">{% csrf_token %}</form>
+    {% if status == "4" %}
+        <p class="success">Aktualizacja ID ukończona pomyślnie.</p>
+    {% endif %}
 </section>
 <section>
 	<h2>Hasło do panelu</h2>
@@ -118,15 +145,15 @@
 		<table>
 			<tr>
 				<td><label>Stare hasło:</label></td>
-				<td><input type="password" name="old_password"></td>
+				<td><input type="password" name="old_password" title="Stare hasło"></td>
 			</tr>
 			<tr>
 				<td><label>Nowe hasło:</label></td>
-				<td><input type="password" name="new_password"></td>
+				<td><input type="password" name="new_password" title="Stare hasło"></td>
 			</tr>
 			<tr>
 				<td><label>Powtórz hasło:</label></td>
-				<td><input type="password" name="newer_password"></td>
+				<td><input type="password" name="newer_password" title="Stare hasło"></td>
 			</tr>
 		</table>
 		
@@ -142,11 +169,11 @@
 	</form>
 	<form method="post" action="/admin/changepass/" class="mobilechangepassword">
 		<label>Stare hasło:</label>
-		<input type="password" name="old_password">
+		<input type="password" name="old_password" title="Stare hasło">
 		<label>Nowe hasło:</label>
-		<input type="password" name="new_password">
+		<input type="password" name="new_password" title="Stare hasło">
 		<label>Powtórz hasło:</label>
-		<input type="password" name="newer_password">
+		<input type="password" name="newer_password" title="Stare hasło">
 		
 		{% if status == "-1" %}
 		<p class="error">Hasło nie spełnia wymogów bezpieczeństwa.</p>
