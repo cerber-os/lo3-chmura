@@ -77,8 +77,8 @@
 	<h2>Klasy priorytetowe</h2>
 	<p>Wybierz klasy, które będą pojawiać się na listach w pierwszej kolejności.</p>
 	<form method="post" action="/admin/modifypriority/">
-		<div class="tablescroller checktable">
-			<table>
+		<div class="tablescroller">
+			<table class="checktable">
 				{% for class in priority_classes %}
 				<tr>
 					<td>{{ class }}</td>

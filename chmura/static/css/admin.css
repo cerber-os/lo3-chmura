@@ -41,12 +41,18 @@ div.tablescroller table {
 div.tablescroller input {
 	width: 100%;
 }
-div.tablescroller.checktable td:nth-child(2) {
-	width: 20px;
+
+table.checktable {
+	table-layout: unset !important;
 }
-div.tablescroller.checktable input[type="checkbox"] {
-	width: auto;
-	transform: scale(2);
+table.checktable td:nth-child(2) {
+	width: 20px;
+	padding-right: 10px;
+	line-height: 0;
+}
+table.checktable input[type="checkbox"] {
+	width: 22px;
+	height: 22px;
 	margin: 0;
 }
 
