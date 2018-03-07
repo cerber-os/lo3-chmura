@@ -26,7 +26,8 @@ SECRET_KEY = os.environ.get('lo3_django_secretkey', '*v^4+%9%0qv0i8mzy5hsz&e9k*%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('lo3_django_debug', 'True') == 'True'
 
-ALLOWED_HOSTS = ['localhost', 'cerberos.pl']
+if not DEBUG: ALLOWED_HOSTS = ['localhost', 'cerberos.pl']
+else: ALLOWED_HOSTS = ['*']
 
 
 # Application definition
