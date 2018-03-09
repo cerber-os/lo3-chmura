@@ -1,7 +1,8 @@
 function closeOverlay(div, event) {
 	if (div)
-		if (event.srcElement != div)
+		if (event.target != div) {
 			return;
+		}
 		
 	document.getElementById("overlay").style.visibility = "hidden";
 }
