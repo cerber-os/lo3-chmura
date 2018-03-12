@@ -87,12 +87,21 @@ div.searchresults a.result {
 	display: block;
 	
 	background-color: #FFFFFF;
-	font-size: 13.3333px;
 	padding: 4px;
+	
+	font-size: 13.3333px;
+	text-decoration: none;
 }
 div.searchresults a.result:nth-child(even) {
 	background-color: #F1F3F5;
 }
+div.searchresults a.result:hover:not(.nonresult) {
+	background-color: #B3B4B8;
+}
+div.searchresults a.result:nth-child(even):hover:not(.nonresult) {
+	background-color: #AAACB2;
+}
+
 div.searchresults a.result > span {
 	position: absolute;
 	right: 4px;
@@ -100,6 +109,9 @@ div.searchresults a.result > span {
 	font-size: 0.85em;
 	line-height: 2.2em;
 	
+	color: #757575;
+}
+div.searchresults a.nonresult {
 	color: #757575;
 }
 

@@ -256,7 +256,11 @@ function searchForTimetable(query) { //find matching entries in the search index
 		
 		//create results entry
 		var resultsEntry = {};
-		resultsEntry.text = searchIndex[i].name;
+		resultsEntry.html = searchIndex[i].name.substring(0, score)
+			+ "<b>"
+			+ searchIndex[i].name.substr(score, query.length)
+			+ "</b>"
+			+ searchIndex[i].name.substr(score + query.length);
 		resultsEntry.type = searchIndex[i].type;
 		resultsEntry.uid = searchIndex[i].uid;
 		resultsEntry.score = score;
@@ -267,6 +271,73 @@ function searchForTimetable(query) { //find matching entries in the search index
 	results.sort(function(a, b) { return a.score - b.score; });
 	
 	return results;
+}
+function handleSearchBarKeyUp(input, event) { //triggered when a key is released in the search bar, used for text input
+	//get suggestion holder
+	var suggestionHolder = input.parentElement.children[1].children[0];
+	
+	//exclude enter key from being handled
+	if (event.keyCode == 13) { acceptSearchSuggestion(suggestionHolder); return; }
+
+	//get search results and clear previous results
+	var results = searchForTimetable(input.value);
+	suggestionHolder.innerHTML = "";
+	
+	//build nonresult if there are no results
+	if (results.length == 0 && input.value.length != 0) {
+		var nonresult = document.createElement("a");
+		nonresult.className = "result nonresult";
+		nonresult.innerText = "Brak wyników.";
+		
+		suggestionHolder.appendChild(nonresult);
+		return;
+	}
+	
+	//result type dictionary
+	var typeDictionary = {
+		"class": "klasa",
+		"teacher": "nauczyciel",
+		"student": "uczeń"
+	};
+	
+	//build results
+	for (var i = 0; i < 5 && i < results.length; i++) {
+		var result = document.createElement("a");
+		result.className = "result";
+		result.innerHTML = results[i].html;
+		result.innerHTML += "<span>" + typeDictionary[results[i].type] + "</span>";
+		result.setAttribute("href", "/?sel=" + results[i].type + "&uid=" + encodeURIComponent(results[i].uid));
+		
+		suggestionHolder.appendChild(result);
+		
+		//show 10th result only if there are 5 results
+		if (i == 3 && results.length > 5) break;
+	}
+	
+	//show skipped results nonresult
+	if (results.length > 5) {
+		var result = document.createElement("a");
+		result.className = "result nonresult";
+		result.innerText = "Nie pokazano " + (results.length - 4) + " wyników."
+		
+		suggestionHolder.appendChild(result);
+	}
+}
+function handleSearchBarKeyDown(input, event) { //triggered when a key is pressed in the search bar, used for arrow keys
+	//get suggestion holder
+	var suggestionHolder = input.parentElement.children[1].children[0];
+	
+	//handle control keys
+	if (event.keyCode == 40) { moveSearchSelection(suggestionHolder, true); return; }
+	if (event.keyCode == 38) { moveSearchSelection(suggestionHolder, false); return; }
+}
+function moveSearchSelection(suggestionHolder, down) { //mark suggestion as selected
+	//prevent cursor movement
+	event.preventDefault();
+}
+function acceptSearchSuggestion(suggestionHolder) { //follow link in marked selection
+	//prevent form submission
+	event.preventDefault();
 }
 
 /*

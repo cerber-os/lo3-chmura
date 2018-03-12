@@ -144,14 +144,16 @@
 		<p class="buttonholder"><input type="submit" value="Wybierz" onclick="setLastSettings(this)"></p>
 		<p>Wyszukaj</p>
 		<div>
-			<input type="text" placeholder="Nazwa klasy, ucznia lub nauczyciela...">
-			<!--<div class="searchresults">
-				<div>
-					<a class="result">Dupsko1<span>nauczyciel</span></a>
-					<a class="result">Dupsko2</a>
-					<a class="result">Dupsko3</a>
-				</div>
-			</div>-->
+			<input
+				type="text"
+				name="query"
+				autocomplete="off"
+				placeholder="Nazwa klasy, ucznia lub nauczyciela"
+				onkeyup="handleSearchBarKeyUp(this, event)"
+				onkeydown="handleSearchBarKeyDown(this, event)">
+			<div class="searchresults">
+				<div></div>
+			</div>
 		</div>
 	</form>
 </div>
