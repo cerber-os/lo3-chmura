@@ -338,11 +338,11 @@ function handleSearchBarKeyDown(input, event) { //triggered when a key is presse
 	var suggestionHolder = input.parentElement.children[1].children[0];
 	
 	//handle control keys
-	if (event.keyCode == 13) { acceptSearchSuggestion(suggestionHolder); return; }
-	if (event.keyCode == 40) { moveSearchSelection(suggestionHolder, true); return; }
-	if (event.keyCode == 38) { moveSearchSelection(suggestionHolder, false); return; }
+	if (event.keyCode == 13) { acceptSearchSuggestion(suggestionHolder, event); return; }
+	if (event.keyCode == 40) { moveSearchSelection(suggestionHolder, true, event); return; }
+	if (event.keyCode == 38) { moveSearchSelection(suggestionHolder, false, event); return; }
 }
-function moveSearchSelection(suggestionHolder, down) { //update data-selectedindex on suggestion holder
+function moveSearchSelection(suggestionHolder, down, event) { //update data-selectedindex on suggestion holder
 	//prevent cursor movement
 	event.preventDefault();
 	
@@ -378,7 +378,7 @@ function updateSearchSelection(suggestionHolder) { //select appropriate suggesti
 	//select selected index
 	suggestionHolder.children[selectedIndex].setAttribute("data-selected", "data-selected");
 }
-function acceptSearchSuggestion(suggestionHolder) { //follow link in marked selection
+function acceptSearchSuggestion(suggestionHolder, event) { //follow link in marked selection
 	//prevent form submission
 	event.preventDefault();
 	
