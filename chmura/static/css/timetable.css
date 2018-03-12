@@ -101,7 +101,10 @@ div.searchresults a.result:hover:not(.nonresult) {
 div.searchresults a.result:nth-child(even):hover:not(.nonresult) {
 	background-color: #AAACB2;
 }
-
+div.searchresults a.result[data-selected], div.searchresults a.result[data-selected] * {
+	background-color: #2F333E !important;
+	color: #FFFFFF !important;
+}
 div.searchresults a.result > span {
 	position: absolute;
 	right: 4px;

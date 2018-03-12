@@ -277,12 +277,17 @@ function handleSearchBarKeyUp(input, event) { //triggered when a key is released
 	//get suggestion holder
 	var suggestionHolder = input.parentElement.children[1].children[0];
 	
-	//exclude enter key from being handled
-	if (event.keyCode == 13) { acceptSearchSuggestion(suggestionHolder); return; }
-
+	//exclude control keys from being handled
+	if (event.keyCode == 13) { return; }
+	if (event.keyCode == 38) { return; }
+	if (event.keyCode == 40) { return; }
+	
 	//get search results and clear previous results
 	var results = searchForTimetable(input.value);
 	suggestionHolder.innerHTML = "";
+	
+	//reset selected suggestion
+	suggestionHolder.setAttribute("data-selectedindex", "-1");
 	
 	//build nonresult if there are no results
 	if (results.length == 0 && input.value.length != 0) {
@@ -328,21 +333,67 @@ function handleSearchBarKeyUp(input, event) { //triggered when a key is released
 		suggestionHolder.appendChild(result);
 	}
 }
-function handleSearchBarKeyDown(input, event) { //triggered when a key is pressed in the search bar, used for arrow keys
+function handleSearchBarKeyDown(input, event) { //triggered when a key is pressed in the search bar, used for control keys
 	//get suggestion holder
 	var suggestionHolder = input.parentElement.children[1].children[0];
 	
 	//handle control keys
+	if (event.keyCode == 13) { acceptSearchSuggestion(suggestionHolder); return; }
 	if (event.keyCode == 40) { moveSearchSelection(suggestionHolder, true); return; }
 	if (event.keyCode == 38) { moveSearchSelection(suggestionHolder, false); return; }
 }
-function moveSearchSelection(suggestionHolder, down) { //mark suggestion as selected
+function moveSearchSelection(suggestionHolder, down) { //update data-selectedindex on suggestion holder
 	//prevent cursor movement
 	event.preventDefault();
+	
+	//prevent selection of empty list
+	if (suggestionHolder.children.length == 0) return;
+	
+	//calculate desired selectedindex
+	var desiredSelectedIndex = Number(suggestionHolder.getAttribute("data-selectedIndex")) + (down ? 1 : -1);
+	
+	//prevent selectedindex exceeding -1 when decreasing
+	if (desiredSelectedIndex == -2) return;
+	
+	//calculate max selectedindex and prevent exceeding it
+	var maxSelectedIndex = suggestionHolder.children.length - 1;
+	if (!suggestionHolder.children[suggestionHolder.children.length - 1].hasAttribute("data-type")) maxSelectedIndex--; //prevent selecting nonresult
+	if (desiredSelectedIndex == maxSelectedIndex + 1) return;
+	
+	//set selectedindex and update html
+	suggestionHolder.setAttribute("data-selectedIndex", desiredSelectedIndex);
+	updateSearchSelection(suggestionHolder);
+}
+function updateSearchSelection(suggestionHolder) { //select appropriate suggestion based on data-selectedindex
+	//get selected index
+	var selectedIndex = Number(suggestionHolder.getAttribute("data-selectedIndex"));
+	
+	//de-select all suggestions
+	for (var i = 0; i < suggestionHolder.children.length; i++)
+		suggestionHolder.children[i].removeAttribute("data-selected");
+	
+	//nothing to select
+	if (selectedIndex == -1) return;
+	
+	//select selected index
+	suggestionHolder.children[selectedIndex].setAttribute("data-selected", "data-selected");
 }
 function acceptSearchSuggestion(suggestionHolder) { //follow link in marked selection
 	//prevent form submission
 	event.preventDefault();
+	
+	//exclude empty suggestion holders
+	if (suggestionHolder.children.length == 0) return;
+	if (suggestionHolder.children.length == 1 && !suggestionHolder.children[0].hasAttribute("data-type")) return;
+	
+	//get selected index, if nothing is selected, select first entry
+	var selectedIndex = Number(suggestionHolder.getAttribute("data-selectedIndex"));
+	if (selectedIndex == -1) selectedIndex = 0;
+	
+	//click suggestion
+	var suggestion = suggestionHolder.children[selectedIndex];
+	setLastSettingsFromSearch(suggestion);
+	window.location = suggestion.getAttribute("href");
 }
 function setLastSettingsFromSearch(a) { //remember chosen timetable, triggered on result selection
 	var type = a.getAttribute("data-type");
