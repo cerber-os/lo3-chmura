@@ -7,6 +7,10 @@ function showTimetableSelect() { //show the timetable select dialog
 	document.getElementById("overlaytitle").innerText = "Wybierz plan";
 	document.getElementById("overlaycontent").innerHTML = document.getElementById("timetableselectdialog").innerHTML;
 	
+	//show last mobile form
+	var lastMobileForm = getCookie("lastmobileform");
+	if (lastMobileForm) toggleMobileForm(Number(lastMobileForm));
+	
 	//zoom out for mobile users
 	zoomOut();
 }
@@ -178,19 +182,30 @@ function zoomOut() { //zooms the page out on mobile devices
 	viewport.content = "width=device-width, initial-scale=1";
 	setTimeout(function() { viewport.content = "width=device-width"; }, 1) //after the DOM is updated, remove the initial-scale value to allow immediate change on next attempt
 }
-function toggleMobileForm() { //changes selection type on mobile devices
+function toggleMobileForm(override) { //changes selection type on mobile devices and remembers the choice
 	//get mobile forms holder
 	var formHolder = document.getElementById("overlaycontent").children[0];
-	console.log(formHolder);
+	
+	if (override != undefined) {
+		for (var i = 0; i < formHolder.children.length; i++)
+			if (i == override) formHolder.children[i].setAttribute("data-selectedmobileform", "data-selectedmobileform");
+			else formHolder.children[i].removeAttribute("data-selectedmobileform");
+			
+		return;
+	}
 	
 	//iterate over forms, move the data-selectedmobileform attribute
 	for (var i = 0; i < formHolder.children.length; i++)
 		if (formHolder.children[i].hasAttribute("data-selectedmobileform")) {
+			var newForm;
+			
 			//if at the end, move attribute to the beginning
-			if (i == formHolder.children.length - 1)
-				formHolder.children[0].setAttribute("data-selectedmobileform", "data-selectedmobileform");
-			else
-				formHolder.children[i + 1].setAttribute("data-selectedmobileform", "data-selectedmobileform");
+			if (i == formHolder.children.length - 1) newForm = 0;
+			else newForm = i + 1;
+			
+			//display the right form and remember the choice
+			formHolder.children[newForm].setAttribute("data-selectedmobileform", "data-selectedmobileform");
+			setCookie("lastmobileform", newForm, 31536000000);
 			
 			//remove attribute from current form
 			formHolder.children[i].removeAttribute("data-selectedmobileform");
