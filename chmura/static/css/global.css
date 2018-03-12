@@ -91,9 +91,6 @@ body {
 }
 #overlaycontent {
 	background-color: #FFFFFF;
-	
-	max-height: 500px;
-	overflow-y: auto;
 }
 #overlayclose {
 	height: 20px;
@@ -111,8 +108,9 @@ body {
 }
 #overlaycontent p:first-child { margin-top: 0; }
 #overlaycontent p:last-child { margin-bottom: 0; }
-#overlaycontent select {
+#overlaycontent select, #overlaycontent input[type="text"] {
 	width: 100%;
+	box-sizing: border-box;
 }
 
 #hellooverlay {
@@ -189,6 +187,9 @@ button, input[type="submit"] {
 }
 a {
 	color: inherit;
+}
+input[type="text"] {
+	padding: 0 4px;
 }
 
 p.buttonholder {

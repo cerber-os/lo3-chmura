@@ -3,13 +3,13 @@
 {% block title %}Plan lekcji{% endblock %}
 
 {% block localcss %}
-<link rel="stylesheet" href="/static/css/timetable.css?4">
+<link rel="stylesheet" href="/static/css/timetable.css?5">
 {#<link rel="stylesheet" href="/static/css/timetablecolors.css">#}
 {% if device == "Chrome" %}<link rel="stylesheet" href="/static/css/timetablechromefix.css">{% endif %}
 {% endblock %}
 
 {% block localjs %}
-<script src="/static/js/timetable.js?3" defer></script>
+<script src="/static/js/timetable.js?4" defer></script>
 {% endblock %}
 
 {% block secondaryheaderselect %}
@@ -111,35 +111,48 @@
 <div id="timetableselectdialog" hidden>
 	<form>
 		<p>Pokaż plan</p>
-		<select name="sel" onchange="handleTimetableTypeSelectUpdate(this)">
-			<option value="class">Klasy</option>
-			<option value="student">Ucznia</option>
-			<option value="teacher">Nauczyciela</option>
-		</select>
-		<select name="uid" data-selecttype="class">
-			{% for class, uid in classes.items %}
-			<option value="{{ uid }}">{{ class }}</option>
-			{% endfor %}
-		</select>
-		<p style="display: none" class="nonspaced">Z klasy</p>
-		<select style="display: none" data-selecttype="populatedclass" onchange="showStudentList(this)">
+		<div>
+			<select name="sel" onchange="handleTimetableTypeSelectUpdate(this)">
+				<option value="class">Klasy</option>
+				<option value="student">Ucznia</option>
+				<option value="teacher">Nauczyciela</option>
+			</select>
+			<select name="uid" data-selecttype="class">
+				{% for class, uid in classes.items %}
+				<option value="{{ uid }}">{{ class }}</option>
+				{% endfor %}
+			</select>
+			<p style="display: none" class="nonspaced">Z klasy</p>
+			<select style="display: none" data-selecttype="populatedclass" onchange="showStudentList(this)">
+				{% for class, studentlist in students.items %}
+				<option>{{ class }}</option>
+				{% endfor %}
+			</select>
+			<select style="display: none" data-selecttype="teacher">
+				{% for name, uid in teachers.items %}
+				<option value="{{ uid }}">{{ name }}</option>
+				{% endfor %}
+			</select>
 			{% for class, studentlist in students.items %}
-			<option>{{ class }}</option>
+			<select style="display: none" data-selecttype="student" data-class="{{ class }}">
+				{% for student in studentlist %}
+				<option value="{{ student.id }}">{{ student.lastname }} {{ student.firstname }}</option>
+				{% endfor %}
+			</select>
 			{% endfor %}
-		</select>
-		<select style="display: none" data-selecttype="teacher">
-			{% for name, uid in teachers.items %}
-			<option value="{{ uid }}">{{ name }}</option>
-			{% endfor %}
-		</select>
-		{% for class, studentlist in students.items %}
-		<select style="display: none" data-selecttype="student" data-class="{{ class }}">
-			{% for student in studentlist %}
-			<option value="{{ student.id }}">{{ student.lastname }} {{ student.firstname }}</option>
-			{% endfor %}
-		</select>
-		{% endfor %}
+		</div>
 		<p class="buttonholder"><input type="submit" value="Wybierz" onclick="setLastSettings(this)"></p>
+		<p>Wyszukaj</p>
+		<div>
+			<input type="text" placeholder="Nazwa klasy, ucznia lub nauczyciela...">
+			<!--<div class="searchresults">
+				<div>
+					<a class="result">Dupsko1<span>nauczyciel</span></a>
+					<a class="result">Dupsko2</a>
+					<a class="result">Dupsko3</a>
+				</div>
+			</div>-->
+		</div>
 	</form>
 </div>
 {% endblock %}

@@ -34,27 +34,27 @@ function handleTimetableSelectUpdate(select) { //triggered when a timetable quic
 	window.location = "/?sel=" + select.selectedOptions[0].getAttribute("data-type") + "&uid=" + encodeURIComponent(select.selectedOptions[0].getAttribute("data-uid"));
 }
 function handleTimetableTypeSelectUpdate(select) { //triggered when the timetable type select in the dialog is changed
-	//hide all elements except first paragraph, type select, and submit button; prevent them from being included in the form
-	for (var i = 2; i < select.parentElement.children.length - 1; i++) {
+	//hide all elements except type select; prevent them from being included in the form
+	for (var i = 1; i < select.parentElement.children.length; i++) {
 		select.parentElement.children[i].style.display = "none";
 		select.parentElement.children[i].removeAttribute("name");
 	}
 	
 	if (select.selectedOptions[0].value == "class") {
 		//show the all classes select, include it in the form
-		select.parentElement.children[2].style.display = "";
-		select.parentElement.children[2].setAttribute("name", "uid");
+		select.parentElement.children[1].style.display = "";
+		select.parentElement.children[1].setAttribute("name", "uid");
 	}
 	else if (select.selectedOptions[0].value == "student") {
 		//show the "from class" text and the populated classes select
+		select.parentElement.children[2].style.display = "";
 		select.parentElement.children[3].style.display = "";
-		select.parentElement.children[4].style.display = "";
-		showStudentList(select.parentElement.children[4]); //show the corresponding student list and include it in the form
+		showStudentList(select.parentElement.children[3]); //show the corresponding student list and include it in the form
 	}
 	else if (select.selectedOptions[0].value == "teacher") {
 		//show the teacher select and include it in the form
-		select.parentElement.children[5].style.display = "";
-		select.parentElement.children[5].setAttribute("name", "uid");
+		select.parentElement.children[4].style.display = "";
+		select.parentElement.children[4].setAttribute("name", "uid");
 	}
 }
 function showStudentList(classSelect) { //display the appropriate student list and include it in the form
@@ -188,6 +188,11 @@ function showDetails(a) { //show the lesson details dialog, triggered when the "
 	document.getElementById("overlaytitle").innerText = "Szczegóły";
 	document.getElementById("overlaycontent").innerHTML = "";
 	
+	//create comapct lesson holder
+	var holder = document.createElement("div");
+	holder.className = "compactlessonholder";
+	holder = document.getElementById("overlaycontent").appendChild(holder);
+	
 	//get the lessonholder
 	var lessonContainer = a.parentElement.parentElement.parentElement.parentElement;
 	
@@ -195,7 +200,7 @@ function showDetails(a) { //show the lesson details dialog, triggered when the "
 	for (var i = 1; i < lessonContainer.children.length; i++) {
 		var entry = lessonContainer.children[i].children[0].cloneNode(true);
 		entry.className = "compactlesson";
-		document.getElementById("overlaycontent").appendChild(entry);
+		holder.appendChild(entry);
 	}
 	
 	//zoom out on mobile devices
@@ -203,8 +208,71 @@ function showDetails(a) { //show the lesson details dialog, triggered when the "
 }
 
 /*
+*	SEARCH FUNCTIONALITY
+*/
+var searchIndex = [];
+
+function addSearchIndexEntry(name, type, uid) { //add entry to the search index
+	var entry = {};
+	
+	entry.name = name;
+	entry.type = type;
+	entry.uid = uid;
+	
+	searchIndex.push(entry);
+}
+function buildSearchIndex() { //fill index with entries
+	//get all selects in the document
+	var selects = document.getElementsByTagName("select");
+	
+	//iterate over all the selects
+	for (var i = 0; i < selects.length; i++) {
+		var selectType = selects[i].getAttribute("data-selecttype");
+		
+		//determine entries type, no data-selecttype = irrelevant select
+		var type;
+		if (selectType == "class" || selectType == "student" || selectType == "teacher") type = selectType;
+		else continue;
+		
+		//add entries to search index
+		for (var j = 0; j < selects[i].options.length; j++)
+			addSearchIndexEntry(selects[i].options[j].innerText, type, selects[i].options[j].value);
+	}
+}
+function searchForTimetable(query) { //find matching entries in the search index
+	var results = [];
+	
+	//sanitize input
+	if (!query) return results;
+	query = query.toLowerCase();
+	
+	//iterate over search index entries
+	for (var i in searchIndex) {
+		//calculate score based on query position in name
+		var score = searchIndex[i].name.toLowerCase().indexOf(query);
+		
+		//discard non-matching entries
+		if (score == -1) continue;
+		
+		//create results entry
+		var resultsEntry = {};
+		resultsEntry.text = searchIndex[i].name;
+		resultsEntry.type = searchIndex[i].type;
+		resultsEntry.uid = searchIndex[i].uid;
+		resultsEntry.score = score;
+		results.push(resultsEntry);
+	}
+	
+	//sort by score
+	results.sort(function(a, b) { return a.score - b.score; });
+	
+	return results;
+}
+
+/*
 *	ONLOAD CODE
 */
 window.onload = function() {
 	displayLastSettings(); //update the quickselect to show remembered options
+	buildSearchIndex(); //prepare search index for searching
 }
