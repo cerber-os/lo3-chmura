@@ -118,6 +118,11 @@ div.searchresults a.nonresult {
 	color: #757575;
 }
 
+span.mobileformtoggler {
+	font-size: 0.8em;
+	display: none;
+}
+
 @media screen and (max-width: 1000px) {
 	body {
 		margin-top: -50px;
@@ -149,6 +154,9 @@ div.searchresults a.nonresult {
 	#overlaytitlebar { margin: 0 0 6pt; }
 	#overlaytitlebar { font-size: inherit; }
 	#overlayclose { height: 15px; width: auto; }
+	
+	form.timetableselectdialog > div:not([data-selectedmobileform]) { display: none; }
+	span.mobileformtoggler { display: unset; }
 }
 @media screen and (max-width: 500px), screen and (max-height: 500px) {
 	#timetable {

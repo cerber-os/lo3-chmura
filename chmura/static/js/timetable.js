@@ -178,6 +178,25 @@ function zoomOut() { //zooms the page out on mobile devices
 	viewport.content = "width=device-width, initial-scale=1";
 	setTimeout(function() { viewport.content = "width=device-width"; }, 1) //after the DOM is updated, remove the initial-scale value to allow immediate change on next attempt
 }
+function toggleMobileForm() { //changes selection type on mobile devices
+	//get mobile forms holder
+	var formHolder = document.getElementById("overlaycontent").children[0];
+	console.log(formHolder);
+	
+	//iterate over forms, move the data-selectedmobileform attribute
+	for (var i = 0; i < formHolder.children.length; i++)
+		if (formHolder.children[i].hasAttribute("data-selectedmobileform")) {
+			//if at the end, move attribute to the beginning
+			if (i == formHolder.children.length - 1)
+				formHolder.children[0].setAttribute("data-selectedmobileform", "data-selectedmobileform");
+			else
+				formHolder.children[i + 1].setAttribute("data-selectedmobileform", "data-selectedmobileform");
+			
+			//remove attribute from current form
+			formHolder.children[i].removeAttribute("data-selectedmobileform");
+			return;
+		}
+}
 
 /*
 *	TIMETABLE-RELATED FUNCTIONS
@@ -275,7 +294,7 @@ function searchForTimetable(query) { //find matching entries in the search index
 }
 function handleSearchBarKeyUp(input, event) { //triggered when a key is released in the search bar, used for text input
 	//get suggestion holder
-	var suggestionHolder = input.parentElement.children[1].children[0];
+	var suggestionHolder = input.parentElement.children[2].children[0];
 	
 	//exclude control keys from being handled
 	if (event.keyCode == 13) { return; }
@@ -335,7 +354,7 @@ function handleSearchBarKeyUp(input, event) { //triggered when a key is released
 }
 function handleSearchBarKeyDown(input, event) { //triggered when a key is pressed in the search bar, used for control keys
 	//get suggestion holder
-	var suggestionHolder = input.parentElement.children[1].children[0];
+	var suggestionHolder = input.parentElement.children[2].children[0];
 	
 	//handle control keys
 	if (event.keyCode == 13) { acceptSearchSuggestion(suggestionHolder, event); return; }

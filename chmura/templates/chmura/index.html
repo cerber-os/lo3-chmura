@@ -109,41 +109,43 @@
 </div>
 
 <div id="timetableselectdialog" hidden>
-	<form>
-		<p>Pokaż plan</p>
-		<div>
-			<select name="sel" onchange="handleTimetableTypeSelectUpdate(this)">
-				<option value="class">Klasy</option>
-				<option value="student">Ucznia</option>
-				<option value="teacher">Nauczyciela</option>
-			</select>
-			<select name="uid" data-selecttype="class">
-				{% for class, uid in classes.items %}
-				<option value="{{ uid }}">{{ class }}</option>
-				{% endfor %}
-			</select>
-			<p style="display: none" class="nonspaced">Z klasy</p>
-			<select style="display: none" data-selecttype="populatedclass" onchange="showStudentList(this)">
+	<form class="timetableselectdialog">
+		<div data-selectedmobileform>
+			<p>Pokaż plan <span class="mobileformtoggler">lub <a href="javascript:toggleMobileForm()">wyszukaj</a></span></p>
+			<div>
+				<select name="sel" onchange="handleTimetableTypeSelectUpdate(this)">
+					<option value="class">Klasy</option>
+					<option value="student">Ucznia</option>
+					<option value="teacher">Nauczyciela</option>
+				</select>
+				<select name="uid" data-selecttype="class">
+					{% for class, uid in classes.items %}
+					<option value="{{ uid }}">{{ class }}</option>
+					{% endfor %}
+				</select>
+				<p style="display: none" class="nonspaced">Z klasy</p>
+				<select style="display: none" data-selecttype="populatedclass" onchange="showStudentList(this)">
+					{% for class, studentlist in students.items %}
+					<option>{{ class }}</option>
+					{% endfor %}
+				</select>
+				<select style="display: none" data-selecttype="teacher">
+					{% for name, uid in teachers.items %}
+					<option value="{{ uid }}">{{ name }}</option>
+					{% endfor %}
+				</select>
 				{% for class, studentlist in students.items %}
-				<option>{{ class }}</option>
+				<select style="display: none" data-selecttype="student" data-class="{{ class }}">
+					{% for student in studentlist %}
+					<option value="{{ student.id }}">{{ student.lastname }} {{ student.firstname }}</option>
+					{% endfor %}
+				</select>
 				{% endfor %}
-			</select>
-			<select style="display: none" data-selecttype="teacher">
-				{% for name, uid in teachers.items %}
-				<option value="{{ uid }}">{{ name }}</option>
-				{% endfor %}
-			</select>
-			{% for class, studentlist in students.items %}
-			<select style="display: none" data-selecttype="student" data-class="{{ class }}">
-				{% for student in studentlist %}
-				<option value="{{ student.id }}">{{ student.lastname }} {{ student.firstname }}</option>
-				{% endfor %}
-			</select>
-			{% endfor %}
+			</div>
+			<p class="buttonholder"><input type="submit" value="Wybierz" onclick="setLastSettings(this)"></p>
 		</div>
-		<p class="buttonholder"><input type="submit" value="Wybierz" onclick="setLastSettings(this)"></p>
-		<p>Wyszukaj</p>
 		<div>
+			<p>Wyszukaj <span class="mobileformtoggler">lub <a href="javascript:toggleMobileForm()">wybierz z listy</a></span></p>
 			<input
 				type="text"
 				name="query"
