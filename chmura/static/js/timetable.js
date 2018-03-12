@@ -256,6 +256,7 @@ function searchForTimetable(query) { //find matching entries in the search index
 		
 		//create results entry
 		var resultsEntry = {};
+		resultsEntry.text = searchIndex[i].name;
 		resultsEntry.html = searchIndex[i].name.substring(0, score)
 			+ "<b>"
 			+ searchIndex[i].name.substr(score, query.length)
@@ -307,6 +308,10 @@ function handleSearchBarKeyUp(input, event) { //triggered when a key is released
 		result.innerHTML = results[i].html;
 		result.innerHTML += "<span>" + typeDictionary[results[i].type] + "</span>";
 		result.setAttribute("href", "/?sel=" + results[i].type + "&uid=" + encodeURIComponent(results[i].uid));
+		result.setAttribute("data-type", results[i].type);
+		result.setAttribute("data-uid", results[i].uid);
+		result.setAttribute("data-displayname", results[i].text);
+		result.setAttribute("onclick", "setLastSettingsFromSearch(this)");
 		
 		suggestionHolder.appendChild(result);
 		
@@ -338,6 +343,15 @@ function moveSearchSelection(suggestionHolder, down) { //mark suggestion as sele
 function acceptSearchSuggestion(suggestionHolder) { //follow link in marked selection
 	//prevent form submission
 	event.preventDefault();
+}
+function setLastSettingsFromSearch(a) { //remember chosen timetable, triggered on result selection
+	var type = a.getAttribute("data-type");
+	var displayName = a.getAttribute("data-displayname");
+	var uid = a.getAttribute("data-uid");
+	
+	setCookie("lasttype", type, 31536000000);
+	setCookie("last" + type, displayName, 31536000000);
+	setCookie("last" + type + "uid", uid, 31536000000);
 }
 
 /*
