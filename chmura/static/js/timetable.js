@@ -121,16 +121,16 @@ function displayLastSettings() { //called on document load, fills the timetable 
 		//select the pre-filled option
 		var defaultOption = select.children[0];
 		var defaultType = select.children[0].getAttribute("data-type");
-		var defaultValue = select.children[0].innerText;
+		var defaultUid = select.children[0].getAttribute("data-uid");
 		
 		//save the "choose option" and temporatily remove it
 		var chooseOption = select.children[select.children.length - 1];
 		select.removeChild(chooseOption);
 		
 		//determine whether the pre-filled option matches one of the saved options
-		var defaultIsCurrentClass = defaultType == "Klasa" && defaultValue == getCookie("lastclass");
-		var defaultIsCurrentStudent = defaultType == "Uczeń" && defaultValue == getCookie("laststudent");
-		var defaultIsCurrentTeacher = defaultType == "Nauczyciel" && defaultValue == getCookie("lastteacher");
+		var defaultIsCurrentClass = defaultType == "Klasa" && defaultUid == getCookie("lastclassuid");
+		var defaultIsCurrentStudent = defaultType == "Uczeń" && defaultUid == getCookie("laststudentuid");
+		var defaultIsCurrentTeacher = defaultType == "Nauczyciel" && defaultUid == getCookie("lastteacheruid");
 		
 		//convert the pre-filled option type value from display name to type id
 		var typeDictionary = {
