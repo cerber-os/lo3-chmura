@@ -11,7 +11,7 @@ from .subst import get_substitution, updateJob
 from .updateids import load_ids, updateid
 from .news import get_news, newsJob
 from .agenda import get_agenda
-from .utils import getReversedStudent, getReversedDict, get_cur_path
+from .utils import getReversedStudent, getReversedDict, get_cur_path, requestedTimetableError
 import datetime
 import re
 import chmura.log as log
@@ -40,11 +40,11 @@ def index(request):
 
     if not re.match(r'^[*-]?\d{1,3}$', uid):
         log.info('Incorrect uid was given')
-        raise Http404
+        return requestedTimetableError(request, reason=1)
 
     if selector is None:
         log.info('Incorrect selector was given')
-        raise Http404
+        return requestedTimetableError(request, reason=1)
 
     if selector == 'trieda':
         con['type'] = 'Klasa'
@@ -56,8 +56,11 @@ def index(request):
         con['type'] = 'Nauczyciel'
         con['target'] = getReversedDict(con['teachers'], uid)
     else:
-        raise Http404
-    con['timetable'] = get_timetable(uid=uid, selector=selector)
+        return requestedTimetableError(request, reason=1)
+    try:
+        con['timetable'] = get_timetable(uid=uid, selector=selector)
+    except Http404:
+        return requestedTimetableError(request, reason=2)
     con['target_uid'] = uid
     begin = 0 if '0' in con['timetable']['Poniedziałek'] else 1
     con['begin'] = begin

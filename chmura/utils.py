@@ -6,6 +6,7 @@ import random
 import urllib.request
 import urllib.parse
 import chmura.log as log
+from django.shortcuts import render
 from lo3.settings import ENABLE_TOR, ENABLE_AGGRESSIVE_IP_CHANGE, DEBUG
 from chmura.models import Settings
 
@@ -87,3 +88,11 @@ def url_request(address, header=None, params=None):
     url = urllib.request.Request(address, options, headers=header)
     serverResponse = opener.open(url)
     return serverResponse
+
+
+def requestedTimetableError(request, reason):
+    response = render(request, 'chmura/timetableerror.html', {'reason': reason}, status=404)
+    for _ in ['lasttype', 'lastclassuid', 'lastteacheruid', 'laststudentuid',
+              'lastclass', 'lastteacher', 'laststudent']:
+        response.delete_cookie(_)
+    return response
