@@ -8,6 +8,7 @@ import urllib.parse
 import chmura.log as log
 from django.shortcuts import render
 from lo3.settings import ENABLE_TOR, ENABLE_AGGRESSIVE_IP_CHANGE, DEBUG
+from time import sleep
 from chmura.models import Settings
 
 
@@ -86,7 +87,11 @@ def url_request(address, header=None, params=None):
 
     options = urllib.parse.urlencode(params).encode('UTF-8')
     url = urllib.request.Request(address, options, headers=header)
-    serverResponse = opener.open(url)
+    try:
+        serverResponse = opener.open(url)
+    except Exception:
+        sleep(10)
+        serverResponse = opener.open(url)
     return serverResponse
 
 

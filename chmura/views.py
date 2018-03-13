@@ -19,6 +19,7 @@ import shutil
 import threading
 import tempfile
 import os
+import traceback
 
 
 def index(request):
@@ -314,7 +315,8 @@ def updateCache():
         try:
             open(updateprocesspath, 'w').write('error---')
             log.error(e)
-            email = EmailMessage('Blad przy aktualizacji cache!!!', 'Treść błędu: ' + str(e), to=['cerber@cerberos.pl'])
+            email = EmailMessage('Blad przy aktualizacji cache!!!', 'Treść błędu: ' + str(traceback.format_exc()),
+                                 to=['cerber@cerberos.pl'])
             email.send()
             return
         except Exception as e:
