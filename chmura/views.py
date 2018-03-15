@@ -12,6 +12,7 @@ from .updateids import load_ids, updateid
 from .news import get_news, newsJob
 from .agenda import get_agenda
 from .utils import getReversedStudent, getReversedDict, get_cur_path, requestedTimetableError
+from time import sleep
 import datetime
 import re
 import chmura.log as log
@@ -308,8 +309,14 @@ def updateCache():
     open(updateprocesspath, 'w').write('updating')
     try:
         updateid()
+        sleep(10)
+
         timetableJob()
+        sleep(10)
+
         updateJob()
+        sleep(10)
+
         newsJob()
     except Exception as e:
         try:

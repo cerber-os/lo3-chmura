@@ -134,7 +134,7 @@ CRONJOBS = [
     ('0 0 */2 * *', 'chmura.timetable.timetableJob'),
     # ('0 */12 * * *', 'chmura.news.newsJob'),
     # ('0 0 */10 * *', 'chmura.news.agendaJob'),
-    ('0 */2 * * *', 'chmura.subst.updateJob'),
+    ('0 */1 * * *', 'chmura.subst.updateJob'),
     ('0 12 1 * *', 'chmura.updateids.updateid'),
 ]
 

@@ -231,6 +231,13 @@ def download_subst(date):
             zastepstwa[k].append(status)
         except KeyError:
             zastepstwa[k] = [status]
+
+    for grupa in zastepstwa:
+        if grupa == '':
+            zastepstwa[grupa] = sorted(zastepstwa[grupa], key=lambda x: x['przerwa']['name'])
+        else:
+            zastepstwa[grupa] = sorted(zastepstwa[grupa], key=lambda x: x['lekcja']['name'])
+
     posortowane = dict(sorted(zastepstwa.items()))
     return {'dane': posortowane, 'notka': note}
 
