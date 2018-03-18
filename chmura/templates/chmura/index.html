@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block localjs %}
-<script src="/static/js/timetable.js?6" defer></script>
+<script src="/static/js/timetable.js?7" defer></script>
 {% endblock %}
 
 {% block secondaryheaderselect %}
@@ -152,7 +152,8 @@
 				autocomplete="off"
 				placeholder="Nazwa klasy, ucznia lub nauczyciela"
 				onkeyup="handleSearchBarKeyUp(this, event)"
-				onkeydown="handleSearchBarKeyDown(this, event)">
+				onkeydown="handleSearchBarKeyDown(this, event)"
+				class="searchbar">
 			<div class="searchresults">
 				<div data-selectedindex="-1"></div>
 			</div>

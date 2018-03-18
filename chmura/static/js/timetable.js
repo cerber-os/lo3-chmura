@@ -11,6 +11,9 @@ function showTimetableSelect() { //show the timetable select dialog
 	var lastMobileForm = getCookie("lastmobileform");
 	if (lastMobileForm) toggleMobileForm(Number(lastMobileForm));
 	
+	//focus on the search bar
+	document.getElementsByClassName("searchbar")[0].select();
+	
 	//zoom out for mobile users
 	zoomOut();
 }
@@ -309,7 +312,7 @@ function searchForTimetable(query) { //find matching entries in the search index
 }
 function handleSearchBarKeyUp(input, event) { //triggered when a key is released in the search bar, used for text input
 	//get suggestion holder
-	var suggestionHolder = input.parentElement.children[2].children[0];
+	var suggestionHolder = input.parentElement.children[3].children[0];
 	
 	//exclude control keys from being handled
 	if (event.keyCode == 13) { return; }
@@ -369,7 +372,7 @@ function handleSearchBarKeyUp(input, event) { //triggered when a key is released
 }
 function handleSearchBarKeyDown(input, event) { //triggered when a key is pressed in the search bar, used for control keys
 	//get suggestion holder
-	var suggestionHolder = input.parentElement.children[2].children[0];
+	var suggestionHolder = input.parentElement.children[3].children[0];
 	
 	//handle control keys
 	if (event.keyCode == 13) { acceptSearchSuggestion(suggestionHolder, event); return; }
