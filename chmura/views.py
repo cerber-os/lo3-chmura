@@ -22,6 +22,8 @@ import tempfile
 import os
 import traceback
 
+from .timetable_v2 import *
+
 
 def index(request):
     types = {'class': 'trieda',
@@ -88,10 +90,16 @@ def announcement(request):
     return render(request, 'chmura/announcement.html')
 
 
+def debug(request):
+    return render(request, 'chmura/debug.html', {'timetable': process_gcall()})
+
+
 def substitutionList(request):
     now = datetime.datetime.now()
     if now.hour >= 17:
         now = now + datetime.timedelta(days=1)
+    if now.weekday() >= 5:
+        now = now + datetime.timedelta(days=7-now.weekday())
     now = str(now.year) + '-' + str(now.month).zfill(2) + '-' + str(now.day).zfill(2)
     date = request.GET.get('date', now)
 
@@ -107,10 +115,20 @@ def substitutionList(request):
     except Http404:
         return redirect('/substitution/')
 
+    daysNames = {0: 'Poniedziałek', 1: 'Wtorek', 2: 'Środa', 3: 'Czwartek', 4: 'Piątek'}
+    data_now = datetime.datetime.now()
+    data_set = {}
+    for shift in range(0, 7):
+        loop_date = data_now + datetime.timedelta(days=shift)
+        if loop_date.weekday() >= 5:
+            continue
+        data_set[daysNames[loop_date.weekday()] + ', ' + loop_date.strftime('%d.%m.%Y')] = loop_date.strftime('%Y-%m-%d')
+
     con = {'zastepstwa': zastepstwa['dane'],
            'notka': zastepstwa['notka'],
            'data': date,
            'data_now': now,
+           'data_set': data_set,
            'classes': load_ids('classes'),
            'teachers': load_ids('teachers')}
     return render(request, 'chmura/subst.html', con)
