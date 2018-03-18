@@ -61,4 +61,7 @@ function getHttpGetParameter(name) {
 	return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-window.onkeydown = function(event) { if (event.keyCode == 27) closeOverlay(); }
+function handleOnKeyDown(event) {
+	if (event.keyCode == 27) closeOverlay();
+}
+window.addEventListener("keydown", handleOnKeyDown);

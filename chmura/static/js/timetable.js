@@ -443,8 +443,12 @@ function setLastSettingsFromSearch(a) { //remember chosen timetable, triggered o
 }
 
 /*
-*	ONLOAD CODE
+*	EVENTS
 */
+function handleOnKeyDown(event) {
+	if (event.keyCode == 113) showTimetableSelect(); //show timetable select on F2
+}
+window.addEventListener("keydown", handleOnKeyDown);
 window.onload = function() {
 	displayLastSettings(); //update the quickselect to show remembered options
 	buildSearchIndex(); //prepare search index for searching
