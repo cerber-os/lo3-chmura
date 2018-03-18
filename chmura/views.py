@@ -115,13 +115,11 @@ def substitutionList(request):
     except Http404:
         return redirect('/substitution/')
 
-    daysNames = {0: 'Poniedziałek', 1: 'Wtorek', 2: 'Środa', 3: 'Czwartek', 4: 'Piątek'}
+    daysNames = {0: 'Poniedziałek', 1: 'Wtorek', 2: 'Środa', 3: 'Czwartek', 4: 'Piątek', 5: 'Sobota', 6: 'Niedziela'}
     data_now = datetime.datetime.now()
     data_set = {}
-    for shift in range(0, 7):
+    for shift in range(0, 8):
         loop_date = data_now + datetime.timedelta(days=shift)
-        if loop_date.weekday() >= 5:
-            continue
         data_set[daysNames[loop_date.weekday()] + ', ' + loop_date.strftime('%d.%m.%Y')] = loop_date.strftime('%Y-%m-%d')
 
     con = {'zastepstwa': zastepstwa['dane'],

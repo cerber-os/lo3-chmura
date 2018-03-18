@@ -6,17 +6,27 @@
 <link rel="stylesheet" href="/static/css/substitution.css?1">
 {% endblock %}
 {% block localjs %}
-<script src="/static/js/substitution.js?4" defer></script>
+<script src="/static/js/substitution.js?5" defer></script>
 {% endblock %}
 
 {% block secondaryheaderselect %}
-<select class="dayselect" onchange="handleSubstitutionDaySelectUpdate(this)" id="maindayselect" data-date="{{ data }}"></select>
+<select class="dayselect" onchange="handleSubstitutionDaySelectUpdate(this)" id="maindayselect" data-date="{{ data }}">
+	{% for date, value in data_set.items %}
+	<option value="{{ value }}" {% if value == data %}selected{% endif %}>{{ date }}</option>
+	{% endfor %}
+</select>
 {% endblock %}
 
 {% block content %}
 <div id="mobilecontrols">
 	<p>Wybierz dzień:</p>
-	<div><select class="dayselect" onchange="handleSubstitutionDaySelectUpdate(this)"></select></div>
+	<div>
+		<select class="dayselect" onchange="handleSubstitutionDaySelectUpdate(this)" data-date="{{ data }}">
+			{% for date, value in data_set.items %}
+			<option value="{{ value }}" {% if value == data %}selected{% endif %}>{{ date }}</option>
+			{% endfor %}
+		</select>
+	</div>
 	<p>Pokaż zastępstwa dla:</p>
 	<div>
 		<select class="substitutiongroupselect" onchange="handleFilterSelectUpdate(this)">

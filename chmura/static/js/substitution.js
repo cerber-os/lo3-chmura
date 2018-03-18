@@ -1,27 +1,9 @@
-function populateDaySelect() {
+function handleSubstitutionDaySelectLoad() {
 	var selects = document.getElementsByClassName("dayselect");
 	
-	var day = new Date();
-	var dayNames = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
-	
-	var selectedDate = new Date(document.getElementById("maindayselect").getAttribute("data-date")) || new Date();
-	
-	for (var i = 0; i <= 7; i++) {
-		var dayString = ("0" + day.getDate()).substr(-2);
-		var monthString = ("0" + (day.getMonth() + 1)).substr(-2)
-		var yearString = day.getFullYear();
-		
-		var dateString = dayNames[day.getDay()] + ", " + dayString + "." + monthString + "." + yearString;
-		var isoString = yearString + "-" + monthString + "-" + dayString;
-		
-		var option = document.createElement("option");
-		option.setAttribute("value", isoString);
-		option.innerText = dateString;
-		if (day.getDate() == selectedDate.getDate()) option.setAttribute("selected", "selected");
-		for (var j = 0; j < selects.length; j++) selects[j].appendChild(option.cloneNode(true));
-		
-		day.setDate(day.getDate() + 1);
-	}
+	for (var i = 0; i < selects.length; i++)
+		if (selects[i].selectedOptions[0].value != selects[i].getAttribute("data-date"))
+			handleSubstitutionDaySelectUpdate(selects[i]);
 }
 function handleSubstitutionDaySelectUpdate(select) {
 	var date = select.selectedOptions[0].value;
@@ -102,6 +84,6 @@ function handleFilterSelectUpdate(updatedSelect) {
 }
 
 window.onload = function() {
-	populateDaySelect();
 	selectSavedFilterIndex();
+	handleSubstitutionDaySelectLoad();
 }
