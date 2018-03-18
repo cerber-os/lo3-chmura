@@ -3,7 +3,7 @@
 {% block title %}Plan lekcji{% endblock %}
 
 {% block localcss %}
-<link rel="stylesheet" href="/static/css/timetable.css?6">
+<link rel="stylesheet" href="/static/css/timetable.css?7">
 {#<link rel="stylesheet" href="/static/css/timetablecolors.css">#}
 {% if device == "Chrome" %}<link rel="stylesheet" href="/static/css/timetablechromefix.css">{% endif %}
 {% endblock %}
@@ -145,7 +145,8 @@
 			<p class="buttonholder"><input type="submit" value="Wybierz" onclick="setLastSettings(this)"></p>
 		</div>
 		<div>
-			<p>Wyszukaj <span class="mobileformtoggler">lub <a href="javascript:toggleMobileForm()">wybierz z listy</a></span></p>
+			<p class="desktoptimetableselectlabel">Lub wyszukaj</p>
+			<p class="mobiletimetableselectlabel">Wyszukaj <span class="mobileformtoggler">lub <a href="javascript:toggleMobileForm()">wybierz z listy</a></span></p>
 			<input
 				type="text"
 				autocomplete="off"

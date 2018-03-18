@@ -122,6 +122,7 @@ span.mobileformtoggler {
 	font-size: 0.8em;
 	display: none;
 }
+p.mobiletimetableselectlabel { display: none; }
 
 @media screen and (max-width: 1000px) {
 	body {
@@ -157,6 +158,8 @@ span.mobileformtoggler {
 	
 	form.timetableselectdialog > div:not([data-selectedmobileform]) { display: none; }
 	span.mobileformtoggler { display: unset; }
+	p.desktoptimetableselectlabel { display: none; }
+	p.mobiletimetableselectlabel { display: unset; }
 }
 @media screen and (max-width: 500px), screen and (max-height: 500px) {
 	#timetable {
