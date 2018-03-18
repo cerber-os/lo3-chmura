@@ -58,7 +58,7 @@ h2 {
 	font-size: 1.3em;
 }
 
-p.notka {
+p.remarks {
 	color: #E53935;
 	margin-left: 2em;
 }
@@ -76,4 +76,6 @@ td.mobilesubstitution > p:last-of-type { margin-bottom: 0; }
 	
 	#mobilecontrols { display: block; }
 	#groupselectwrapper { display: none; }
+	
+	p.remarks { margin-left: 8px; }
 }

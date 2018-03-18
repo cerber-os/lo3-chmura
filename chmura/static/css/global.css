@@ -188,7 +188,7 @@ button, input[type="submit"] {
 a {
 	color: inherit;
 }
-input[type="text"] {
+input[type="text"], input[type="password"] {
 	padding: 0 4px;
 }
 

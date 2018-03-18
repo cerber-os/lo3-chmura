@@ -3,7 +3,7 @@
 {% block title %}Zastępstwa{% endblock %}
 
 {% block localcss %}
-<link rel="stylesheet" href="/static/css/substitution.css">
+<link rel="stylesheet" href="/static/css/substitution.css?1">
 {% endblock %}
 {% block localjs %}
 <script src="/static/js/substitution.js?4" defer></script>
@@ -36,7 +36,7 @@
 
 {% if notka|length > 0 %}
 <h2>Uwagi</h2>
-<p class="notka">{% autoescape off %}{{ notka }}{% endautoescape %}</p>
+<p class="remarks">{% autoescape off %}{{ notka }}{% endautoescape %}</p>
 {% endif %}
 
 {% if zastepstwa|length == 0 %}
