@@ -74,7 +74,7 @@ def updateTimeTables():
     students = load_ids('students')
     for obj_class in students:
         for student in students[obj_class]:
-            with open(CACHE_LOCATION + 'timetables/student' + student['id'].replace('#', '*') + '.tt', 'wb') as f:
+            with open(CACHE_LOCATION + 'timetables/student' + student['id'].replace('*', '#') + '.tt', 'wb') as f:
                 pickle.dump(tb.getTimeTableForObject('student', student['id']), f, 2)
 
 
