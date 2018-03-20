@@ -36,10 +36,7 @@
 </head>
 <body>
 	<h1>Błąd podczas wyświetlania planu lekcji</h1>
-	<h1 class="smaller">
-    {% if reason == 1 %}Podano niepoprawny identyfikator klasy lub selektor
-    {% elif reason == 2 %}Nie można wygenerować żądanego planu lekcji
-    {% endif %}</h1>
+	<h1 class="smaller">{{ reason }}</h1>
 	<p>Przepraszam, ale nie jest w stanie wygenerować planu lekcji, o który mnie poprosiłeś.</p>
 	<p>Jeśli uważasz, że to mój błąd, będę bardzo wdzięczny za <a href="https://docs.google.com/forms/u/0/d/1crfIHHFgJh8a26Snn9wLvZP2OyYGu-K9zxKhoKr0TKA/viewform">zgłoszenie tego</a>.</p>
 </body>

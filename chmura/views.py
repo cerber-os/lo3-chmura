@@ -6,15 +6,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from chmura.models import Subject, Alias, PriorityClass, SubstitutionType
 from lo3.settings import DEBUG
-from .timetable import get_timetable, timetableJob
 from .subst import get_substitution, updateJob
 from .updateids import load_ids, updateid
 from .news import get_news, newsJob
 from .agenda import get_agenda
-from .utils import getReversedStudent, getReversedDict, get_cur_path, requestedTimetableError
+from .utils import getReversedStudent, getReversedDict, get_cur_path
+from .timetable import loadTimeTable, TimeTableException, getSelectorName, getPluralName, updateTimeTables
 from time import sleep
 import datetime
-import re
 import chmura.log as log
 import shutil
 import threading
@@ -22,14 +21,8 @@ import tempfile
 import os
 import traceback
 
-from .timetable_v2 import *
-
 
 def index(request):
-    types = {'class': 'trieda',
-             'student': 'student',
-             'teacher': 'ucitel'}
-
     con = {'classes': load_ids('classes'),
            'teachers': load_ids('teachers'),
            'students': load_ids('students'),
@@ -40,41 +33,35 @@ def index(request):
     lastuid = request.COOKIES.get('last' + lasttype + 'uid', '-22')
 
     uid = request.GET.get('uid', lastuid)
-    selector = types.get(request.GET.get('sel', lasttype))
+    selector = request.GET.get('sel', lasttype)
 
-    if not re.match(r'^[*-]?\d{1,3}$', uid):
-        log.info('Incorrect uid was given')
-        return requestedTimetableError(request, reason=1)
+    try:
+        con['timetable'] = loadTimeTable(selector=selector, uid=uid)
+        con['begin'] = con['timetable']['timetable_settings']['begin']
+        con['end'] = con['timetable']['timetable_settings']['end']
+        con['break_range'] = [con['breaks'][i] for i in range(con['begin'], con['end'] + 1)]
 
-    if selector is None:
-        log.info('Incorrect selector was given')
-        return requestedTimetableError(request, reason=1)
+        if not con['timetable']['timetable_settings']['is_saturday']:
+            del(con['timetable']['Niedziela'])
+            del(con['timetable']['Sobota'])
 
-    if selector == 'trieda':
-        con['type'] = 'Klasa'
-        con['target'] = getReversedDict(con['classes'], uid)
-    elif selector == 'student':
-        con['type'] = 'Uczeń'
+        del(con['timetable']['timetable_settings'])
+    except TimeTableException as e:
+        response = render(request, 'chmura/timetableerror.html', {'reason': e.message}, status=404)
+        for _ in ['lasttype', 'lastclassuid', 'lastteacheruid', 'laststudentuid',
+                  'lastclass', 'lastteacher', 'laststudent']:
+            response.delete_cookie(_)
+        return response
+    con['type'] = getSelectorName(selector)
+    if selector == 'student':
         con['target'] = getReversedStudent(con['students'], uid)
-    elif selector == 'ucitel':
-        con['type'] = 'Nauczyciel'
-        con['target'] = getReversedDict(con['teachers'], uid)
     else:
-        return requestedTimetableError(request, reason=1)
-    try:
-        con['timetable'] = get_timetable(uid=uid, selector=selector)
-    except Http404:
-        return requestedTimetableError(request, reason=2)
+        con['target'] = getReversedDict(con[getPluralName(selector)], uid)
     con['target_uid'] = uid
-    begin = 0 if '0' in con['timetable']['Poniedziałek'] else 1
-    con['begin'] = begin
-    try:
-        end = con['timetable']['Poniedziałek'].keys()
-        end = [int(e) for e in end]
-        end = int(sorted(end)[-1])
-    except ValueError:
-        end = 9
-    con['break_range'] = [con['breaks'][i] for i in range(begin, end + 1)]
+
+    con['display_teacher'] = 1 if selector != 'teacher' else 0
+    con['display_classes'] = 1 if selector not in ['class', 'student'] else 0
+    con['display_classroom'] = 1 if selector != 'classroom' else 0
 
     if 'Chrome' in request.user_agent.browser.family:
         con['device'] = 'Chrome'
@@ -88,10 +75,6 @@ def index(request):
 
 def announcement(request):
     return render(request, 'chmura/announcement.html')
-
-
-def debug(request):
-    return render(request, 'chmura/debug.html', {'timetable': process_gcall()})
 
 
 def substitutionList(request):
@@ -115,11 +98,13 @@ def substitutionList(request):
     except Http404:
         return redirect('/substitution/')
 
-    daysNames = {0: 'Poniedziałek', 1: 'Wtorek', 2: 'Środa', 3: 'Czwartek', 4: 'Piątek', 5: 'Sobota', 6: 'Niedziela'}
+    daysNames = {0: 'Poniedziałek', 1: 'Wtorek', 2: 'Środa', 3: 'Czwartek', 4: 'Piątek'}
     data_now = datetime.datetime.now()
     data_set = {}
-    for shift in range(0, 8):
+    for shift in range(0, 7):
         loop_date = data_now + datetime.timedelta(days=shift)
+        if loop_date.weekday() >= 5:
+            continue
         data_set[daysNames[loop_date.weekday()] + ', ' + loop_date.strftime('%d.%m.%Y')] = loop_date.strftime('%Y-%m-%d')
 
     con = {'zastepstwa': zastepstwa['dane'],
@@ -327,7 +312,7 @@ def updateCache():
         updateid()
         sleep(10)
 
-        timetableJob()
+        updateTimeTables()
         sleep(10)
 
         updateJob()

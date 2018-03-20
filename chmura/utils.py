@@ -93,11 +93,3 @@ def url_request(address, header=None, params=None):
         sleep(10)
         serverResponse = opener.open(url)
     return serverResponse
-
-
-def requestedTimetableError(request, reason):
-    response = render(request, 'chmura/timetableerror.html', {'reason': reason}, status=404)
-    for _ in ['lasttype', 'lastclassuid', 'lastteacheruid', 'laststudentuid',
-              'lastclass', 'lastteacher', 'laststudent']:
-        response.delete_cookie(_)
-    return response
