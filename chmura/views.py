@@ -4,6 +4,7 @@ from django.core.mail import EmailMessage
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from chmura.models import Subject, Alias, PriorityClass, SubstitutionType
 from lo3.settings import DEBUG
 from .updateids import load_ids, updateid
@@ -128,16 +129,14 @@ def loginPage(request):
 
     user = authenticate(request, username=username, password=password)
     if user is not None:
-        # Zalogowany(szef_prezesa, tajnehaslo1) - jeśli sądzisz, że na produkcji są te same dane, to lepiej zmień zawód
         login(request, user)
         return redirect('/admin/')
     else:
         return render(request, 'chmura/adminlogin.html', {'incorrect_login': True})
 
 
+@login_required()
 def adminPanel(request):
-    if not request.user.is_authenticated:
-        return redirect('/adminlogin/')
     con = {'classes': load_ids('classes'),
            'subjects': [i.name for i in Subject.objects.all()],
            'is_debug': DEBUG,
@@ -187,9 +186,8 @@ def adminPanel(request):
 # -1		Błąd
 
 
+@login_required()
 def adminChangePassword(request):
-    if not request.user.is_authenticated:
-        return redirect('/adminlogin/')
     u = User.objects.get(username=request.user.username)
     newpassword = request.POST.get('new_password', '1')
     if u.check_password(request.POST.get('old_password', None)):
@@ -208,9 +206,8 @@ def adminChangePassword(request):
     return redirect('/admin?status=' + error)
 
 
+@login_required()
 def adminClearCache(request):
-    if not request.user.is_authenticated:
-        return redirect('/adminlogin/')
     if not DEBUG:
         return redirect('/admin/?status=-4')  # Opcja dostępna w trybie debug
     if os.path.exists(get_cur_path() + '/../cache'):
@@ -222,10 +219,8 @@ def adminClearCache(request):
     return redirect('/admin?status=1')  # Pomyślnie wyczyszczono cache
 
 
+@login_required()
 def adminModifyAliases(request):
-    if not request.user.is_authenticated:
-        return redirect('/adminlogin/')
-
     for name, alias in request.POST.items():
         if name.startswith('class$'):
             selector = 'class'
@@ -255,16 +250,14 @@ def adminModifyAliases(request):
     return redirect('/admin?status=2&aliastype=' + request.GET.get("aliastype"))  # Pomyślnie zmodyfikowano aliasy
 
 
+@login_required()
 def adminLogout(request):
-    if not request.user.is_authenticated:
-        return redirect('/adminlogin/')
     logout(request)
     return redirect('/')
 
 
+@login_required()
 def adminUpdateCache(request):
-    if not request.user.is_authenticated:
-        return redirect('/adminlogin/')
     updateprocesspath = tempfile.gettempdir() + '/updateProcess'
     
     if not request.user.is_authenticated:
@@ -277,6 +270,7 @@ def adminUpdateCache(request):
     return redirect('/admin?status=3')
 
 
+@login_required()
 def adminGetState():
     updateprocesspath = tempfile.gettempdir() + '/updateProcess'
     
@@ -289,6 +283,7 @@ def adminGetState():
     return 2  # Aktualizacja zakończona
 
 
+@login_required()
 def updateCache():
     updateprocesspath = tempfile.gettempdir() + '/updateProcess'
     
@@ -318,9 +313,8 @@ def updateCache():
     open(updateprocesspath, 'w').write('finished')
 
 
+@login_required()
 def adminModifyPriority(request):
-    if not request.user.is_authenticated:
-        return redirect('/adminlogin/')
     classes = load_ids('classes')
 
     for priority in PriorityClass.objects.all():
@@ -344,9 +338,7 @@ def adminModifyPriority(request):
     return redirect('/admin?status=2&aliastype=priority')  # Pomyślnie zmodyfikowano priorytety klas
 
 
+@login_required()
 def adminUpdateID(request):
-    if not request.user.is_authenticated:
-        return redirect('/adminlogin/')
-
     updateid()
     return redirect('/admin?status=4')  # Pomyślnie zmodyfikowano priorytety klas

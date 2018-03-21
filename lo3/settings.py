@@ -150,6 +150,8 @@ else:
 
 # Securiy
 
+LOGIN_URL = '/adminlogin/'
+
 if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
