@@ -1,22 +1,22 @@
 from django.shortcuts import render, redirect
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from django.core.mail import EmailMessage
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from chmura.models import Subject, Alias, PriorityClass, SubstitutionType
 from lo3.settings import DEBUG
-from .subst import get_substitution, updateJob
 from .updateids import load_ids, updateid
 from .news import get_news, newsJob
 from .agenda import get_agenda
 from .utils import getReversedStudent, getReversedDict, get_cur_path
+from chmura.subst import updateSubstitution, checkIfDateInFuture, loadSubstiution, \
+                             SubstitutionException, generateDatesDict
 from .timetable import loadTimeTable, TimeTableException, getSelectorName, getPluralName, updateTimeTables
 from time import sleep
-import datetime
+from datetime import datetime, timedelta
 import chmura.log as log
 import shutil
-import threading
 import tempfile
 import os
 import traceback
@@ -47,7 +47,7 @@ def index(request):
 
         del(con['timetable']['timetable_settings'])
     except TimeTableException as e:
-        response = render(request, 'chmura/timetableerror.html', {'reason': e.message}, status=404)
+        response = render(request, 'chmura/error.html', {'subsystem': 'planu lekcji', 'reason': e.message}, status=404)
         for _ in ['lasttype', 'lastclassuid', 'lastteacheruid', 'laststudentuid',
                   'lastclass', 'lastteacher', 'laststudent']:
             response.delete_cookie(_)
@@ -78,40 +78,27 @@ def announcement(request):
 
 
 def substitutionList(request):
-    now = datetime.datetime.now()
+    now = datetime.now()
     if now.hour >= 17:
-        now = now + datetime.timedelta(days=1)
+        now = now + timedelta(days=1)
     if now.weekday() >= 5:
-        now = now + datetime.timedelta(days=7-now.weekday())
+        now = now + timedelta(days=7-now.weekday())
     now = str(now.year) + '-' + str(now.month).zfill(2) + '-' + str(now.day).zfill(2)
     date = request.GET.get('date', now)
 
-    try:
-        date_diff = (datetime.datetime.strptime(date, '%Y-%m-%d') - datetime.datetime.strptime(now, '%Y-%m-%d')).days
-        if date_diff < -1 or date_diff > 7:
-            return redirect('/substitution/')
-    except ValueError:
+    if not checkIfDateInFuture(date):
         return redirect('/substitution/')
 
     try:
-        zastepstwa = get_substitution(date)
-    except Http404:
-        return redirect('/substitution/')
-
-    daysNames = {0: 'Poniedziałek', 1: 'Wtorek', 2: 'Środa', 3: 'Czwartek', 4: 'Piątek'}
-    data_now = datetime.datetime.now()
-    data_set = {}
-    for shift in range(0, 7):
-        loop_date = data_now + datetime.timedelta(days=shift)
-        if loop_date.weekday() >= 5:
-            continue
-        data_set[daysNames[loop_date.weekday()] + ', ' + loop_date.strftime('%d.%m.%Y')] = loop_date.strftime('%Y-%m-%d')
+        zastepstwa = loadSubstiution(date)
+    except SubstitutionException as e:
+        return render(request, 'chmura/error.html', {'subsystem': 'zastępstw', 'reason': e.message}, status=404)
 
     con = {'zastepstwa': zastepstwa['dane'],
            'notka': zastepstwa['notka'],
            'data': date,
            'data_now': now,
-           'data_set': data_set,
+           'data_set': generateDatesDict(),
            'classes': load_ids('classes'),
            'teachers': load_ids('teachers')}
     return render(request, 'chmura/subst.html', con)
@@ -285,9 +272,7 @@ def adminUpdateCache(request):
     if os.path.isfile(updateprocesspath) and open(updateprocesspath, 'r').read(8) != 'finished':
         return redirect('/admin?status=-6')  # Aktualizacja w toku
 
-    t = threading.Thread(target=updateCache)
-    t.setDaemon(True)
-    t.start()
+    updateCache()
 
     return redirect('/admin?status=3')
 
@@ -315,7 +300,7 @@ def updateCache():
         updateTimeTables()
         sleep(10)
 
-        updateJob()
+        updateSubstitution()
         sleep(10)
 
         newsJob()

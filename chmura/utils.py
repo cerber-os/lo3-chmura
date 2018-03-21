@@ -6,10 +6,8 @@ import random
 import urllib.request
 import urllib.parse
 import chmura.log as log
-from django.shortcuts import render
 from lo3.settings import ENABLE_TOR, ENABLE_AGGRESSIVE_IP_CHANGE, DEBUG
 from time import sleep
-from chmura.models import Settings
 
 
 if DEBUG:

@@ -1,8 +1,7 @@
-from django.http import Http404
 from django.core.exceptions import ObjectDoesNotExist
 from io import StringIO
-from lo3.settings import CACHE_LOCATION
-from chmura.models import Alias, Settings, SubstitutionType
+from lo3.settings import CACHE_LOCATION, DEBUG
+from chmura.models import Alias, SubstitutionType
 from .utils import url_request, create_new_session
 from datetime import datetime, timedelta
 from time import sleep
@@ -11,47 +10,25 @@ import pickle
 import re
 import json
 import os
+import traceback
 
 
-def save_dict(name, obj):
-    if not os.path.exists(CACHE_LOCATION + 'substitution'):
-        os.makedirs(CACHE_LOCATION + 'substitution')
-    with open(CACHE_LOCATION + 'substitution/' + name + '.sbt', 'wb') as f:
-        pickle.dump(obj, f, 2)
+##################################################
+# Aktualizowanie zastępstw
+##################################################
+def download_gcall(date, credentials):
+    params = {'gpid': credentials['gpid'],
+              'gsh': credentials['gsh'],
+              'action': 'switch',
+              'date': date,
+              '_LJSL': '4100'}
+    serverResponse = url_request('https://lo3gdynia.edupage.org/gcall',
+                                 {'Cookie': 'PHPSESSID=' + credentials['phpsessid']},
+                                 params).read().decode('UTF-8')
+    return serverResponse
 
 
-def load_dict(date):
-    if not os.path.exists(CACHE_LOCATION + 'substitution'):
-        os.makedirs(CACHE_LOCATION + 'substitution')
-    try:
-        with open(CACHE_LOCATION + 'substitution/' + date + '.sbt', 'rb') as f:
-            return pickle.load(f)
-    except FileNotFoundError:
-        zast = download_and_regenerate_subst(date)
-        save_dict(date, zast)
-        return zast
-
-
-def get_substitution(date):
-    if re.match(r'^20[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$', date) is None:
-        log.info('Incorrect date was given - subst:30')
-        raise Http404
-    return load_dict(date)
-
-
-def download_and_regenerate_subst(date):
-    try:
-        return download_subst(date)
-    except ValueError:
-        log.info('Regenerating gpid, gsh and cookie')
-        regenerate_pass()
-        try:
-            return download_subst(date)
-        except ValueError:
-            return {'dane': [], 'notka': ''}
-
-
-def regenerate_pass():
+def regeneratePass():
     resp = url_request('https://lo3gdynia.edupage.org/substitution')
     cookie = resp.getheader('Set-Cookie')
     cookie = cookie[cookie.index('PHPSESSID=') + 10: cookie.index(';')]
@@ -62,228 +39,288 @@ def regenerate_pass():
     gpid = resp[gpid_start: resp.index('&', gpid_start)]
     gsh = resp[gsh_start: resp.index('"', gsh_start)]
 
-    Settings.objects.filter().update(gpid=gpid,
-                                     gsh=gsh,
-                                     phpsessid=cookie)
     log.info('New gpid, gsh and cookie', gpid + ' ' + gsh + ' ' + cookie)
+    return {'gpid': gpid, 'gsh': gsh, 'phpsessid': cookie}
 
 
-def download_subst(date):
-    if len(Settings.objects.all()) == 0:
-        unikalnanazwazmiennej = Settings()
-        unikalnanazwazmiennej.save()
-    settings = Settings.objects.all()[0]
-    substitution_types_aliases = {i.orig: i.alias for i in Alias.objects.filter(selector='subst')}
-    params = {'gpid': settings.gpid,
-              'gsh': settings.gsh,
-              'action': 'switch',
-              'date': date,
-              '_LJSL': '2052'}
-    serverResponse = url_request('https://lo3gdynia.edupage.org/gcall',
-                                 {'Cookie': 'PHPSESSID=' + settings.phpsessid},
-                                 params).read().decode('UTF-8')
-    log.debug(serverResponse)
+def updateSubstitution():
+    create_new_session()
+    credentials = regeneratePass()
+    now = datetime.now()
+    if not os.path.exists(CACHE_LOCATION + 'substitution'):
+        os.makedirs(CACHE_LOCATION + 'substitution')
 
-    jsdb_start = serverResponse.index('ttdb.fill({') + 10
-    jsdb = serverResponse[jsdb_start: serverResponse.find('"}}});', jsdb_start) + 4]
-    jsdb = StringIO(jsdb)
-    jsdb = json.load(jsdb)
+    # Clear old substitution cache
+    for filename in os.listdir(CACHE_LOCATION + 'substitution'):
+        name = os.path.splitext(filename)[0]
+        if datetime.strptime(name, '%Y-%m-%d').date() < now.date():
+            os.remove(CACHE_LOCATION + 'substitution/' + filename)
 
-    teachers = jsdb.get('teachers', {})
-    classes = jsdb.get('classes', {})
-    subjects = jsdb.get('subjects', {})
-    classrooms = jsdb.get('classrooms', {})
-    periods = jsdb.get('periods', {})
-    subType = jsdb.get('substitution_types', {})
-    breaks = jsdb.get('breaks', {})
-
-    for i in ['teachers', 'classes', 'subjects', 'classrooms', 'breaks']:
-        exec(i + '["None"] = ""')
-
-    # Pobieranie czerwonej notatki
-    try:
-        note_start = serverResponse.index('.innerHTML="', serverResponse.index('.innerHTML="') + 1) + len(
-            '.indexHTML="')
-        note = serverResponse[note_start: jsdb_start - 10]
-        note = note[0: note.index('";gi')]
-        note = note.replace('\\n', '')
-        note = note.replace('\\"', '"')
-        note = note.replace('<br /> <br />', '<br />')
-    except ValueError:
-        note = ""
-
-    subst = serverResponse[serverResponse.find('dt.DataSource(') + 14:serverResponse.find(');var dt = new')]
-    subst = StringIO(subst)
-    subst = json.load(subst)
-
-    # zastepstwa = []
-    zastepstwa = {}
-
-    for zastepstwo in subst:
-        status = {'new_przedmiot': [],
-                  'new_nauczyciel': [],
-                  'old_nauczyciel': [],
-                  'old_przedmiot': [],
-                  'new_sala': [],
-                  'old_sala': [],
-                  'old_klasa': [],
-                  'new_klasa': [],
-                  'przedmiot': [],
-                  'lekcja': [],
-                  'notka': '',
-                  'klasa': [], }
-        for key in zastepstwo:
-            if key == 'cancelled':
-                status['anulowano'] = zastepstwo[key]
-            elif key == 'note':
-                status['notka'] = zastepstwo[key]
-            elif key == 'substitution_typeid':
-                status['typ'] = subType.get(zastepstwo[key], {}).copy()
-                if status['typ'].get('short', '') != '' and \
-                        not SubstitutionType.objects.filter(name=status['typ'].get('short', '')).exists():
-                    SubstitutionType(name=status['typ'].get('short', '')).save()
-
-                status['typ']['short'] = substitution_types_aliases.get(status['typ'].get('short', ''),
-                                                                        status['typ'].get('short', ''))
-            elif key == 'period':
-                if type(periods) is list:
-                    status['lekcja'] = periods[int(zastepstwo[key])]
-                elif type(periods) is str:
-                    status['lekcja'] = zastepstwo[key]
-                else:
-                    status['lekcja'] = periods.get(zastepstwo[key], 'None')
-
-            elif key == 'subjectid':
-                status['przedmiot'] = [getSubject(subjects.get(str(zastepstwo[key]), ''))]
-            elif key == 'subjectids':
-                status['przedmiot'] = [getSubject(subjects.get(str(s), '')) for s in zastepstwo[key]]
-
-            elif key == 'teacherid':
-                status['nauczyciel'] = [teachers.get(str(zastepstwo[key]), '')]
-            elif key == 'teacherids':
-                status['nauczyciel'] = [teachers.get(str(s), '') for s in zastepstwo[key]]
-
-            elif key == 'classid':
-                status['klasa'] = [getClass(classes.get(str(zastepstwo[key]), ''))]
-            elif key == 'classids':
-                status['klasa'] = [getClass(classes.get(str(s), '')) for s in zastepstwo[key]]
-
-            elif key == 'classroomid':
-                status['sala'] = [classrooms.get(str(zastepstwo[key]), '')]
-            elif key == 'classroomids':
-                status['sala'] = [classrooms.get(str(s), '') for s in zastepstwo[key]]
-
-            elif key == 'changes':
-                for z in zastepstwo[key]:
-                    if z['column'] == 'teacherid' or z['column'] == 'teacherids':
-                        status['old_nauczyciel'].append(teachers.get(str(z.get('old', '')), ''))
-
-                        n = teachers.get(str(z.get('new', '')))
-                        if n not in [None, '']:
-                            status['new_nauczyciel'].append(n)
-                    elif z['column'] == 'classroomid' or z['column'] == 'classroomids':
-                        status['old_sala'].append(classrooms.get(str(z.get('old', '')), ''))
-                        s = classrooms.get(str(z.get('new', '')))
-                        if s not in [None, '']:
-                            status['new_sala'].append(s)
-                    elif z['column'] == 'subjectid' or z['column'] == 'subjectids':
-                        status['old_przedmiot'].append(getSubject(subjects.get(str(z.get('old', '')), '')))
-
-                        p = getSubject(subjects.get(str(z.get('new', '')), ''))
-                        if p not in [None, '']:
-                            status['new_przedmiot'].append(p)
-                    elif z['column'] == 'classid' or z['column'] == 'classids':
-                        status['old_klasa'].append(getClass(classes.get(str(z.get('old', '')), '')))
-
-                        c = getClass(classes.get(str(z.get('new', '')), ''))
-                        if c is not None:
-                            status['new_klasa'].append(c)
-
-        log.debug('Klasa: ' + str(status.get('klasa', 'None')) + '\t' + 'Lekcja: ' + str(
-            status.get('lekcja', 'None')) + '\n' +
-                  'Nauczyciel: ' + str(status['nauczyciel']) + ' -> ' + str(status['new_nauczyciel']) + '\n' +
-                  'Przedmiot :' + str(status.get('przedmiot', 'None')) + ' -> ' + str(status['new_przedmiot']) + '\n' +
-                  'Sala :' + str(status['sala']) + ' -> ' + str(status['new_sala']) + '\n' +
-                  'Typ zastępstwa: ' + str(status.get('typ', 'None')) + '\n\n')
-
-        if len(status['klasa']) == 0:
-            status['klasa'].append({'name': ''})
-
-        status['przerwa'] = breaks.get(zastepstwo.get('break'))
-        status['klasa'] = sorted(status['klasa'], key=lambda s: s['name'])
-
-        k = ""
-        for s in status['klasa']:
-            for l in status['old_klasa']:
-                if s['name'] == l['name']:
-                    k += '<s>' + s['name'] + '</s>, '
-                    break
-            else:
-                k += s['name'] + ', '
-        k = k[0:-2]
-        status['displayname'] = k
-
-        k = ""
-        for s in status['klasa']:
-            k += s['name'] + ', '
-        k = k[0:-2]
+    # Download substitutions for next 5 days
+    for day in range(0, 7):
+        period = (now + timedelta(days=day)).strftime('%Y-%m-%d')
+        period_unform = now + timedelta(days=day)
+        if period_unform.weekday() >= 5:
+            with open(CACHE_LOCATION + 'substitution/' + period + '.sbt', 'wb') as f:
+                pickle.dump({'dane': [], 'notka': ''}, f, 2)
+            continue
+        log.info('Downloading new substituion for', period)
+        jsdb = download_gcall(period, credentials=credentials)
         try:
-            zastepstwa[k].append(status)
-        except KeyError:
-            zastepstwa[k] = [status]
+            result = SubstitutionDB(jsdb).generateSubstitution()
+        except ValueError:
+            create_new_session()
+            credentials = regeneratePass()
+            jsdb = download_gcall(date, credentials=credentials)
+            try:
+                result = SubstitutionDB(jsdb).generateSubstitution()
+            except ValueError:
+                log.crititcal('Unable to update substitution', str(traceback.format_exc()))
+                return
+        with open(CACHE_LOCATION + 'substitution/' + period + '.sbt', 'wb') as f:
+            pickle.dump(result, f, 2)
+        sleep(10)
 
-    for grupa in zastepstwa:
-        if grupa == '':
-            zastepstwa[grupa] = sorted(zastepstwa[grupa], key=lambda x: x['przerwa']['name'])
+
+##################################################
+# Generowanie dla klienta
+##################################################
+def verifyInput(date):
+    if not re.match(r'^20[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$', date):
+        raise SubstitutionException('Podano datę w niewłaściwym formacie')
+
+
+def checkIfDateInFuture(date):
+    """Checks if given date is not in the past and more than 7 days in future"""
+    try:
+        date_diff = datetime.strptime(date, '%Y-%m-%d') - datetime.now()
+        date_diff = date_diff.days
+        if date_diff < -1 or date_diff > 7:
+            return False
+    except ValueError:
+        return False
+    return True
+
+
+def generateDatesDict():
+    """Return dictionary containing names and numbers of next 5 working days"""
+    data_set = {}
+    daysNames = {0: 'Poniedziałek', 1: 'Wtorek', 2: 'Środa', 3: 'Czwartek', 4: 'Piątek'}
+    for shift in range(0, 7):
+        for_date = datetime.now() + timedelta(days=shift)
+        if for_date.weekday() >= 5:
+            continue
+        data_set[daysNames[for_date.weekday()] + ', ' + for_date.strftime('%d.%m.%Y')] = for_date.strftime('%Y-%m-%d')
+    return data_set
+
+
+def loadSubstiution(date):
+    verifyInput(date)
+    if not os.path.exists(CACHE_LOCATION + 'substitution'):
+        os.makedirs(CACHE_LOCATION + 'substitution')
+    try:
+        with open(CACHE_LOCATION + 'substitution/' + date + '.sbt', 'rb') as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        if DEBUG:
+            log.info('DEBUG mode active - downloading substitutions')
+            updateSubstitution()
+            raise SubstitutionException('Try debugowania jest aktywny. Pobrano zastępstwa. Odśwież stronę.')
         else:
-            zastepstwa[grupa] = sorted(zastepstwa[grupa], key=lambda x: x['lekcja']['name'])
-
-    posortowane = dict(sorted(zastepstwa.items()))
-    return {'dane': posortowane, 'notka': note}
+            raise SubstitutionException('Zastępstwa na żądany dzień nie istnieją')
 
 
-def getClass(c):
+##################################################
+# Aliasy
+##################################################
+def getAliasOfClass(c):
     return getAlias(c, 'class')
 
 
-def getSubject(x):
+def getAliasOfSubject(x):
     return getAlias(x, 'subject')
 
 
 def getAlias(c, sel):
     if c == "":
         return c
+    x = c.copy()
     try:
         a = Alias.objects.get(orig=c['name'], selector=sel)
-        c['name'] = a.alias
-        return c
+        x['name'] = a.alias
+        return x
     except ObjectDoesNotExist:
-        return c
+        return x
 
 
-def updateJob():
-    create_new_session()
-    now = datetime.now()
-    if not os.path.exists(CACHE_LOCATION + 'substitution'):
-        os.makedirs(CACHE_LOCATION + 'substitution')
-    for filename in os.listdir(CACHE_LOCATION + 'substitution'):
-        name = os.path.splitext(filename)[0]
-        if datetime.strptime(name, '%Y-%m-%d').date() < now.date():
-            log.info('Deleting old substitution cache')
-            os.remove(CACHE_LOCATION + 'substitution/' + filename)
+##################################################
+# Klasy
+##################################################
+class SubstitutionDB:
+    def __init__(self, _resp):
+        self.serverResponse = _resp
 
-    continueDownloading = True
-    for i in range(0, 7):
-        period = now + timedelta(days=i)
-        if period.weekday() >= 5: 
-            period += timedelta(days=7 - period.weekday())
-        if continueDownloading:
-            log.info('Downloading new substitution for', period.strftime('%Y-%m-%d'))
-            zast = download_and_regenerate_subst(period.strftime('%Y-%m-%d'))
-            if zast == {'dane': [], 'notka': ''}:
-                continueDownloading = False
-        else:
-            log.info('Omitting update for', period.strftime('%Y-%m-%d'))
-            zast = {'dane': [], 'notka': ''}
-        save_dict(period.strftime('%Y-%m-%d'), zast)
-        sleep(2)
+        jsdb_start = self.serverResponse.index('ttdb.fill({') + 10
+        jsdb = self.serverResponse[jsdb_start: self.serverResponse.find('"}}});', jsdb_start) + 4]
+        jsdb = StringIO(jsdb)
+        jsdb = json.load(jsdb)
+        self.jsdb = jsdb
+        self.jsdb_start = jsdb_start
+
+        self.substitution_types_aliases = {i.orig: i.alias for i in Alias.objects.filter(selector='subst')}
+        self.teachers = self.jsdb.get('teachers', {})
+        self.classes = self.jsdb.get('classes', {})
+        self.subjects = self.jsdb.get('subjects', {})
+        self.classrooms = self.jsdb.get('classrooms', {})
+        self.periods = self.jsdb.get('periods', {})
+        self.subType = self.jsdb.get('substitution_types', {})
+        self.breaks = self.jsdb.get('breaks', {})
+
+        for i in ['teachers', 'classes', 'subjects', 'classrooms', 'breaks']:
+            exec('self.' + i + '["None"] = ""')
+
+    def getNote(self):
+        """Return red note from top of substitutions"""
+        try:
+            note_start = self.serverResponse.index('.innerHTML="', self.serverResponse.index('.innerHTML="') + 1) + len(
+                '.indexHTML="')
+            note = self.serverResponse[note_start: self.jsdb_start - 10]
+            note = note[0: note.index('";gi')]
+            note = self.cleanNote(note)
+        except ValueError:
+            note = ""
+        return note
+
+    @staticmethod
+    def cleanNote(note):
+        note = note.replace('\\n', '')
+        note = note.replace('\\"', '"')
+        note = note.replace('<br /> <br />', '<br />')
+        return note
+
+    def extractSubstitution(self):
+        subst = self.serverResponse[self.serverResponse.find('dt.DataSource(') + 14: self.serverResponse.find(');var dt = new')]
+        subst = json.load(StringIO(subst))
+        zastepstwa = {}
+
+        for zastepstwo in subst:
+            status = {'new_przedmiot': [],
+                      'new_nauczyciel': [],
+                      'old_nauczyciel': [],
+                      'old_przedmiot': [],
+                      'new_sala': [],
+                      'old_sala': [],
+                      'old_klasa': [],
+                      'new_klasa': [],
+                      'przedmiot': [],
+                      'lekcja': [],
+                      'notka': '',
+                      'klasa': [], }
+            for key in zastepstwo:
+                if key == 'cancelled':
+                    status['anulowano'] = zastepstwo[key]
+                elif key == 'note':
+                    status['notka'] = zastepstwo[key]
+                elif key == 'substitution_typeid':
+                    status['typ'] = self.subType.get(zastepstwo[key], {}).copy()
+                    if status['typ'].get('short', '') != '' and \
+                            not SubstitutionType.objects.filter(name=status['typ'].get('short', '')).exists():
+                        SubstitutionType(name=status['typ'].get('short', '')).save()
+
+                    status['typ']['short'] = self.substitution_types_aliases.get(status['typ'].get('short', ''),
+                                                                                 status['typ'].get('short', ''))
+                elif key == 'period':
+                    if type(self.periods) is list:
+                        status['lekcja'] = self.periods[int(zastepstwo[key])]
+                    elif type(self.periods) is str:
+                        status['lekcja'] = zastepstwo[key]
+                    else:
+                        status['lekcja'] = self.periods.get(zastepstwo[key], 'None')
+
+                elif key == 'subjectid':
+                    status['przedmiot'] = [getAliasOfSubject(self.subjects.get(str(zastepstwo[key]), ''))]
+                elif key == 'subjectids':
+                    status['przedmiot'] = [getAliasOfSubject(self.subjects.get(str(s), '')) for s in zastepstwo[key]]
+
+                elif key == 'teacherid':
+                    status['nauczyciel'] = [self.teachers.get(str(zastepstwo[key]), '')]
+                elif key == 'teacherids':
+                    status['nauczyciel'] = [self.teachers.get(str(s), '') for s in zastepstwo[key]]
+
+                elif key == 'classid':
+                    status['klasa'] = [getAliasOfClass(self.classes.get(str(zastepstwo[key]), ''))]
+                elif key == 'classids':
+                    status['klasa'] = [getAliasOfClass(self.classes.get(str(s), '')) for s in zastepstwo[key]]
+
+                elif key == 'classroomid':
+                    status['sala'] = [self.classrooms.get(str(zastepstwo[key]), '')]
+                elif key == 'classroomids':
+                    status['sala'] = [self.classrooms.get(str(s), '') for s in zastepstwo[key]]
+
+                elif key == 'changes':
+                    for z in zastepstwo[key]:
+                        if z['column'] == 'teacherid' or z['column'] == 'teacherids':
+                            status['old_nauczyciel'].append(self.teachers.get(str(z.get('old', '')), ''))
+
+                            n = self.teachers.get(str(z.get('new', '')))
+                            if n not in [None, '']:
+                                status['new_nauczyciel'].append(n)
+                        elif z['column'] == 'classroomid' or z['column'] == 'classroomids':
+                            status['old_sala'].append(self.classrooms.get(str(z.get('old', '')), ''))
+                            s = self.classrooms.get(str(z.get('new', '')))
+                            if s not in [None, '']:
+                                status['new_sala'].append(s)
+                        elif z['column'] == 'subjectid' or z['column'] == 'subjectids':
+                            status['old_przedmiot'].append(getAliasOfSubject(self.subjects.get(str(z.get('old', '')), '')))
+
+                            p = getAliasOfSubject(self.subjects.get(str(z.get('new', '')), ''))
+                            if p not in [None, '']:
+                                status['new_przedmiot'].append(p)
+                        elif z['column'] == 'classid' or z['column'] == 'classids':
+                            status['old_klasa'].append(getAliasOfClass(self.classes.get(str(z.get('old', '')), '')))
+
+                            c = getAliasOfClass(self.classes.get(str(z.get('new', '')), ''))
+                            if c is not None:
+                                status['new_klasa'].append(c)
+
+            if len(status['klasa']) == 0:
+                status['klasa'].append({'name': ''})
+
+            status['przerwa'] = self.breaks.get(zastepstwo.get('break'))
+            status['klasa'] = sorted(status['klasa'], key=lambda s: s['name'])
+
+            k = ""
+            for s in status['klasa']:
+                for l in status['old_klasa']:
+                    if s['name'] == l['name']:
+                        k += '<s>' + s['name'] + '</s>, '
+                        break
+                else:
+                    k += s['name'] + ', '
+            k = k[0:-2]
+            status['displayname'] = k
+
+            k = ""
+            for s in status['klasa']:
+                k += s['name'] + ', '
+            k = k[0:-2]
+            try:
+                zastepstwa[k].append(status)
+            except KeyError:
+                zastepstwa[k] = [status]
+
+        for grupa in zastepstwa:
+            if grupa == '':
+                zastepstwa[grupa] = sorted(zastepstwa[grupa], key=lambda x: x['przerwa']['name'])
+            else:
+                zastepstwa[grupa] = sorted(zastepstwa[grupa], key=lambda x: x['lekcja']['name'])
+
+        return dict(sorted(zastepstwa.items()))
+
+    def generateSubstitution(self):
+        return {'dane': self.extractSubstitution(), 'notka': self.getNote()}
+
+
+class SubstitutionException(Exception):
+    def __init__(self, message):
+        self.message = message
