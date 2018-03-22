@@ -214,7 +214,8 @@ class TimeTableDB:
                 if group_item.get('classid', '') == id_class and group_item.get('entireclass', True):
                     return True
 
-            if lesson.get('subjectid', '') in self.getStudentsSubjects(object_id):
+            if lesson.get('subjectid', '') in self.getStudentsSubjects(object_id) \
+                    and lesson.get('seminargroup') in self.getStudentsGroups(object_id, lesson.get('subjectid', '')):
                 return True
             else:
                 return False
@@ -257,6 +258,14 @@ class TimeTableDB:
         for key in self.studentsSubjectsList:
             if self.studentsSubjectsList[key].get('studentid', '') == _id:
                 ret.append(self.studentsSubjectsList[key].get('subjectid', ''))
+        return ret
+
+    def getStudentsGroups(self, _id, _subjectid):
+        ret = []
+        for key in self.studentsSubjectsList:
+            if self.studentsSubjectsList[key].get('studentid', '') == _id and \
+                    self.studentsSubjectsList[key].get('subjectid', '') == _subjectid:
+                ret.append(self.studentsSubjectsList[key].get('seminargroup', ''))
         return ret
 
     @staticmethod
