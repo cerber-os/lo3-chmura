@@ -2,28 +2,35 @@ from bs4 import BeautifulSoup
 from io import StringIO
 import pickle
 import html5lib
-from .utils import *
+from .utils import url_request
 import chmura.log as log
+import os
+from lo3.settings import DEBUG, CACHE_LOCATION
 
 
 def save_dict(obj):
-    with open(get_cur_path() + '/../cache/agendaF/agenda.ag', 'wb') as f:
+    if not os.path.exists(CACHE_LOCATION + 'agendaF'):
+        os.makedirs(CACHE_LOCATION + 'agendaF')
+    with open(CACHE_LOCATION + 'agendaF/agenda.ag', 'wb') as f:
         pickle.dump(obj, f, 2)
 
 
 def load_dict():
-    if not os.path.exists(get_cur_path() + '/../cache/agendaF'):
-        os.makedirs(get_cur_path() + '/../cache/agendaF')
+    if not os.path.exists(CACHE_LOCATION + 'agendaF'):
+        os.makedirs(CACHE_LOCATION + 'agendaF')
     try:
-        with open(get_cur_path() + '/../cache/agendaF/agenda.ag', 'rb') as f:
+        with open(CACHE_LOCATION + 'agendaF/agenda.ag', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
-        agendaF = download_agenda()
-        save_dict(agendaF)
-        return agendaF
+        if DEBUG:
+            agendaF = download_agenda()
+            save_dict(agendaF)
+            return agendaF
+        else:
+            raise AgendaException('Terminarz jest niedostępny')
 
 
-def get_agenda():
+def getAgenda():
     return load_dict()
 
 
@@ -51,7 +58,12 @@ def download_agenda():
     return agenda
 
 
-def agendaJob():
+def updateAgenda():
     log.info('Updating agenda')
     agenda = download_agenda()
     save_dict(agenda)
+
+
+class AgendaException(Exception):
+    def __init__(self, message):
+        self.message = message

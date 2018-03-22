@@ -8,8 +8,8 @@ from django.contrib.auth.decorators import login_required
 from chmura.models import Subject, Alias, PriorityClass, SubstitutionType
 from lo3.settings import DEBUG
 from .updateids import load_ids, updateid
-from .news import get_news, newsJob
-from .agenda import get_agenda
+from .news import getNews, updateNews
+from .agenda import getAgenda, AgendaException
 from .utils import getReversedStudent, getReversedDict, get_cur_path
 from chmura.subst import updateSubstitution, checkIfDateInFuture, loadSubstiution, \
                              SubstitutionException, generateDatesDict
@@ -106,12 +106,20 @@ def substitutionList(request):
 
 
 def newsPage(request):
-    con = {'news': get_news()}
+    if not DEBUG:
+        return render(request, 'chmura/error.html', {'subsystem': 'aktualności', 'reason': 'Usługa nie jest jeszcze dostępna.'})
+    con = {'news': getNews()}
     return render(request, 'chmura/news.html', con)
 
 
 def agenda(request):
-    con = {'terminarz': get_agenda()}
+    if not DEBUG:
+        return render(request, 'chmura/error.html', {'subsystem': 'terminarza', 'reason': 'Usługa nie jest jeszcze dostępna.'})
+    try:
+        con = {'terminarz': getAgenda()}
+    except AgendaException as e:
+        return render(request, 'chmura/error.html', {'subsystem': 'terminarza', 'reason': e.message})
+
     return render(request, 'chmura/agenda.html', con)
 
 
@@ -298,7 +306,7 @@ def updateCache():
         updateSubstitution()
         sleep(10)
 
-        newsJob()
+        updateNews()
     except Exception as e:
         try:
             open(updateprocesspath, 'w').write('error---')

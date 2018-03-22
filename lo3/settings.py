@@ -132,8 +132,8 @@ STATIC_URL = '/static/'
 
 CRONJOBS = [
     ('0 0 */2 * *', 'chmura.timetable.updateTimeTables'),
-    # ('0 */12 * * *', 'chmura.news.newsJob'),
-    # ('0 0 */10 * *', 'chmura.news.agendaJob'),
+    # ('0 */12 * * *', 'chmura.news.updateNews'),
+    # ('0 0 */10 * *', 'chmura.agenda.updateAgenda'),
     ('0 */1 * * *', 'chmura.subst.updateSubstitution'),
     ('0 12 1 * *', 'chmura.updateids.updateid'),
 ]
@@ -182,6 +182,5 @@ if not DEBUG:
         },
     }
 
-# Cache location
-# TODO: Wprowadzić to wszędzie
+# Cache location (requires / at the end)
 CACHE_LOCATION = os.path.dirname(os.path.abspath(__file__)) + '/../cache/'

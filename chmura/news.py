@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 from .utils import url_request
 from lo3.settings import DEBUG, CACHE_LOCATION
-from django.http import Http404
 import pickle
 import chmura.log as log
 import os
@@ -10,7 +9,7 @@ import os
 def save_dict(obj):
     if not os.path.exists(CACHE_LOCATION + 'newsF'):
         os.makedirs(CACHE_LOCATION + 'newsF')
-    with open(CACHE_LOCATION + '/newsF/news.nw', 'wb') as f:
+    with open(CACHE_LOCATION + 'newsF/news.nw', 'wb') as f:
         pickle.dump(obj, f, 2)
 
 
@@ -18,16 +17,16 @@ def load_dict():
     if not os.path.exists(CACHE_LOCATION + 'newsF'):
         os.makedirs(CACHE_LOCATION + 'newsF')
     try:
-        with open(CACHE_LOCATION + '/newsF/news.nw', 'rb') as f:
+        with open(CACHE_LOCATION + 'newsF/news.nw', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
         if DEBUG:
             log.info('Downloading news')
             news = download_news()
             save_dict(news)
+            return news
         else:
-            raise Http404
-    return news
+            raise NewsException('Aktualności są niedostępne')
 
 
 def download_news():
@@ -56,11 +55,16 @@ def download_news():
     return aktualnosci
 
 
-def get_news():
+def getNews():
     return load_dict()
 
 
-def newsJob():
+def updateNews():
     log.info('Updating news')
     news = download_news()
     save_dict(news)
+
+
+class NewsException(Exception):
+    def __init__(self, message):
+        self.message = message

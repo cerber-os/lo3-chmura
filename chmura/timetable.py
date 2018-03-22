@@ -57,6 +57,9 @@ def download_gcall():
 
 
 def updateTimeTables():
+    if not os.path.exists(CACHE_LOCATION + 'timetables'):
+        os.makedirs(CACHE_LOCATION + 'timetables')
+
     _gcall = download_gcall()
     tb = TimeTableDB(json.load(_gcall))
 
