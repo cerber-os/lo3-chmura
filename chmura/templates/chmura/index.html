@@ -20,7 +20,6 @@
 {% endblock %}
 
 {% block content %}
-    <!--{{ hidden_classrooms }}-->
 <div id="timetablewrapper">
 	<table id="timetable">
 		<tr>
@@ -143,9 +142,9 @@
 				</select>
 				<select style="display: none" data-selecttype="classroom">
 					{% for classroom, classroomid in classrooms.items %}
-                    {% if classroom not in hidden_classrooms %}
+					{% if classroom not in hidden_classrooms %}
 					<option value="{{ classroomid }}">{{ classroom }}</option>
-                    {% endif %}
+					{% endif %}
 					{% endfor %}
 				</select>
 				{% for class, studentlist in students.items %}
