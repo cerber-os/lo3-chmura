@@ -282,8 +282,8 @@ function searchForTimetable(query) { //find matching entries in the search index
 		results.push(resultsEntry);
 	}
 	
-	//sort by score
-	results.sort(function(a, b) { return a.score - b.score; });
+	//sort by score and by length
+	results.sort(function(a, b) { return (a.score != b.score) ? (a.score - b.score) : (a.text.length - b.text.length); });
 	
 	return results;
 }
