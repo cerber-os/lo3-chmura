@@ -85,12 +85,14 @@ def classrooms_sort(classrooms):
         first_sort[priority].append({'classroom': classroom, 'idx': idx})
 
     for i in range(0, 11):
-        first_sort[i] = sorted(first_sort[i], key=lambda x: locale.strxfrm(x['classroom']))
+        first_sort[i] = sorted(first_sort[i], key=lambda x: x['classroom'].lower())
 
     result = {}
     for i in range(0, 11):
         for k in first_sort[i]:
             result[k['classroom']] = k['idx']
+
+    print(result)
     return result
 
 
