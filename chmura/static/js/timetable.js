@@ -28,14 +28,10 @@ function handleTimetableSelectUpdate(select) { //triggered when a timetable quic
 	//if not, remember the selected option for the next time the last option is chosen
 	select.setAttribute("data-previousselectedindex", select.selectedIndex);
 	
-	//cookie name dictionaries, different names for different data types
-	var uidDictionary = {"class": "lastclassuid", "student": "laststudentuid", "teacher": "lastteacheruid"};
-	var nameDictionary = {"class": "lastclass", "student": "laststudent", "teacher": "lastteacher"};
-	
 	//remember selected timetables using cookies
 	setCookie("lasttype", select.selectedOptions[0].getAttribute("data-type"), 31536000000); //set last selected timetable type
-	setCookie(uidDictionary[select.selectedOptions[0].getAttribute("data-type")], select.selectedOptions[0].getAttribute("data-uid"), 31536000000); //set its uid
-	setCookie(nameDictionary[select.selectedOptions[0].getAttribute("data-type")], select.selectedOptions[0].innerText, 31536000000); //set its display name
+	setCookie("last" + select.selectedOptions[0].getAttribute("data-type") + "uid", select.selectedOptions[0].getAttribute("data-uid"), 31536000000); //set its uid
+	setCookie("last" + select.selectedOptions[0].getAttribute("data-type"), select.selectedOptions[0].innerText, 31536000000); //set its display name
 	
 	//change window location to desired timetable
 	window.location = "/?sel=" + select.selectedOptions[0].getAttribute("data-type") + "&uid=" + encodeURIComponent(select.selectedOptions[0].getAttribute("data-uid"));
@@ -89,32 +85,21 @@ function showStudentList(classSelect) { //display the appropriate student list a
 			}
 }
 function setLastSettings(submit) { //triggered on timetable select form submission, remember choice
-	//get all form elements
-	var formElements = submit.parentElement.parentElement.children;
+	//get all form selects
+	var formSelects = submit.parentElement.parentElement.children[1].children;
 	
 	//iterate over them and find the one containing the currently selected uid (of unknown timetable type)
-	for (var i = 0; i < formElements.length; i++)
-		if (formElements[i].getAttribute("name") == "uid") {
+	for (var i = 0; i < formSelects.length; i++)
+		if (formSelects[i].getAttribute("name") == "uid") {
 			
-			if (formElements[i].getAttribute("data-selecttype") == "student") {
-				//current timetable type is student
-				setCookie("lasttype", "student", 31536000000);
-				setCookie("laststudent", formElements[i].selectedOptions[0].innerText, 31536000000);
-				setCookie("laststudentuid", formElements[i].selectedOptions[0].value, 31536000000);
-			}
-			else if (formElements[i].getAttribute("data-selecttype") == "class") {
-				//current timetable type is class
-				setCookie("lasttype", "class", 31536000000);
-				setCookie("lastclass", formElements[i].selectedOptions[0].innerText, 31536000000);
-				setCookie("lastclassuid", formElements[i].selectedOptions[0].value, 31536000000);
-			}
-			else if (formElements[i].getAttribute("data-selecttype") == "teacher") {
-				//current timetable type is teacher
-				setCookie("lasttype", "teacher", 31536000000);
-				setCookie("lastteacher", formElements[i].selectedOptions[0].innerText, 31536000000);
-				setCookie("lastteacheruid", formElements[i].selectedOptions[0].value, 31536000000);
-			}
-
+			
+			//get the select's timetable type
+			var type = formSelects[i].getAttribute("data-selecttype");
+			
+			//remember the choice using cookies
+			setCookie("lasttype", type, 31536000000);
+			setCookie("last" + type, formSelects[i].selectedOptions[0].innerText, 31536000000);
+			setCookie("last" + type + "uid", formSelects[i].selectedOptions[0].value, 31536000000);
 			return;
 		}
 }
@@ -131,56 +116,43 @@ function displayLastSettings() { //called on document load, fills the timetable 
 		var defaultType = select.children[0].getAttribute("data-type");
 		var defaultUid = select.children[0].getAttribute("data-uid");
 		
-		//save the "choose option" and temporatily remove it
+		//if the currently displayed timetable is a remembered one, remove the pre-filled option
+		var rememberedType = getCookie("lasttype");
+		var rememberedUid = getCookie("last" + rememberedType + "uid");
+		var defaultRemoved = false;
+		
+		if (defaultType == rememberedType && defaultUid == rememberedUid) {
+			select.removeChild(defaultOption);
+			defaultRemoved = true;
+		}
+		
+		//save the "choose" option and temporatily remove it
 		var chooseOption = select.children[select.children.length - 1];
 		select.removeChild(chooseOption);
 		
-		//determine whether the pre-filled option matches one of the saved options
-		var defaultIsCurrentClass = defaultType == "Klasa" && defaultUid == getCookie("lastclassuid");
-		var defaultIsCurrentStudent = defaultType == "Uczeń" && defaultUid == getCookie("laststudentuid");
-		var defaultIsCurrentTeacher = defaultType == "Nauczyciel" && defaultUid == getCookie("lastteacheruid");
+		//list of timetable types to add to select
+		var timetableTypes = ["class", "teacher", "student", "classroom"];
 		
-		//convert the pre-filled option type value from display name to type id
-		var typeDictionary = {
-			"Klasa": "class",
-			"Uczeń": "student",
-			"Nauczyciel": "teacher"
-		};
-		defaultOption.setAttribute("data-type", typeDictionary[defaultOption.getAttribute("data-type")]);
+		//add option for each of the types, as long as it's remembered
+		var indexToSelect = 0; //prepare for future selection
 		
-		if (!defaultIsCurrentClass && getCookie("lastclass")) {
-			//if there is a remembered class and the pre-filled option wasn't a class, add an option to show the remembered class
+		for (var i in timetableTypes) {
+			if (!getCookie("last" + timetableTypes[i])) continue;
+			
 			var option = document.createElement("option");
-			option.setAttribute("data-type", "class");
-			option.setAttribute("data-uid", getCookie("lastclassuid"));
-			option.innerText = getCookie("lastclass");
-			select.appendChild(option);
+			option.setAttribute("data-type", timetableTypes[i]);
+			option.setAttribute("data-uid", getCookie("last" + timetableTypes[i] + "uid"));
+			option.innerText = getCookie("last" + timetableTypes[i]);
+			
+			option = select.appendChild(option);
+			
+			if (timetableTypes[i] == rememberedType && getCookie("last" + timetableTypes[i] + "uid") == rememberedUid && defaultRemoved)
+				indexToSelect = option.index;
 		}
-		
-		if (!defaultIsCurrentStudent && getCookie("laststudent")) {
-			//if there is a remembered student and the pre-filled option wasn't a student, add an option to show the remembered student
-			var option = document.createElement("option");
-			option.setAttribute("data-type", "student");
-			option.setAttribute("data-uid", getCookie("laststudentuid"));
-			option.innerText = getCookie("laststudent");
-			select.appendChild(option);
-		}
-		else if (defaultIsCurrentStudent)
-			select.appendChild(select.removeChild(defaultOption)); //otherwise, if the pre-filled option was a student, move it to the bottom
-		
-		if (!defaultIsCurrentTeacher && getCookie("lastteacher")) {
-			//if there is a remembered teacher and the pre-filled option wasn't a teacher, add an option to show the remembered teacher
-			var option = document.createElement("option");
-			option.setAttribute("data-type", "teacher");
-			option.setAttribute("data-uid", getCookie("lastteacheruid"));
-			option.innerText = getCookie("lastteacher");
-			select.appendChild(option);
-		}
-		else if (defaultIsCurrentTeacher)
-			select.appendChild(select.removeChild(defaultOption)); //otherwise, if the pre-filled option was a teacher, move it to the bottom
 		
 		//re-add the "choose" option and remember the currently selected index
 		select.appendChild(chooseOption);
+		select.selectedIndex = indexToSelect;
 		select.setAttribute("data-previousselectedindex", select.selectedIndex);
 	}
 }
@@ -273,7 +245,7 @@ function buildSearchIndex() { //fill index with entries
 		
 		//determine entries type, no data-selecttype = irrelevant select
 		var type;
-		if (selectType == "class" || selectType == "student" || selectType == "teacher") type = selectType;
+		if (selectType == "class" || selectType == "student" || selectType == "teacher" || selectType == "classroom") type = selectType;
 		else continue;
 		
 		//add entries to search index
@@ -345,7 +317,8 @@ function handleSearchBarKeyUp(input, event) { //triggered when a key is released
 	var typeDictionary = {
 		"class": "klasa",
 		"teacher": "nauczyciel",
-		"student": "uczeń"
+		"student": "uczeń",
+		"classroom": "sala"
 	};
 	
 	//build results
