@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block localjs %}
-<script src="/static/js/timetable.js?8" defer></script>
+<script src="/static/js/timetable.js?9" defer></script>
 {% endblock %}
 
 {% block secondaryheaderselect %}
@@ -34,7 +34,9 @@
 			<th>{{ weekday }}</th>
 			
 			{% for block in blocks %}
-            {% if forloop.counter0 != 0 or not begin %}{% if forloop.counter0 <= end %}
+			{% if forloop.counter0 != 0 or not begin %}
+			{% if forloop.counter0 <= end %}
+			
 			{% if block|length == 0 %}
 			<td></td>
 			{% elif block|length == 1 %}
@@ -77,9 +79,10 @@
 					{% endfor %}
 				</div>
 			</td>
-			{% endif %}{% endif %}
-            {% endif %}
+			{% endif %}
 			
+			{% endif %}
+			{% endif %}
 			{% endfor %}
 		</tr>
 		{% endfor %}
@@ -119,6 +122,7 @@
 					<option value="class">Klasy</option>
 					<option value="student">Ucznia</option>
 					<option value="teacher">Nauczyciela</option>
+					<option value="classroom">Sali</option>
 				</select>
 				<select name="uid" data-selecttype="class">
 					{% for class, uid in classes.items %}
@@ -134,6 +138,11 @@
 				<select style="display: none" data-selecttype="teacher">
 					{% for name, uid in teachers.items %}
 					<option value="{{ uid }}">{{ name }}</option>
+					{% endfor %}
+				</select>
+				<select style="display: none" data-selecttype="classroom">
+					{% for classroom, classroomid in classrooms.items %}
+					<option value="{{ classroomid }}">{{ classroom }}</option>
 					{% endfor %}
 				</select>
 				{% for class, studentlist in students.items %}

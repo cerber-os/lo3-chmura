@@ -63,6 +63,11 @@ function handleTimetableTypeSelectUpdate(select) { //triggered when the timetabl
 		select.parentElement.children[4].style.display = "";
 		select.parentElement.children[4].setAttribute("name", "uid");
 	}
+	else if (select.selectedOptions[0].value == "classroom") {
+		//show the classroom select and include it in the form
+		select.parentElement.children[5].style.display = "";
+		select.parentElement.children[5].setAttribute("name", "uid");
+	}
 }
 function showStudentList(classSelect) { //display the appropriate student list and include it in the form
 	//get the selected class name
