@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from chmura.models import Subject, Alias, PriorityClass, SubstitutionType
+from chmura.models import Subject, Alias, PriorityClass, PriorityClassroom, SubstitutionType
 from lo3.settings import DEBUG
 from .updateids import load_ids, updateid
 from .news import getNews, updateNews
@@ -154,7 +154,8 @@ def adminPanel(request):
            'update_state': adminGetState(),
            'substitution_types': [i.name for i in SubstitutionType.objects.all()],
            'priority_classes': {},
-           'classrooms': load_ids('classrooms')}
+           'classrooms': load_ids('classrooms'),
+           'priority_classrooms': {i.name: i.priority for i in PriorityClassroom.objects.all()}}
     for i in load_ids('classes'):
         if len(PriorityClass.objects.filter(name=i)) > 0:
             con['priority_classes'][i] = PriorityClass.objects.filter(name=i)[0].is_priority
@@ -291,7 +292,6 @@ def adminGetState():
     return 2  # Aktualizacja zakończona
 
 
-@login_required()
 def updateCache():
     updateprocesspath = tempfile.gettempdir() + '/updateProcess'
     
@@ -344,6 +344,26 @@ def adminModifyPriority(request):
         p.is_priority = True
         p.save()
     return redirect('/admin?status=2&aliastype=priority')  # Pomyślnie zmodyfikowano priorytety klas
+
+
+@login_required()
+def adminModifyClassroomsPriority(request):
+    for classroom, priority in request.POST.items():
+        if classroom.startswith('priority$'):
+            name = classroom[len('priority$'):]
+        else:
+            continue
+
+        if not isinstance(priority, int) or priority > 10 or priority < 0:
+            continue
+
+        try:
+            p = PriorityClassroom.objects.get(name=name)
+        except ObjectDoesNotExist:
+            p = PriorityClassroom(name=name)
+        p.priority = priority
+        p.save()
+    return redirect('/admin?status=2&aliastype=classroomspriority')  # Pomyślnie zmodyfikowano priorytety sal
 
 
 @login_required()

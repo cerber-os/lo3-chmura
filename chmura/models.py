@@ -17,5 +17,10 @@ class PriorityClass(models.Model):
     is_priority = models.BooleanField()
 
 
+class PriorityClassroom(models.Model):
+    name = models.CharField(max_length=100)
+    priority = models.IntegerField()
+
+
 class SubstitutionType(models.Model):
     name = models.CharField(max_length=100)

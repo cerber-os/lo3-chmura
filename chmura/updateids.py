@@ -1,6 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from io import StringIO
-from chmura.models import Alias, PriorityClass
+from chmura.models import Alias, PriorityClass, PriorityClassroom
 from .utils import get_cur_path, url_request
 import json
 import pickle
@@ -73,6 +73,25 @@ def get_fields(typ, obj):
         return 'None'
 
 
+def classrooms_sort(classrooms):
+    first_sort = [[] for _ in range(0, 11)]
+    for classroom, idx in classrooms.items():
+        try:
+            priority = PriorityClassroom.objects.get(name=classroom).priority
+        except ObjectDoesNotExist:
+            priority = 9
+        first_sort[priority].append({'classroom': classroom, 'idx': idx})
+
+    for i in range(0, 11):
+        first_sort[i] = sorted(first_sort[i], key=lambda x: locale.strxfrm(x['classroom']))
+
+    result = {}
+    for i in range(0, 11):
+        for k in first_sort[i]:
+            result[k['classroom']] = k['idx']
+    return result
+
+
 def save_ids(ids):
     for i in ids:
         d = {}
@@ -93,6 +112,8 @@ def save_ids(ids):
                     group_normal[t] = d[t]
             save_dict(i, {**dict(sorted(group_priority.items(), key=lambda x: locale.strxfrm(x[0]))),
                           **dict(sorted(group_normal  .items(), key=lambda x: locale.strxfrm(x[0])))})
+        elif i == 'classrooms':
+            save_dict(i, classrooms_sort(d))
         else:
             save_dict(i, d)
 

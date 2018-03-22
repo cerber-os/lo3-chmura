@@ -93,9 +93,28 @@
 	</form>
 </section>
 <section>
+	<h2>Priorytety sal</h2>
+	<p>Ustaw priorytet każdej sali w postaci liczby od 0 (najwyższy) do 10 (najniższy)</p>
+	<form method="post" action="/admin/modifyclassroomspriority/">
+		<div class="tablescroller">
+			<table>
+				{% for classroom, idx in classrooms.items %}
+				<tr>
+					<td>{{ classroom }}</td>
+					<td><input type="number" name="priority${{ classroom }}" value="{{ priority_classrooms|get_item_or_ten:classroom }}" min="0" max="10"></td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+		{% if status == "2" and alias_type == "classroomspriority" %}<p class="success">Priorytety zapisane.</p>{% endif %}
+		<input type="submit" value="Zapisz">
+		{% csrf_token %}
+	</form>
+</section>
+<section>
 	<h2>Pamięć podręczna</h2>
 	<p>
-		Usuń zbuforowane dane i pobierz je na nowo. Uwaga: proces może potrwać nawet 30 minut.
+		Usuń zbuforowane dane i pobierz je na nowo. Uwaga: proces trwa około 2 minuty.
 	</p>
 	<p>
 		Status ostatniej aktualizacji:
