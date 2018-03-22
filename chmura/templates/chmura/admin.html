@@ -4,7 +4,7 @@
 {% block title %}Panel administracyjny{% endblock %}
 
 {% block localcss %}
-<link rel="stylesheet" href="/static/css/admin.css">
+<link rel="stylesheet" href="/static/css/admin.css?1">
 {% endblock %}
 
 {% block content %}
@@ -94,7 +94,7 @@
 </section>
 <section>
 	<h2>Priorytety sal</h2>
-	<p>Ustaw priorytet każdej sali w postaci liczby od 0 (najwyższy) do 10 (najniższy)</p>
+	<p>Ustaw kolejność wyświetlania sal. Najwyższy priorytet to 0, najniższy to 10. Ujemny priorytet oznacza salę ukrytą.</p>
 	<form method="post" action="/admin/modifyclassroomspriority/">
 		<div class="tablescroller">
 			<table>
@@ -114,7 +114,7 @@
 <section>
 	<h2>Pamięć podręczna</h2>
 	<p>
-		Usuń zbuforowane dane i pobierz je na nowo. Uwaga: proces trwa około 2 minuty.
+		Usuń zbuforowane dane i pobierz je na nowo. Proces trwa około 2 minut.
 	</p>
 	<p>
 		Status ostatniej aktualizacji:

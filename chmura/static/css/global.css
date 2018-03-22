@@ -164,7 +164,7 @@ body {
 	font-size: 0.5em;
 }
 
-select, input[type="text"], input[type="password"] {
+select, input[type="text"], input[type="password"], input[type="number"] {
 	color: #000000;
 	border: none;
 	background-color: #E9ECEF;
@@ -188,7 +188,7 @@ button, input[type="submit"] {
 a {
 	color: inherit;
 }
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], input[type="number"] {
 	padding: 0 4px;
 }
 

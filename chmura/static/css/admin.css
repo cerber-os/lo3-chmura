@@ -22,7 +22,7 @@ h1 {
 	margin: 8px;
 	line-height: 1.2em;
 }
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], input[type="number"] {
 	background-color: #FFFFFF;
 }
 
