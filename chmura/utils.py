@@ -22,7 +22,7 @@ if ENABLE_AGGRESSIVE_IP_CHANGE:
     from stem import Signal
     from stem.control import Controller
 
-    log.warning('Aggressive IP changing is active!')
+    log.info('Aggressive IP changing is active!')
 
 USER_AGENTS_LIST = ['Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0',
                     'Mozilla/5.0 (Macintosh; Intel Mac OS X 16.0; rv:42.0) Gecko/20100101 Firefox/42.0',

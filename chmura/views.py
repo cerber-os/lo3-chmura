@@ -6,14 +6,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from chmura.models import Subject, Alias, PriorityClass, PriorityClassroom, SubstitutionType
-from lo3.settings import DEBUG
+from lo3.settings import DEBUG, CACHE_LOCATION
 from .updateids import load_ids, updateid
 from .news import getNews, updateNews
 from .agenda import getAgenda, AgendaException
-from .utils import getReversedStudent, getReversedDict, get_cur_path
+from .utils import getReversedStudent, getReversedDict
 from chmura.subst import updateSubstitution, checkIfDateInFuture, loadSubstiution, \
                              SubstitutionException, generateDatesDict
-from .timetable import loadTimeTable, TimeTableException, getSelectorName, getPluralName, updateTimeTables
+from .timetable import loadTimeTable, TimeTableException, getPluralName, updateTimeTables
 from time import sleep
 from datetime import datetime, timedelta
 import chmura.log as log
@@ -28,7 +28,8 @@ def index(request):
            'teachers': load_ids('teachers'),
            'students': load_ids('students'),
            'classrooms': load_ids('classrooms'),
-           'breaks': load_ids('breaks')}
+           'breaks': load_ids('breaks'),
+           'hidden_classrooms': [i.name for i in PriorityClassroom.objects.filter(priority=-1)]}
 
     lasttype = request.COOKIES.get('lasttype', 'class')
     lastuid = request.COOKIES.get('last' + lasttype + 'uid', '-22')
@@ -213,20 +214,20 @@ def adminChangePassword(request):
             error = '-2'  # Nowe hasła nie są jednakowe
     else:
         error = '-3'  # Błędne stare hasło
-    return redirect('/admin?status=' + error)
+    return redirect('/admin/?status=' + error)
 
 
 @login_required()
 def adminClearCache(request):
     if not DEBUG:
         return redirect('/admin/?status=-4')  # Opcja dostępna w trybie debug
-    if os.path.exists(get_cur_path() + '/../cache'):
-        shutil.rmtree(get_cur_path() + '/../cache/')
+    if os.path.exists(CACHE_LOCATION):
+        shutil.rmtree(CACHE_LOCATION)
 
     # Usuwanie kolorów
     Subject.objects.all().delete()
 
-    return redirect('/admin?status=1')  # Pomyślnie wyczyszczono cache
+    return redirect('/admin/?status=1')  # Pomyślnie wyczyszczono cache
 
 
 @login_required()
@@ -257,7 +258,7 @@ def adminModifyAliases(request):
             a = Alias(orig=name, alias=alias, selector=selector)
         a.alias = alias
         a.save()
-    return redirect('/admin?status=2&aliastype=' + request.GET.get("aliastype"))  # Pomyślnie zmodyfikowano aliasy
+    return redirect('/admin/?status=2&aliastype=' + request.GET.get("aliastype"))  # Pomyślnie zmodyfikowano aliasy
 
 
 @login_required()
@@ -277,7 +278,7 @@ def adminUpdateCache(request):
 
     updateCache()
 
-    return redirect('/admin?status=3')
+    return redirect('/admin/?status=3')
 
 
 def adminGetState():
@@ -343,7 +344,7 @@ def adminModifyPriority(request):
             p = PriorityClass(name=name)
         p.is_priority = True
         p.save()
-    return redirect('/admin?status=2&aliastype=priority')  # Pomyślnie zmodyfikowano priorytety klas
+    return redirect('/admin/?status=2&aliastype=priority')  # Pomyślnie zmodyfikowano priorytety klas
 
 
 @login_required()
@@ -354,7 +355,11 @@ def adminModifyClassroomsPriority(request):
         else:
             continue
 
-        if not isinstance(priority, int) or priority > 10 or priority < 0:
+        try:
+            priority = int(priority)
+        except ValueError:
+            continue
+        if priority > 10 or priority < -1:
             continue
 
         try:
@@ -363,10 +368,10 @@ def adminModifyClassroomsPriority(request):
             p = PriorityClassroom(name=name)
         p.priority = priority
         p.save()
-    return redirect('/admin?status=2&aliastype=classroomspriority')  # Pomyślnie zmodyfikowano priorytety sal
+    return redirect('/admin/?status=2&aliastype=classroomspriority')  # Pomyślnie zmodyfikowano priorytety sal
 
 
 @login_required()
 def adminUpdateID(request):
     updateid()
-    return redirect('/admin?status=4')  # Pomyślnie zmodyfikowano priorytety klas
+    return redirect('/admin/?status=4')  # Pomyślnie zaktualizowano ID

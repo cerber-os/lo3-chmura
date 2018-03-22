@@ -78,6 +78,8 @@ def classrooms_sort(classrooms):
     for classroom, idx in classrooms.items():
         try:
             priority = PriorityClassroom.objects.get(name=classroom).priority
+            if priority < 0:
+                priority = 9
         except ObjectDoesNotExist:
             priority = 9
         first_sort[priority].append({'classroom': classroom, 'idx': idx})

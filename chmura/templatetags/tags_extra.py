@@ -7,5 +7,5 @@ def get_item(dictionary, key):
 
 
 @register.filter
-def get_item_or_ten(dictionary, key):
-    return dictionary.get(key, 10)
+def get_item_or_zero(dictionary, key):
+    return dictionary.get(key, 0)

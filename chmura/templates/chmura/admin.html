@@ -101,7 +101,7 @@
 				{% for classroom, idx in classrooms.items %}
 				<tr>
 					<td>{{ classroom }}</td>
-					<td><input type="number" name="priority${{ classroom }}" value="{{ priority_classrooms|get_item_or_ten:classroom }}" min="0" max="10"></td>
+					<td><input type="number" name="priority${{ classroom }}" value="{{ priority_classrooms|get_item_or_zero:classroom }}" min="-1" max="10"></td>
 				</tr>
 				{% endfor %}
 			</table>
