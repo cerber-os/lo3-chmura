@@ -136,17 +136,17 @@ function displayLastSettings() { //called on document load, fills the timetable 
 		//add option for each of the types, as long as it's remembered
 		var indexToSelect = 0; //prepare for future selection
 		
-		for (var i in timetableTypes) {
-			if (!getCookie("last" + timetableTypes[i])) continue;
+		for (var j in timetableTypes) {
+			if (!getCookie("last" + timetableTypes[j])) continue;
 			
 			var option = document.createElement("option");
-			option.setAttribute("data-type", timetableTypes[i]);
-			option.setAttribute("data-uid", getCookie("last" + timetableTypes[i] + "uid"));
-			option.innerText = getCookie("last" + timetableTypes[i]);
+			option.setAttribute("data-type", timetableTypes[j]);
+			option.setAttribute("data-uid", getCookie("last" + timetableTypes[j] + "uid"));
+			option.innerText = getCookie("last" + timetableTypes[j]);
 			
 			option = select.appendChild(option);
 			
-			if (timetableTypes[i] == rememberedType && getCookie("last" + timetableTypes[i] + "uid") == rememberedUid && defaultRemoved)
+			if (timetableTypes[j] == rememberedType && getCookie("last" + timetableTypes[j] + "uid") == rememberedUid && defaultRemoved)
 				indexToSelect = option.index;
 		}
 		
