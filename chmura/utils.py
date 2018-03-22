@@ -76,7 +76,7 @@ def url_request(address, header=None, params=None):
         header = {}
     if params is None:
         params = {}
-    prx = {'http': '127.0.0.1:9050'} if ENABLE_TOR else {}
+    prx = {'socks5': '127.0.0.1:9050'} if ENABLE_TOR else {}
 
     header['User-Agent'] = CURRENT_USER_AGENT
 

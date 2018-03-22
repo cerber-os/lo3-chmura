@@ -71,7 +71,7 @@ def updateSubstitution():
         except ValueError:
             create_new_session()
             credentials = regeneratePass()
-            jsdb = download_gcall(date, credentials=credentials)
+            jsdb = download_gcall(period, credentials=credentials)
             try:
                 result = SubstitutionDB(jsdb).generateSubstitution()
             except ValueError:

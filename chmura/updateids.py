@@ -84,8 +84,8 @@ def classrooms_sort(classrooms):
             priority = 9
         first_sort[priority].append({'classroom': classroom, 'idx': idx})
 
-    for i in range(0, 11):
-        first_sort[i] = sorted(first_sort[i], key=lambda x: x['classroom'].lower())
+    # for i in range(0, 11):
+    #    first_sort[i] = sorted(first_sort[i], key=lambda x: x['classroom'].lower())
 
     result = {}
     for i in range(0, 11):

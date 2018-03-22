@@ -186,7 +186,7 @@ class TimeTableDB:
 
                 subject = self.getSubject(lesson['subjectid'])
                 color = subject.get('color')
-                color = get_color(subject, color)
+                color = get_color(subject['name'], color)
                 subject = getAliasOfSubject(subject['name'])
 
                 cell_object = {'classes': classes,

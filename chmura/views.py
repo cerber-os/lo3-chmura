@@ -107,14 +107,15 @@ def substitutionList(request):
 
 
 def newsPage(request):
-    if not DEBUG or request.user.is_authenticated:
+    print(request.user.is_authenticated)
+    if not DEBUG and not request.user.is_authenticated:
         return render(request, 'chmura/error.html', {'subsystem': 'aktualności', 'reason': 'Usługa nie jest jeszcze dostępna.'})
     con = {'news': getNews()}
     return render(request, 'chmura/news.html', con)
 
 
 def agenda(request):
-    if not DEBUG or request.user.is_authenticated:
+    if not DEBUG and not request.user.is_authenticated:
         return render(request, 'chmura/error.html', {'subsystem': 'terminarza', 'reason': 'Usługa nie jest jeszcze dostępna.'})
     try:
         con = {'terminarz': getAgenda()}
