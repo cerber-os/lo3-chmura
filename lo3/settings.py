@@ -26,10 +26,7 @@ SECRET_KEY = os.environ.get('lo3_django_secretkey', '*v^4+%9%0qv0i8mzy5hsz&e9k*%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('lo3_django_debug', 'True') == 'True'
 
-if not DEBUG:
-    ALLOWED_HOSTS = ['localhost', 'cerberos.pl']
-else:
-    ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -132,8 +129,8 @@ STATIC_URL = '/static/'
 
 CRONJOBS = [
     ('0 0 */2 * *', 'chmura.timetable.updateTimeTables'),
-    # ('0 */12 * * *', 'chmura.news.updateNews'),
-    # ('0 0 */10 * *', 'chmura.agenda.updateAgenda'),
+    ('0 */12 * * *', 'chmura.news.updateNews'),
+    ('0 0 */10 * *', 'chmura.agenda.updateAgenda'),
     ('0 */1 * * *', 'chmura.subst.updateSubstitution'),
     ('0 12 1 * *', 'chmura.updateids.updateid'),
 ]

@@ -49,11 +49,11 @@ def index(request):
         del(con['timetable']['timetable_settings'])
     except TimeTableException as e:
         response = render(request, 'chmura/error.html', {'subsystem': 'planu lekcji', 'reason': e.message}, status=404)
-        for _ in ['lasttype', 'lastclassuid', 'lastteacheruid', 'laststudentuid',
-                  'lastclass', 'lastteacher', 'laststudent']:
+        for _ in ['lasttype', 'lastclassuid', 'lastteacheruid', 'laststudentuid', 'lastclassroomuid'
+                  'lastclass', 'lastteacher', 'laststudent', 'lastclassroom']:
             response.delete_cookie(_)
         return response
-    con['type'] = getSelectorName(selector)
+    con['type'] = selector
     if selector == 'student':
         con['target'] = getReversedStudent(con['students'], uid)
     else:
@@ -153,7 +153,8 @@ def adminPanel(request):
            'aliases': {i.orig: i.alias for i in Alias.objects.all()},
            'update_state': adminGetState(),
            'substitution_types': [i.name for i in SubstitutionType.objects.all()],
-           'priority_classes': {}}
+           'priority_classes': {},
+           'classrooms': load_ids('classrooms')}
     for i in load_ids('classes'):
         if len(PriorityClass.objects.filter(name=i)) > 0:
             con['priority_classes'][i] = PriorityClass.objects.filter(name=i)[0].is_priority
@@ -278,7 +279,6 @@ def adminUpdateCache(request):
     return redirect('/admin?status=3')
 
 
-@login_required()
 def adminGetState():
     updateprocesspath = tempfile.gettempdir() + '/updateProcess'
     
