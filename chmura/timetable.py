@@ -186,13 +186,14 @@ class TimeTableDB:
 
                 subject = self.getSubject(lesson['subjectid'])
                 color = subject.get('color')
+                color = get_color(subject, color)
                 subject = getAliasOfSubject(subject['name'])
 
                 cell_object = {'classes': classes,
                                'teacher': teachers,
                                'classroom': classrooms,
                                'subject': subject,
-                               'color': get_color(subject, color)}
+                               'color': color}
                 for shift in range(0, duration):
                     timetable[self.daysNameList.get(day, '0')][int(period) + shift].append(cell_object)
         timetable['timetable_settings']['is_saturday'] = not self.checkIfSaturdayIsEmpty(timetable['Sobota'])
