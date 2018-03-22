@@ -3,7 +3,7 @@
 {% block title %}Plan lekcji{% endblock %}
 
 {% block localcss %}
-<link rel="stylesheet" href="/static/css/timetable.css?7">
+<link rel="stylesheet" href="/static/css/timetable.css?8">
 {#<link rel="stylesheet" href="/static/css/timetablecolors.css">#}
 {% if device == "Chrome" %}<link rel="stylesheet" href="/static/css/timetablechromefix.css">{% endif %}
 {% endblock %}
@@ -41,9 +41,10 @@
 			<td></td>
 			{% elif block|length == 1 %}
 			<td class="lesson" style="background-color: {{ block.0.color }};">
-				<p>{{ block.0.subject }}</p>
-				<p>{% if display_teacher %}{{ block.0.teacher }}{% endif %} {% if display_classes %}{{ block.0.classes }}{% endif %}</p>
-				<p>{% if display_classroom %}{{ block.0.classroom }}{% endif %}</p>
+				<p class="subject">{{ block.0.subject }}</p>
+				<p>{% if display_teacher %}{{ block.0.teacher }}{% endif %}</p>
+				{% if display_classes %}<p class="classes">{{ block.0.classes }}</p>{% endif %}
+				<p class="classroom">{% if display_classroom %}{{ block.0.classroom }}{% endif %}</p>
 			</td>
 			{% elif block|length <= 3 %}
 			<td>
@@ -51,9 +52,10 @@
 					{% for lesson in block %}
 					<div>
 						<div class="lesson" style="background-color: {{ lesson.color }};">
-							<p>{{ lesson.subject }}</p>
-							<p>{% if display_teacher %}{{ lesson.teacher }}{% endif %} {% if display_classes %}{{ lesson.classes }}{% endif %}</p>
-							<p>{% if display_classroom %}{{ lesson.classroom }}{% endif %}</p>
+							<p class="subject">{{ lesson.subject }}</p>
+							<p>{% if display_teacher %}{{ lesson.teacher }}{% endif %}</p>
+							{% if display_classes %}<p class="classes">{{ lesson.classes }}</p>{% endif %}
+							<p class="classroom">{% if display_classroom %}{{ lesson.classroom }}{% endif %}</p>
 						</div>
 					</div>
 					{% endfor %}
@@ -64,16 +66,17 @@
 				<div class="lessonholder">
 					<div class="detailslesson">
 						<div class="lesson variouslessons" style="background-color: white;">
-							<p>Różne</p>
+							<p class="subject">Różne</p>
 							<p class="detailslink"><a href="javascript:void(0)" onclick="showDetails(this)">Rozwiń</a></p>
 						</div>
 					</div>
 					{% for lesson in block %}
 					<div class="hiddenlesson">
 						<div class="lesson" style="background-color: {{ lesson.color }}">
-							<p>{{ lesson.subject }}</p>
-							<p>{% if display_teacher %}{{ lesson.teacher }}{% endif %} {% if display_classes %}{{ lesson.classes }}{% endif %}</p>
-							<p>{% if display_classroom %}{{ lesson.classroom }}{% endif %}</p>
+							<p class="subject">{{ lesson.subject }}</p>
+							<p>{% if display_teacher %}{{ lesson.teacher }}{% endif %}</p>
+							{% if display_classes %}<p class="classes">{{ lesson.classes }}</p>{% endif %}
+							<p class="classroom">{% if display_classroom %}{{ lesson.classroom }}{% endif %}</p>
 						</div>
 					</div>
 					{% endfor %}
