@@ -34,7 +34,7 @@
 			<th>{{ weekday }}</th>
 			
 			{% for block in blocks %}
-            {% if forloop.counter0 != 0 or not begin %}
+            {% if forloop.counter0 != 0 or not begin %}{% if forloop.counter0 <= end %}
 			{% if block|length == 0 %}
 			<td></td>
 			{% elif block|length == 1 %}
@@ -77,7 +77,7 @@
 					{% endfor %}
 				</div>
 			</td>
-			{% endif %}
+			{% endif %}{% endif %}
             {% endif %}
 			
 			{% endfor %}
