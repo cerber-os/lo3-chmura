@@ -209,11 +209,13 @@
 <section>
 	<h2>Dziennik zdarzeń</h2>
     <table>
+        {% autoescape off %}
         <tr><td>Ostatnia aktualizacja planu lekcji:</td><td>{{ timetable_update.date|return_never_on_empty }}</td></tr>
         <tr><td>Ostatnia aktualizacja zastępstw:</td><td>{{ subst_update.date|return_never_on_empty }}</td></tr>
         <tr><td>Ostatnia aktualizacja identyfikatorów:</td><td>{{ ids_update.date|return_never_on_empty }}</td></tr>
         <tr><td>Ostatnia aktualizacja aktualności:</td><td>{{ news_update.date|return_never_on_empty }}</td></tr>
         <tr><td>Ostatnia aktualizacja terminarza:</td><td>{{ agenda_update.date|return_never_on_empty }}</td></tr>
+        {% endautoescape %}
     </table>
     <hr>
     <table>
@@ -247,6 +249,13 @@
     </form>
     {% if status == "5" %}<p class="success">Dziennik zdarzeń został pomyślnie wyczyszczony</p>{% endif %}
 </section>
+
+<form action="/admin/clearEmptyAliases/">
+    {% csrf_token %}
+    <input type="submit" value="Usuń puste aliasy (TYMCZASOWE)">
+    <!--Ambitny Frontend designerze, ten przycisk jest tylko po to, by usunąć bajzel w aliasach. Proszę
+        nie marnuj czasu na jego stylizowanie, bo i tak zniknie w ciągu kilku dni.-->
+</form>
 
 <form action="/admin/logout" class="nonsectionui">
 	<input type="submit" value="Wyloguj">

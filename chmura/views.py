@@ -412,3 +412,9 @@ def adminLastStateElement(name):
         return ''
     else:
         return tab[-1]
+
+
+@login_required()
+def clearEmptyAliases(request):
+    Alias.objects.filter(selector='subject', alias='').delete()
+    return redirect('/admin/')

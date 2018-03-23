@@ -38,6 +38,6 @@ def set_color(level):
 @register.filter()
 def return_never_on_empty(element):
     if element == '':
-        return 'nigdy'
+        return '<span style="color: red; font-weight: bold;">nigdy</span>'
     else:
         return element
