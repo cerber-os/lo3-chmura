@@ -206,6 +206,47 @@
 		<input type="submit" value="Zmień hasło">
 	</form>
 </section>
+<section>
+	<h2>Dziennik zdarzeń</h2>
+    <table>
+        <tr><td>Ostatnia aktualizacja planu lekcji:</td><td>nigdy</td></tr>
+        <tr><td>Ostatnia aktualizacja zastępstw:</td><td>nigdy</td></tr>
+        <tr><td>Ostatnia aktualizacja identyfikatorów:</td><td>nigdy</td></tr>
+        <tr><td>Ostatnia aktualizacja aktualności:</td><td>nigdy</td></tr>
+        <tr><td>Ostatnia aktualizacja terminarza:</td><td>nigdy</td></tr>
+    </table>
+    <hr>
+    <table>
+        {% autoescape off %}
+        <tr><td>Tryb debugowania:</td><td>{{ params.debug|return_on_off:True }}</td></tr>
+        <tr><td>Tor</td><td>{{ params.tor|return_on_off }}</td></tr>
+        <tr><td>Agresywna zmiana adresu IP Tor:</td><td>{{ params.aggr_ip|return_on_off }}</td></tr>
+        {% endautoescape %}
+        <tr><td>Lokalizacja pamięci podręcznej:</td><td>{{ params.cache }}</td></tr>
+    </table>
+    <hr>
+    <div class="tablescroller">
+        {% if events|length > 0 %}
+        <table style="max-width: none;">
+            {% for event in events %}
+            <tr>
+                <td style="width: 20%;">{{ event.date }}</td>
+                {% autoescape off %}<td style="width: 10%;">{{ event.level|set_color }}</td>{% endautoescape %}
+                <td style="width: 50%;">{{ event.message }}</td>
+                <td style="width: 20%;"><a href="/admin/adminadditional/?pk={{ event.pk }}">Pokaż szczegóły</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            Brak zdarzeń w dzienniku
+        {% endif %}
+    </div>
+    <form action="/admin/clearJournal/">
+        {% csrf_token %}
+        <input type="submit" value="Wyczyść dziennik">
+    </form>
+    {% if status == "5" %}<p class="success">Dziennik zdarzeń został pomyślnie wyczyszczony</p>{% endif %}
+</section>
 
 <form action="/admin/logout" class="nonsectionui">
 	<input type="submit" value="Wyloguj">

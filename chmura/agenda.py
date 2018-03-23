@@ -1,11 +1,11 @@
 from bs4 import BeautifulSoup
 from io import StringIO
-import pickle
-import html5lib
+from lo3.settings import DEBUG, CACHE_LOCATION
 from .utils import url_request
 import chmura.log as log
+import pickle
+import html5lib
 import os
-from lo3.settings import DEBUG, CACHE_LOCATION
 
 
 def save_dict(obj):
@@ -59,9 +59,10 @@ def download_agenda():
 
 
 def updateAgenda():
-    log.info('Updating agenda')
+    log.info('Rozpoczynam aktualizację terminarza')
     agenda = download_agenda()
     save_dict(agenda)
+    log.info('Zaktualizowano terminarz')
 
 
 class AgendaException(Exception):

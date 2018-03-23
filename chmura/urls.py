@@ -22,4 +22,6 @@ urlpatterns = [
         url(r'^admin/modifypriority/$', views.adminModifyPriority, name='adminModifyPriority'),
         url(r'^admin/modifyclassroomspriority/$', views.adminModifyClassroomsPriority, name='adminModifyClassroomsPriority'),
         url(r'^admin/adminupdateID/$', views.adminUpdateID, name='adminUpdateID'),
+        url(r'^admin/adminadditional/$', views.adminGetAdditionalJournal, name='adminGetAdditionalJournal'),
+        url(r'^admin/clearJournal/$', views.adminClearJournal, name='adminClearJournal')
 ]

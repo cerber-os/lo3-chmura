@@ -1,12 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.core.mail import EmailMessage
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from chmura.models import Subject, Alias, PriorityClass, PriorityClassroom, SubstitutionType
-from lo3.settings import DEBUG, CACHE_LOCATION
+from chmura.models import Subject, Alias, PriorityClass, PriorityClassroom, SubstitutionType, Journal
+from lo3.settings import DEBUG, CACHE_LOCATION, ENABLE_TOR, ENABLE_AGGRESSIVE_IP_CHANGE
 from .updateids import load_ids, updateid
 from .news import getNews, updateNews
 from .agenda import getAgenda, AgendaException
@@ -21,6 +21,7 @@ import shutil
 import tempfile
 import os
 import traceback
+import threading
 
 
 def index(request):
@@ -129,6 +130,9 @@ def changelog(request):
     return render(request, 'chmura/changelog.html')
 
 
+##################################################
+# Generowanie dla klienta
+##################################################
 def loginPage(request):
     username = request.POST.get('login', None)
     password = request.POST.get('password', None)
@@ -157,7 +161,10 @@ def adminPanel(request):
            'substitution_types': [i.name for i in SubstitutionType.objects.all()],
            'priority_classes': {},
            'classrooms': load_ids('classrooms'),
-           'priority_classrooms': {i.name: i.priority for i in PriorityClassroom.objects.all()}}
+           'priority_classrooms': {i.name: i.priority for i in PriorityClassroom.objects.all()},
+
+           'params': {'debug': DEBUG, 'cache': CACHE_LOCATION, 'tor': ENABLE_TOR, 'aggr_ip': ENABLE_AGGRESSIVE_IP_CHANGE},
+           'events': sorted([i for i in Journal.objects.all()], key=lambda x: x.date, reverse=True)}
     for i in load_ids('classes'):
         if len(PriorityClass.objects.filter(name=i)) > 0:
             con['priority_classes'][i] = PriorityClass.objects.filter(name=i)[0].is_priority
@@ -181,6 +188,7 @@ def adminPanel(request):
 # 2			Pomyślnie zmodyfikowano aliasy
 # 3			Aktualizacja cache rozpoczęta
 # 4         Pomyślnie zaktualizowano ID
+# 5         Pomyślnie wyczyszczono dziennik zdarzeń
 #
 # -1		Hasło nie spełnia wymagań
 # -2		Nowe hasła nie są jednakowe
@@ -277,7 +285,9 @@ def adminUpdateCache(request):
     if os.path.isfile(updateprocesspath) and open(updateprocesspath, 'r').read(8) != 'finished':
         return redirect('/admin?status=-6')  # Aktualizacja w toku
 
-    updateCache()
+    t = threading.Thread(target=updateCache)
+    t.daemon = True
+    t.start()
 
     return redirect('/admin/?status=3')
 
@@ -309,16 +319,16 @@ def updateCache():
         sleep(10)
 
         updateNews()
-    except Exception as e:
+    except Exception:
         try:
             open(updateprocesspath, 'w').write('error---')
-            log.error(e)
+            log.error('Błąd przy aktualizacji cache!', str(traceback.format_exc()))
             email = EmailMessage('Blad przy aktualizacji cache!!!', 'Treść błędu: ' + str(traceback.format_exc()),
                                  to=['cerber@cerberos.pl'])
             email.send()
             return
-        except Exception as e:
-            log.crititcal('Double error!!!: ' + str(e))
+        except Exception:
+            log.critical('Podwójny błąd przy aktualizacji cache!', str(traceback.format_exc()))
             return
     open(updateprocesspath, 'w').write('finished')
 
@@ -376,3 +386,15 @@ def adminModifyClassroomsPriority(request):
 def adminUpdateID(request):
     updateid()
     return redirect('/admin/?status=4')  # Pomyślnie zaktualizowano ID
+
+
+@login_required()
+def adminGetAdditionalJournal(request):
+    j = get_object_or_404(Journal, pk=request.GET.get('pk', '-1'))
+    return HttpResponse(j.additional_info, content_type='text/plain')
+
+
+@login_required()
+def adminClearJournal(request):
+    Journal.objects.all().delete()
+    return redirect('/admin/?status=5')

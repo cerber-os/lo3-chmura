@@ -24,3 +24,10 @@ class PriorityClassroom(models.Model):
 
 class SubstitutionType(models.Model):
     name = models.CharField(max_length=100)
+
+
+class Journal(models.Model):
+    date = models.DateTimeField(auto_now=True)
+    level = models.CharField(max_length=15)
+    message = models.CharField(max_length=250)
+    additional_info = models.CharField(max_length=1000, blank=True)

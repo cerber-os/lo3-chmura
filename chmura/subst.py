@@ -64,7 +64,7 @@ def updateSubstitution():
             with open(CACHE_LOCATION + 'substitution/' + period + '.sbt', 'wb') as f:
                 pickle.dump({'dane': [], 'notka': ''}, f, 2)
             continue
-        log.info('Downloading new substituion for', period)
+        log.info('Pobieranie zastępstwa na ' + period)
         jsdb = download_gcall(period, credentials=credentials)
         try:
             result = SubstitutionDB(jsdb).generateSubstitution()
@@ -75,7 +75,10 @@ def updateSubstitution():
             try:
                 result = SubstitutionDB(jsdb).generateSubstitution()
             except ValueError:
-                log.crititcal('Unable to update substitution', str(traceback.format_exc()))
+                if day < 2:
+                    log.warning('Błąd podczas aktualizacji ' + str(day) + '. zastępstwa', str(traceback.format_exc()))
+                else:
+                    log.info('Błąd podczas aktualizacji ' + str(day) + '. zastępstwa', str(traceback.format_exc()))
                 return
         with open(CACHE_LOCATION + 'substitution/' + period + '.sbt', 'wb') as f:
             pickle.dump(result, f, 2)
@@ -123,10 +126,11 @@ def loadSubstiution(date):
             return pickle.load(f)
     except FileNotFoundError:
         if DEBUG:
-            log.info('DEBUG mode active - downloading substitutions')
+            log.info('Tryb DEBUG aktywny - rozpoczynam pobieranie zastępstw')
             updateSubstitution()
             raise SubstitutionException('Try debugowania jest aktywny. Pobrano zastępstwa. Odśwież stronę.')
         else:
+            log.error('Brak pliku z zastępstwami na ' + date)
             raise SubstitutionException('Zastępstwa na żądany dzień nie istnieją')
 
 

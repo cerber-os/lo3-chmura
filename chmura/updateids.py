@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from io import StringIO
 from chmura.models import Alias, PriorityClass, PriorityClassroom
+from lo3.settings import DEBUG
 from .utils import get_cur_path, url_request
 import json
 import pickle
@@ -25,10 +26,14 @@ def load_dict(name):
         with open(get_cur_path() + '/../cache/ids/' + name + '.id', 'rb') as f:
             return pickle.load(f)
     except FileNotFoundError:
-        log.warning('Ids file not found. Downloading new and returning "null"')
-        save_ids(download_ids())
-        with open(get_cur_path() + '/../cache/ids/' + name + '.id', 'rb') as f:
-            return pickle.load(f)
+        if DEBUG:
+            log.warning('Brak pliku z identyfikatorami. Tryb DEBUG jest aktywny - rozpoczynam pobieranie')
+            save_ids(download_ids())
+            with open(get_cur_path() + '/../cache/ids/' + name + '.id', 'rb') as f:
+                return pickle.load(f)
+        else:
+            log.critical('Brak pliku z identyfikatorami. Zwracam pusty słownik. Możliwe nieoczekiwane działanie')
+            return {}
 
 
 def download_ids():
@@ -83,9 +88,6 @@ def classrooms_sort(classrooms):
         except ObjectDoesNotExist:
             priority = 9
         first_sort[priority].append({'classroom': classroom, 'idx': idx})
-
-    # for i in range(0, 11):
-    #    first_sort[i] = sorted(first_sort[i], key=lambda x: x['classroom'].lower())
 
     result = {}
     for i in range(0, 11):
@@ -161,5 +163,6 @@ def load_ids(typ):
 
 
 def updateid():
-    log.info('Updating ids')
+    log.info('Rozpoczynam aktualizację identyfikatorów')
     save_ids(download_ids())
+    log.info('Zaktualizowano identyfikatory')

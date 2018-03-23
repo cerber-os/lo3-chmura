@@ -103,10 +103,11 @@ def loadTimeTable(selector, uid):
             return pickle.load(f)
     except FileNotFoundError:
         if DEBUG:
-            log.info('DEBUG mode active - downloading timetable')
+            log.info('Tryb DEBUG aktywny - rozpoczynam pobieranie planów lekcji')
             updateTimeTables()
             raise TimeTableException('Tryb debugowania jest aktywny. Pobrano plany lekcji. Odśwież stronę.')
         else:
+            log.error('Brak pliku z planem lekcji dla ' + selector + ' ' + uid)
             raise TimeTableException('Żądany plan lekcji nie istnieje')
 
 

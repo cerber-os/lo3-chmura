@@ -1,4 +1,5 @@
 from lo3.settings import LOGGING_LEVEL, LOGGING_COLORS
+from chmura.models import Journal
 
 LOGGING_LEVELS = ['DEBUG', 'INFO', 'WARN', 'ERROR', 'CRIT']
 
@@ -40,11 +41,12 @@ def error(message, params=''):
     send_msg(message, params, 'ERROR', TermColors.FAIL)
 
 
-def crititcal(message, params=''):
+def critical(message, params=''):
     send_msg(message, params, 'CRIT', TermColors.FAIL + TermColors.BOLD)
 
 
 def send_msg(message, params, typ, color):
+    Journal(level=typ, message=message, additional_info=params).save()
     try:
         if LOGGING_LEVELS.index(typ) < LOGGING_LEVELS.index(LOGGING_LEVEL):
             return

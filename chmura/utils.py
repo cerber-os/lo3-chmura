@@ -16,7 +16,7 @@ if DEBUG:
 if ENABLE_TOR:
     log.info('TOR forwarding enabled')
 else:
-    log.warning('TOR not enabled!!!')
+    log.error('TOR not enabled!!!')
 
 if ENABLE_AGGRESSIVE_IP_CHANGE:
     from stem import Signal
