@@ -11,11 +11,67 @@ function showTimetableSelect() { //show the timetable select dialog
 	var lastMobileForm = getCookie("lastmobileform");
 	if (lastMobileForm) toggleMobileForm(Number(lastMobileForm));
 	
+	//select current timetable
+	setCurrentTimetableInSelectDialog();
+	
 	//focus on the search bar
 	document.getElementsByClassName("searchbar")[0].select();
 	
 	//zoom out for mobile users
 	zoomOut();
+}
+function setCurrentTimetableInSelectDialog() {
+	//fetch current timetable data from quickselect
+	var quickselect = document.getElementsByClassName("timetableselect")[0];
+	var previousQuickselectIndex = Number(quickselect.getAttribute("data-previousselectedindex")); //fetch index from before "Choose" was selected
+	
+	var currentType = quickselect.options[previousQuickselectIndex].getAttribute("data-type");
+	var currentUid = quickselect.options[previousQuickselectIndex].getAttribute("data-uid");
+	
+	//get all selects and make place for student class select
+	var selects = document.getElementsByClassName("timetabledialogselects")[0].children;
+	var studentClassSelect;
+	
+	//take appropriate action for each of them
+	for (var i = 0; i < selects.length; i++)
+		if (selects[i].getAttribute("name") == "sel") {
+			//select the chosen timetable type
+			
+			for (var j = 0; j < selects[i].options.length; j++)
+				if (selects[i].options[j].value == currentType) {
+					selects[i].selectedIndex = j;
+					handleTimetableTypeSelectUpdate(selects[i]);
+					break;
+				}
+		}
+		else if (selects[i].getAttribute("data-selecttype") == currentType) {
+			//select the chosen option
+			for (var j = 0; j < selects[i].options.length; j++)
+				if (selects[i].options[j].value == currentUid) {					
+					//if the current type is a student, select the appropriate class beforehand
+					if (currentType == "student") {
+						//get student's class from the parent select
+						var studentClass = selects[i].getAttribute("data-class");
+						
+						//select the class in remembered select
+						for (var k = 0; k < studentClassSelect.options.length; k++)
+							if (studentClassSelect.options[k].value == studentClass) {
+								studentClassSelect.selectedIndex = k;
+								break;
+							}
+							
+						//update the student selects
+						showStudentList(studentClassSelect);
+					}
+					
+					//select the option itself
+					selects[i].selectedIndex = j;
+					
+					return;
+				}
+		}
+		else if (selects[i].getAttribute("data-selecttype") == "populatedclass")
+			studentClassSelect = selects[i]; //remember student class select for student selection
 }
 function handleTimetableSelectUpdate(select) { //triggered when a timetable quickselect is changed, modifies the select and acts appropriately
 	//if the chosen option was the last one on the list, show timetable dialog and reset selected option
@@ -73,8 +129,7 @@ function showStudentList(classSelect) { //display the appropriate student list a
 	for (var i = 0; i < classSelect.parentElement.children.length - 1; i++)
 		if (classSelect.parentElement.children[i].getAttribute("data-selecttype") == "student")
 			if (classSelect.parentElement.children[i].getAttribute("data-class") == classname) {
-				//if it's the matching class, reset it, show it and include it in the form
-				classSelect.parentElement.children[i].selectedIndex = 0;
+				//if it's the matching class, show it and include it in the form
 				classSelect.parentElement.children[i].style.display = "";
 				classSelect.parentElement.children[i].setAttribute("name", "uid");
 			}

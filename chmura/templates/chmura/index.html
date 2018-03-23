@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block localjs %}
-<script src="/static/js/timetable.js?9" defer></script>
+<script src="/static/js/timetable.js?10" defer></script>
 {% endblock %}
 
 {% block secondaryheaderselect %}
@@ -120,7 +120,7 @@
 	<form class="timetableselectdialog">
 		<div data-selectedmobileform>
 			<p>Pokaż plan <span class="mobileformtoggler">lub <a href="javascript:toggleMobileForm()">wyszukaj</a></span></p>
-			<div>
+			<div class="timetabledialogselects">
 				<select name="sel" onchange="handleTimetableTypeSelectUpdate(this)">
 					<option value="class">Klasy</option>
 					<option value="student">Ucznia</option>
