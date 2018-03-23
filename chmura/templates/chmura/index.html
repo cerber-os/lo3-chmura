@@ -3,7 +3,7 @@
 {% block title %}Plan lekcji{% endblock %}
 
 {% block localcss %}
-<link rel="stylesheet" href="/static/css/timetable.css?8">
+<link rel="stylesheet" href="/static/css/timetable.css?9">
 {#<link rel="stylesheet" href="/static/css/timetablecolors.css">#}
 {% if device == "Chrome" %}<link rel="stylesheet" href="/static/css/timetablechromefix.css">{% endif %}
 {% endblock %}
@@ -41,10 +41,10 @@
 			<td></td>
 			{% elif block|length == 1 %}
 			<td class="lesson" style="background-color: {{ block.0.color }};">
-				<p class="subject">{{ block.0.subject }}</p>
-				<p>{% if display_teacher %}{{ block.0.teacher }}{% endif %}</p>
+				<p>{{ block.0.subject }}</p>
+				{% if display_teacher %}<p>{{ block.0.teacher }}</p>{% endif %}
 				{% if display_classes %}<p class="classes">{{ block.0.classes }}</p>{% endif %}
-				<p class="classroom">{% if display_classroom %}{{ block.0.classroom }}{% endif %}</p>
+				{% if display_classroom %}<p>{{ block.0.classroom }}</p>{% endif %}
 			</td>
 			{% elif block|length <= 3 %}
 			<td>
@@ -52,10 +52,10 @@
 					{% for lesson in block %}
 					<div>
 						<div class="lesson" style="background-color: {{ lesson.color }};">
-							<p class="subject">{{ lesson.subject }}</p>
-							<p>{% if display_teacher %}{{ lesson.teacher }}{% endif %}</p>
+							<p>{{ lesson.subject }}</p>
+							{% if display_teacher %}<p>{{ lesson.teacher }}</p>{% endif %}
 							{% if display_classes %}<p class="classes">{{ lesson.classes }}</p>{% endif %}
-							<p class="classroom">{% if display_classroom %}{{ lesson.classroom }}{% endif %}</p>
+							{% if display_classroom %}<p>{{ lesson.classroom }}{% endif %}</p>
 						</div>
 					</div>
 					{% endfor %}
@@ -73,10 +73,10 @@
 					{% for lesson in block %}
 					<div class="hiddenlesson">
 						<div class="lesson" style="background-color: {{ lesson.color }}">
-							<p class="subject">{{ lesson.subject }}</p>
-							<p>{% if display_teacher %}{{ lesson.teacher }}{% endif %}</p>
+							<p>{{ lesson.subject }}</p>
+							{% if display_teacher %}<p>{{ lesson.teacher }}</p>{% endif %}
 							{% if display_classes %}<p class="classes">{{ lesson.classes }}</p>{% endif %}
-							<p class="classroom">{% if display_classroom %}{{ lesson.classroom }}{% endif %}</p>
+							{% if display_classroom %}<p>{{ lesson.classroom }}</p>{% endif %}
 						</div>
 					</div>
 					{% endfor %}

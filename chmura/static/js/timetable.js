@@ -20,7 +20,7 @@ function showTimetableSelect() { //show the timetable select dialog
 	//zoom out for mobile users
 	zoomOut();
 }
-function setCurrentTimetableInSelectDialog() {
+function setCurrentTimetableInSelectDialog() { //update contents of the timetable select dialog
 	//fetch current timetable data from quickselect
 	var quickselect = document.getElementsByClassName("timetableselect")[0];
 	var previousQuickselectIndex = Number(quickselect.getAttribute("data-previousselectedindex")); //fetch index from before "Choose" was selected
