@@ -63,7 +63,7 @@
 #overlaycontent select, #overlaycontent input[type="text"] { margin-top: 6px; }
 
 #mobiletimetableselect {
-	position: fixed;
+	position: absolute;
 	bottom: 0;
 	left: 0;
 	right: 0;

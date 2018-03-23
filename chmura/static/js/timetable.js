@@ -215,8 +215,9 @@ function zoomOut() { //zooms the page out on mobile devices
 	//change the meta name="viewport" and set the initial scale to 1
 	var viewport = document.getElementById("viewport");
 	viewport.content = "width=device-width, initial-scale=1";
-	setTimeout(function() { viewport.content = "width=device-width"; }, 1) //after the DOM is updated, remove the initial-scale value to allow immediate change on next attempt
+	setTimeout(function() { viewport.content = "width=device-width"; }, 100) //after the DOM is updated, remove the initial-scale value to allow immediate change on next attempt
 }
+
 function toggleMobileForm(override) { //changes selection type on mobile devices and remembers the choice
 	//get mobile forms holder
 	var formHolder = document.getElementById("overlaycontent").children[0];
