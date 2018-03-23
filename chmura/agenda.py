@@ -63,6 +63,7 @@ def updateAgenda():
     agenda = download_agenda()
     save_dict(agenda)
     log.info('Zaktualizowano terminarz')
+    log.update_finished('updateAgenda', 'ok')
 
 
 class AgendaException(Exception):

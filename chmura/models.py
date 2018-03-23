@@ -28,6 +28,8 @@ class SubstitutionType(models.Model):
 
 class Journal(models.Model):
     date = models.DateTimeField(auto_now=True)
-    level = models.CharField(max_length=15)
-    message = models.CharField(max_length=250)
-    additional_info = models.CharField(max_length=1000, blank=True)
+    level = models.CharField(max_length=15, blank=True)
+    message = models.CharField(max_length=251, blank=True)
+    additional_info = models.CharField(max_length=1001, blank=True)
+    module = models.CharField(max_length=20, blank=True)
+    status = models.CharField(max_length=10, blank=True)

@@ -45,7 +45,15 @@ def critical(message, params=''):
     send_msg(message, params, 'CRIT', TermColors.FAIL + TermColors.BOLD)
 
 
+def update_finished(module, status):
+    Journal(module=module, status=status).save()
+
+
 def send_msg(message, params, typ, color):
+    if len(message) > 250:
+        message = message[0:250]
+    if len(params) > 1000:
+        params = params[0:1000]
     Journal(level=typ, message=message, additional_info=params).save()
     try:
         if LOGGING_LEVELS.index(typ) < LOGGING_LEVELS.index(LOGGING_LEVEL):

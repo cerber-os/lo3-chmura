@@ -33,3 +33,11 @@ def set_color(level):
     else:
         color = 'inherit'
     return '<span style="color: ' + color + ';' + text_decoration + '">' + level + '</span>'
+
+
+@register.filter()
+def return_never_on_empty(element):
+    if element == '':
+        return 'nigdy'
+    else:
+        return element

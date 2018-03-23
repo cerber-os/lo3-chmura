@@ -166,3 +166,4 @@ def updateid():
     log.info('Rozpoczynam aktualizację identyfikatorów')
     save_ids(download_ids())
     log.info('Zaktualizowano identyfikatory')
+    log.update_finished('updateIds', 'ok')

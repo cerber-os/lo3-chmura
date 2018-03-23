@@ -64,6 +64,7 @@ def updateNews():
     news = download_news()
     save_dict(news)
     log.info('Zaktualizowano aktualności')
+    log.update_finished('updateNews', 'ok')
 
 
 class NewsException(Exception):

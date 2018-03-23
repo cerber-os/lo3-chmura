@@ -64,7 +64,7 @@ def updateSubstitution():
             with open(CACHE_LOCATION + 'substitution/' + period + '.sbt', 'wb') as f:
                 pickle.dump({'dane': [], 'notka': ''}, f, 2)
             continue
-        log.info('Pobieranie zastępstwa na ' + period)
+        log.info('Pobieranie zastępstw na ' + period)
         jsdb = download_gcall(period, credentials=credentials)
         try:
             result = SubstitutionDB(jsdb).generateSubstitution()
@@ -79,10 +79,11 @@ def updateSubstitution():
                     log.warning('Błąd podczas aktualizacji ' + str(day) + '. zastępstwa', str(traceback.format_exc()))
                 else:
                     log.info('Błąd podczas aktualizacji ' + str(day) + '. zastępstwa', str(traceback.format_exc()))
-                return
+                break
         with open(CACHE_LOCATION + 'substitution/' + period + '.sbt', 'wb') as f:
             pickle.dump(result, f, 2)
         sleep(10)
+    log.update_finished('updateSubst', 'ok')
 
 
 ##################################################

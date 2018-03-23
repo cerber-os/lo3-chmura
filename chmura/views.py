@@ -131,7 +131,7 @@ def changelog(request):
 
 
 ##################################################
-# Generowanie dla klienta
+# Obsługa panelu admina
 ##################################################
 def loginPage(request):
     username = request.POST.get('login', None)
@@ -164,7 +164,13 @@ def adminPanel(request):
            'priority_classrooms': {i.name: i.priority for i in PriorityClassroom.objects.all()},
 
            'params': {'debug': DEBUG, 'cache': CACHE_LOCATION, 'tor': ENABLE_TOR, 'aggr_ip': ENABLE_AGGRESSIVE_IP_CHANGE},
-           'events': sorted([i for i in Journal.objects.all()], key=lambda x: x.date, reverse=True)}
+           'events': sorted([i for i in list(Journal.objects.exclude(level=''))], key=lambda x: x.date, reverse=True),
+
+           'news_update': adminLastStateElement('updateNews'),
+           'ids_update': adminLastStateElement('updateIds'),
+           'timetable_update': adminLastStateElement('updateTimeTable'),
+           'subst_update': adminLastStateElement('updateSubst'),
+           'agenda_update': adminLastStateElement('updateAgenda')}
     for i in load_ids('classes'):
         if len(PriorityClass.objects.filter(name=i)) > 0:
             con['priority_classes'][i] = PriorityClass.objects.filter(name=i)[0].is_priority
@@ -398,3 +404,11 @@ def adminGetAdditionalJournal(request):
 def adminClearJournal(request):
     Journal.objects.all().delete()
     return redirect('/admin/?status=5')
+
+
+def adminLastStateElement(name):
+    tab = sorted(list(Journal.objects.filter(module=name, status='ok')), key=lambda x: x.date, reverse=True)
+    if len(tab) == 0:
+        return ''
+    else:
+        return tab[-1]

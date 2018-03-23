@@ -209,11 +209,11 @@
 <section>
 	<h2>Dziennik zdarzeń</h2>
     <table>
-        <tr><td>Ostatnia aktualizacja planu lekcji:</td><td>nigdy</td></tr>
-        <tr><td>Ostatnia aktualizacja zastępstw:</td><td>nigdy</td></tr>
-        <tr><td>Ostatnia aktualizacja identyfikatorów:</td><td>nigdy</td></tr>
-        <tr><td>Ostatnia aktualizacja aktualności:</td><td>nigdy</td></tr>
-        <tr><td>Ostatnia aktualizacja terminarza:</td><td>nigdy</td></tr>
+        <tr><td>Ostatnia aktualizacja planu lekcji:</td><td>{{ timetable_update.date|return_never_on_empty }}</td></tr>
+        <tr><td>Ostatnia aktualizacja zastępstw:</td><td>{{ subst_update.date|return_never_on_empty }}</td></tr>
+        <tr><td>Ostatnia aktualizacja identyfikatorów:</td><td>{{ ids_update.date|return_never_on_empty }}</td></tr>
+        <tr><td>Ostatnia aktualizacja aktualności:</td><td>{{ news_update.date|return_never_on_empty }}</td></tr>
+        <tr><td>Ostatnia aktualizacja terminarza:</td><td>{{ agenda_update.date|return_never_on_empty }}</td></tr>
     </table>
     <hr>
     <table>
