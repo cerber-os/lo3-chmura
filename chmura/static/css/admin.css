@@ -10,6 +10,10 @@ section {
 section > h2 {
 	margin: 0;
 }
+section > h3 {
+	margin: 0;
+	font-size: initial;
+}
 section > p {
 	margin: 8px 0;
 	text-align: justify;
@@ -56,12 +60,41 @@ table.checktable input[type="checkbox"] {
 	margin: 0;
 }
 
+table.diagnosticstable caption {
+	text-align: left;
+	font-weight: bold;
+}
+table.diagnosticstable td:nth-child(1) {
+	padding-right: 5em;
+}
+
+div.eventlog {
+	font-family: monospace;
+	font-size: 13.3333px;
+	
+	background-color: #FFFFFF;
+	border: 1px solid #A9A9A9;
+	margin: 8px 0;
+	padding: 2px;
+	
+	resize: vertical;
+	cursor: text;
+	word-wrap: break-word;
+	white-space: pre-wrap;
+	overflow: auto;
+	
+	height: 15em;
+}
+
 .loginerror { margin: 0 8px; color: #E53935; }
 .error { color: #E53935; }
 .success { color: #2E7D32; }
 form.nonsectionui {
 	display: block;
 	margin: 8px;
+}
+span.path {
+	font-family: Consolas, monospace;
 }
 
 form.desktopchangepassword label { margin-right: 5em; }

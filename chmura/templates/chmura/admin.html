@@ -158,6 +158,58 @@
 	{% endif %}
 </section>
 <section>
+	<h2>Dziennik zdarzeń</h2>
+    <table class="diagnosticstable">
+		<caption>Ostatnie aktualizacje</caption>
+        <tr>
+			<td>Planu lekcji:</td>
+			<td>{{ timetable_update.date|default:"nigdy" }}</td>
+		</tr>
+        <tr>
+			<td>Zastępstw:</td>
+			<td>{{ subst_update.date|default:"nigdy" }}</td>
+		</tr>
+        <tr>
+			<td>Identyfikatorów:</td>
+			<td>{{ ids_update.date|default:"nigdy" }}</td>
+		</tr>
+        <tr>
+			<td>Aktualności:</td>
+			<td>{{ news_update.date|default:"nigdy" }}</td>
+		</tr>
+        <tr>
+			<td>Terminarza:</td>
+			<td>{{ agenda_update.date|default:"nigdy" }}</td>
+		</tr>
+    </table>
+    <table class="diagnosticstable">
+		<caption>Pozostałe informacje</caption>
+		<tr>
+			<td>Tryb debugowania:</td>
+			<td>{{ params.debug }}</td>
+		</tr>
+        <tr>
+			<td>Wykorzystanie sieci Tor:</td>
+			<td>{{ params.tor }}</td>
+		</tr>
+        <tr>
+			<td>Agresywna zmiana adresu IP Tor:</td>
+			<td>{{ params.aggr_ip }}</td>
+		</tr>
+        <tr>
+			<td>Lokalizacja pamięci podręcznej:</td>
+			<td><span class="path">{{ params.cache }}</span></td>
+		</tr>
+    </table>
+    <h3>Dziennik zdarzeń</h3>
+	<div class="eventlog">{% for event in events %}{{ event.date|date:"Y-m-d H:i:s" }}&#9;{{ event.level }}&#9;<a href="/admin/adminadditional/?pk={{ event.pk }}" target="_blank">szczegóły</a>&#9;{{ event.message }}<br>{% endfor %}</div>
+    <form action="/admin/clearJournal/">
+        {% csrf_token %}
+        <input type="submit" value="Wyczyść dziennik">
+    </form>
+    {% if status == "5" %}<p class="success">Dziennik zdarzeń wyczyszczony pomyślnie.</p>{% endif %}
+</section>
+<section>
 	<h2>Hasło do panelu</h2>
 	<p>Hasło musi mieć co najmniej 8 znaków, w tym przynajmniej jedną cyfrę i jeden znak specjalny.</p>
 	<form method="post" action="/admin/changepass/" class="desktopchangepassword">
@@ -206,56 +258,6 @@
 		<input type="submit" value="Zmień hasło">
 	</form>
 </section>
-<section>
-	<h2>Dziennik zdarzeń</h2>
-    <table>
-        {% autoescape off %}
-        <tr><td>Ostatnia aktualizacja planu lekcji:</td><td>{{ timetable_update.date|return_never_on_empty }}</td></tr>
-        <tr><td>Ostatnia aktualizacja zastępstw:</td><td>{{ subst_update.date|return_never_on_empty }}</td></tr>
-        <tr><td>Ostatnia aktualizacja identyfikatorów:</td><td>{{ ids_update.date|return_never_on_empty }}</td></tr>
-        <tr><td>Ostatnia aktualizacja aktualności:</td><td>{{ news_update.date|return_never_on_empty }}</td></tr>
-        <tr><td>Ostatnia aktualizacja terminarza:</td><td>{{ agenda_update.date|return_never_on_empty }}</td></tr>
-        {% endautoescape %}
-    </table>
-    <hr>
-    <table>
-        {% autoescape off %}
-        <tr><td>Tryb debugowania:</td><td>{{ params.debug|return_on_off:True }}</td></tr>
-        <tr><td>Tor</td><td>{{ params.tor|return_on_off }}</td></tr>
-        <tr><td>Agresywna zmiana adresu IP Tor:</td><td>{{ params.aggr_ip|return_on_off }}</td></tr>
-        {% endautoescape %}
-        <tr><td>Lokalizacja pamięci podręcznej:</td><td>{{ params.cache }}</td></tr>
-    </table>
-    <hr>
-    <div class="tablescroller">
-        {% if events|length > 0 %}
-        <table style="max-width: none;">
-            {% for event in events %}
-            <tr>
-                <td style="width: 20%;">{{ event.date }}</td>
-                {% autoescape off %}<td style="width: 10%;">{{ event.level|set_color }}</td>{% endautoescape %}
-                <td style="width: 50%;">{{ event.message }}</td>
-                <td style="width: 20%;"><a href="/admin/adminadditional/?pk={{ event.pk }}">Pokaż szczegóły</a></td>
-            </tr>
-            {% endfor %}
-        </table>
-        {% else %}
-            Brak zdarzeń w dzienniku
-        {% endif %}
-    </div>
-    <form action="/admin/clearJournal/">
-        {% csrf_token %}
-        <input type="submit" value="Wyczyść dziennik">
-    </form>
-    {% if status == "5" %}<p class="success">Dziennik zdarzeń został pomyślnie wyczyszczony</p>{% endif %}
-</section>
-
-<form action="/admin/clearEmptyAliases/">
-    {% csrf_token %}
-    <input type="submit" value="Usuń puste aliasy (TYMCZASOWE)">
-    <!--Ambitny Frontend designerze, ten przycisk jest tylko po to, by usunąć bajzel w aliasach. Proszę
-        nie marnuj czasu na jego stylizowanie, bo i tak zniknie w ciągu kilku dni.-->
-</form>
 
 <form action="/admin/logout" class="nonsectionui">
 	<input type="submit" value="Wyloguj">
