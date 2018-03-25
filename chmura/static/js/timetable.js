@@ -252,7 +252,7 @@ function toggleMobileForm(override) { //changes selection type on mobile devices
 /*
 *	TIMETABLE-RELATED FUNCTIONS
 */
-function showDetails(a) { //show the lesson details dialog, triggered when the "expand" link is clicked
+function showDetails(div) { //show the lesson details dialog, triggered when the "expand" link is clicked
 	//show the overlay and clear its contents
 	document.getElementById("overlay").style.visibility = "visible";
 	document.getElementById("overlaytitle").innerText = "Szczegóły";
@@ -264,7 +264,7 @@ function showDetails(a) { //show the lesson details dialog, triggered when the "
 	holder = document.getElementById("overlaycontent").appendChild(holder);
 	
 	//get the lessonholder
-	var lessonContainer = a.parentElement.parentElement.parentElement.parentElement;
+	var lessonContainer = div.parentElement;
 	
 	//for each of the elements in the lessonholder, clone the element's only child, change its class to compact and append it to the overlay
 	for (var i = 1; i < lessonContainer.children.length; i++) {

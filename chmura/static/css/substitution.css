@@ -1,5 +1,5 @@
 table.substitutiontable {
-	color: #666;
+	color: #212121;
 	font-size: 0.9em;
 	line-height: 1.1em;
 	
@@ -9,12 +9,18 @@ table.substitutiontable {
 }
 table.substitutiontable td, table.substitutiontable th {
 	padding: 12pt;
-	background-color: #EEEEEE;
+	background-color: #E0E0E0;
 	
 	text-align: center;
 }
+table.substitutiontable th {
+	color: #666;
+}
 table.substitutiontable tr:nth-child(even) td {
-	background-color: #FAFAFA;
+	background-color: #F5F5F5;
+}
+table.substitutiontable tr:nth-child(odd) td {
+	background-color: #EEEEEE;
 }
 div.substitutiontablewrapper {
 	max-width: 1000px;

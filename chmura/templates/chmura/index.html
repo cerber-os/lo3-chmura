@@ -3,13 +3,12 @@
 {% block title %}Plan lekcji{% endblock %}
 
 {% block localcss %}
-<link rel="stylesheet" href="/static/css/timetable.css?9">
-{#<link rel="stylesheet" href="/static/css/timetablecolors.css">#}
+<link rel="stylesheet" href="/static/css/timetable.css?11">
 {% if device == "Chrome" %}<link rel="stylesheet" href="/static/css/timetablechromefix.css">{% endif %}
 {% endblock %}
 
 {% block localjs %}
-<script src="/static/js/timetable.js?10" defer></script>
+<script src="/static/js/timetable.js?11" defer></script>
 {% endblock %}
 
 {% block secondaryheaderselect %}
@@ -64,10 +63,10 @@
 			{% else %}
 			<td>
 				<div class="lessonholder">
-					<div class="detailslesson">
+					<div class="detailslesson" onclick="showDetails(this)">
 						<div class="lesson variouslessons" style="background-color: white;">
 							<p class="subject">Różne</p>
-							<p class="detailslink"><a href="javascript:void(0)" onclick="showDetails(this)">Rozwiń</a></p>
+							<p class="detailslink">Rozwiń</p>
 						</div>
 					</div>
 					{% for lesson in block %}
@@ -166,7 +165,7 @@
 			<input
 				type="text"
 				autocomplete="off"
-				placeholder="Nazwa klasy, ucznia lub nauczyciela"
+				placeholder="Nazwa klasy, ucznia, nauczyciela lub sali"
 				onkeyup="handleSearchBarKeyUp(this, event)"
 				onkeydown="handleSearchBarKeyDown(this, event)"
 				class="searchbar">

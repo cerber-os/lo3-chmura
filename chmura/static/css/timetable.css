@@ -30,15 +30,14 @@
 #timetable .lesson p:nth-of-type(odd) {
 	font-weight: bold;
 }
+#timetable div.detailslesson {
+	cursor: pointer;
+}
 
 #timetable p.detailslink {
 	text-transform: uppercase;
 	font-size: 0.8em;
 	margin-top: 1em;
-}
-#timetable p.detailslink a {
-	text-decoration: none;
-	color: inherit;
 }
 #timetable .hiddenlesson { display: none !important; }
 #timetable .variouslessons p:nth-child(1) { text-transform: none; }
@@ -150,7 +149,7 @@ p.mobiletimetableselectlabel { display: none; }
 	}
 	
 	#mobiletimetableselect { display: inline-block; }
-	#overlaycontent .compactlesson { font-size: 0.6em; }
+	#overlaycontent .compactlesson { font-size: 0.8em; }
 	#overlaycontent .compactlessonholder { max-height: 250px; }
 	#overlaywindow { padding: 6pt; }
 	#overlaytitlebar { margin: 0 0 6pt; }
