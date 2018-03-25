@@ -4,7 +4,7 @@
 {% block title %}Panel administracyjny{% endblock %}
 
 {% block localcss %}
-<link rel="stylesheet" href="/static/css/admin.css?1">
+<link rel="stylesheet" href="/static/css/admin.css?2">
 {% endblock %}
 
 {% block content %}
@@ -163,50 +163,54 @@
 		<caption>Ostatnie aktualizacje</caption>
 		<tr>
 			<td>Planu lekcji:</td>
-			<td>{{ timetable_update.date|default:"nigdy" }}</td>
+			<td> {{ timetable_update.date|default:"nigdy" }}</td>
 		</tr>
 		<tr>
 			<td>Zastępstw:</td>
-			<td>{{ subst_update.date|default:"nigdy" }}</td>
+			<td> {{ subst_update.date|default:"nigdy" }}</td>
 		</tr>
 		<tr>
 			<td>Identyfikatorów:</td>
-			<td>{{ ids_update.date|default:"nigdy" }}</td>
+			<td> {{ ids_update.date|default:"nigdy" }}</td>
 		</tr>
 		<tr>
 			<td>Aktualności:</td>
-			<td>{{ news_update.date|default:"nigdy" }}</td>
+			<td> {{ news_update.date|default:"nigdy" }}</td>
 		</tr>
 		<tr>
 			<td>Terminarza:</td>
-			<td>{{ agenda_update.date|default:"nigdy" }}</td>
+			<td> {{ agenda_update.date|default:"nigdy" }}</td>
 		</tr>
 	</table>
-	<table class="diagnosticstable">
+	<table class="diagnosticstable long">
 		<caption>Pozostałe informacje</caption>
 		<tr>
 			<td>Tryb debugowania:</td>
-			<td>{% if params.debug %}włączony{% else %}wyłączony{% endif %}</td>
+			<td> {% if params.debug %}włączony{% else %}wyłączony{% endif %}</td>
 		</tr>
 		<tr>
 			<td>Wykorzystanie sieci Tor:</td>
-			<td>{% if params.tor %}włączone{% else %}wyłączone{% endif %}</td>
+			<td> {% if params.tor %}włączone{% else %}wyłączone{% endif %}</td>
 		</tr>
 		<tr>
 			<td>Agresywna zmiana adresu IP Tor:</td>
-			<td>{% if params.aggr_ip %}włączona{% else %}wyłączona{% endif %}</td>
+			<td> {% if params.aggr_ip %}włączona{% else %}wyłączona{% endif %}</td>
 		</tr>
 		<tr>
 			<td>Lokalizacja pamięci podręcznej:</td>
-			<td><span class="path">{{ params.cache }}</span></td>
+			<td><span class="path"> {{ params.cache }}</span></td>
 		</tr>
 	</table>
 	<h3>Dziennik zdarzeń</h3>
-	<div id="servereventlog" class="eventlog">
-		{% for event in events %}<span data-entrylevel="{{ event.level }}">{{ event.date|date:"Y-m-d H:i:s" }}&#9;{{ event.level }}&#9;{{ event.message }}{% if event.additional_info|length != 0 %} (<a href="/admin/adminadditional/?pk={{ event.pk }}" target="_blank">szczegóły</a>){% endif %}</span><br>
-		{% endfor %}</div>
+	<div class="eventlog">
+		<div id="logcontentholder">
+			{% for event in events %}<span data-entrylevel="{{ event.level }}">{{ event.date|date:"Y-m-d H:i:s" }}&#9;{{ event.level }}&#9;{{ event.message }}{% if event.additional_info|length != 0 %} (<a href="/admin/adminadditional/?pk={{ event.pk }}" target="_blank">szczegóły</a>){% endif %}</span><br>
+			{% endfor %}
+			<br>
+		</div>
+	</div>
 	<script type="text/javascript">
-		var log = document.getElementById("servereventlog");
+		var log = document.getElementById("logcontentholder");
 		log.scrollTo(0, log.scrollHeight);
 	</script>
 	{% if status == "5" %}<p class="success">Dziennik zdarzeń wyczyszczony pomyślnie.</p>{% endif %}
@@ -234,24 +238,6 @@
 				<td><input type="password" name="newer_password" title="Stare hasło"></td>
 			</tr>
 		</table>
-		
-		{% if status == "-1" %}
-		<p class="error">Hasło nie spełnia wymogów bezpieczeństwa.</p>
-		{% elif status == "-2" %}
-		<p class="error">Hasła nie są jednakowe.</p>
-		{% elif status == "-3" %}
-		<p class="error">Stare hasło jest niepoprawne.</p>
-		{% endif %}
-		
-		<input type="submit" value="Zmień hasło">
-	</form>
-	<form method="post" action="/admin/changepass/" class="mobilechangepassword">
-		<label>Stare hasło:</label>
-		<input type="password" name="old_password" title="Stare hasło">
-		<label>Nowe hasło:</label>
-		<input type="password" name="new_password" title="Stare hasło">
-		<label>Powtórz hasło:</label>
-		<input type="password" name="newer_password" title="Stare hasło">
 		
 		{% if status == "-1" %}
 		<p class="error">Hasło nie spełnia wymogów bezpieczeństwa.</p>

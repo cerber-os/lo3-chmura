@@ -76,20 +76,30 @@ div.eventlog {
 	background-color: #FFFFFF;
 	border: 1px solid #A9A9A9;
 	margin: 8px 0;
-	padding: 2px;
 	
 	resize: vertical;
 	cursor: text;
 	word-wrap: break-word;
-	white-space: pre-wrap;
-	overflow: auto;
+	white-space: pre;
 	
 	height: 15em;
 	min-height: 15em;
+	
+	position: relative;
 }
-div.eventlog > span[data-entrylevel="WARN"] { color: #EF6C00; }
-div.eventlog > span[data-entrylevel="ERROR"] { color: #E53935; }
-div.eventlog > span[data-entrylevel="CRIT"] { color: #E53935; font-weight: bold; }
+div.eventlog > div {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 2px;
+	
+	overflow: auto;
+}
+div.eventlog span[data-entrylevel="WARN"] { color: #EF6C00; }
+div.eventlog span[data-entrylevel="ERROR"] { color: #E53935; }
+div.eventlog span[data-entrylevel="CRIT"] { color: #E53935; font-weight: bold; }
 
 .loginerror { margin: 0 8px; color: #E53935; }
 .error { color: #E53935; }
@@ -100,13 +110,10 @@ form.nonsectionui {
 }
 span.path {
 	font-family: Consolas, monospace;
+	word-break: break-all;
 }
 
 form.desktopchangepassword label { margin-right: 5em; }
-form.mobilechangepassword { display: none; }
-form.mobilechangepassword input[type="password"] { width: 100%; }
-form.mobilechangepassword label { display: block; }
-form.mobilechangepassword input[type="submit"] { margin-top: 0.5em; }
 
 #loginform { display: inline-block; }
 #loginform form.desktoplogin label { margin-right: 5em; }
@@ -120,6 +127,13 @@ form.mobilechangepassword input[type="submit"] { margin-top: 0.5em; }
 	form.desktoplogin { display: none; }
 	form.mobilelogin { display: unset !important; }
 	p.error { text-align: center; }
-	form.desktopchangepassword { display: none; }
-	form.mobilechangepassword { display: unset !important; }
+	
+	form.desktopchangepassword table { width: 100%; text-align: center; margin-bottom: 8px; }
+	form.desktopchangepassword label { margin-right: 0; }
+	form.desktopchangepassword input { width: 100%; box-sizing: border-box; }
+	form.desktopchangepassword td { display: block; }
+	
+	table.diagnosticstable { width: 100%; }
+	table.diagnosticstable td { display: inline; padding-right: 0 !important; }
+	table.diagnosticstable.long td:nth-child(1) { display: block; }
 }
