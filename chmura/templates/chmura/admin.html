@@ -156,6 +156,15 @@
 	{% endif %}
 	<form method="post" action="/admin/clearcache/"><input type="submit" value="Wyczyść pamięć">{% csrf_token %}</form>
 	{% endif %}
+
+    <p>
+		Wyczyść puste aliasy, by posprzątać bazę danych
+	</p>
+    <form action="/admin/clearEmptyAliases/">
+    {% csrf_token %}
+    <input type="submit" value="Usuń puste aliasy (TYMCZASOWE)">
+    <!--Ambitny Frontend designerze, NIE USUWAJ MI TEGO PRZYCISKU!!!-->
+    </form>
 </section>
 <section>
 	<h2>Dziennik zdarzeń</h2>
@@ -246,7 +255,7 @@
 		{% elif status == "-3" %}
 		<p class="error">Stare hasło jest niepoprawne.</p>
 		{% endif %}
-		
+
 		<input type="submit" value="Zmień hasło">
 	</form>
 </section>

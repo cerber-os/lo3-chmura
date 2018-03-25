@@ -79,7 +79,7 @@ def updateSubstitution():
                     log.warning('Błąd podczas aktualizacji ' + str(day) + '. zastępstwa', str(traceback.format_exc()))
                 else:
                     log.info('Błąd podczas aktualizacji ' + str(day) + '. zastępstwa', str(traceback.format_exc()))
-                break
+                result = {'dane': [], 'notka': ''}
         with open(CACHE_LOCATION + 'substitution/' + period + '.sbt', 'wb') as f:
             pickle.dump(result, f, 2)
         sleep(10)
