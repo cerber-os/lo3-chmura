@@ -156,15 +156,6 @@
 	{% endif %}
 	<form method="post" action="/admin/clearcache/"><input type="submit" value="Wyczyść pamięć">{% csrf_token %}</form>
 	{% endif %}
-
-    <p>
-		Wyczyść puste aliasy, by posprzątać bazę danych
-	</p>
-    <form action="/admin/clearEmptyAliases/">
-    {% csrf_token %}
-    <input type="submit" value="Usuń puste aliasy (TYMCZASOWE)">
-    <!--Ambitny Frontend designerze, NIE USUWAJ MI TEGO PRZYCISKU!!!-->
-    </form>
 </section>
 <section>
 	<h2>Dziennik zdarzeń</h2>
@@ -195,15 +186,15 @@
 		<caption>Pozostałe informacje</caption>
 		<tr>
 			<td>Tryb debugowania:</td>
-			<td> {% if params.debug %}włączony{% else %}wyłączony{% endif %}</td>
+			<td> {% if params.debug %}<span style="color: red;">włączony</span>{% else %}wyłączony{% endif %}</td>
 		</tr>
 		<tr>
 			<td>Wykorzystanie sieci Tor:</td>
-			<td> {% if params.tor %}włączone{% else %}wyłączone{% endif %}</td>
+            <td> {% if params.tor %}włączone{% else %}<span style="color: red;">wyłączone</span>{% endif %}</td>
 		</tr>
 		<tr>
 			<td>Agresywna zmiana adresu IP Tor:</td>
-			<td> {% if params.aggr_ip %}włączona{% else %}wyłączona{% endif %}</td>
+            <td> {% if params.aggr_ip %}włączona{% else %}<span style="color: red;">wyłączona</span>{% endif %}</td>
 		</tr>
 		<tr>
 			<td>Lokalizacja pamięci podręcznej:</td>

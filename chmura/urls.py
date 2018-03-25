@@ -23,6 +23,5 @@ urlpatterns = [
         url(r'^admin/modifyclassroomspriority/$', views.adminModifyClassroomsPriority, name='adminModifyClassroomsPriority'),
         url(r'^admin/adminupdateID/$', views.adminUpdateID, name='adminUpdateID'),
         url(r'^admin/adminadditional/$', views.adminGetAdditionalJournal, name='adminGetAdditionalJournal'),
-        url(r'^admin/clearjournal/$', views.adminClearJournal, name='adminClearJournal'),
-        url(r'^admin/clearemptyaliases/$', views.clearEmptyAliases, name='clearEmptyAliases')
+        url(r'^admin/clearjournal/$', views.adminClearJournal, name='adminClearJournal')
 ]

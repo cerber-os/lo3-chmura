@@ -80,9 +80,9 @@ def updateSubstitution():
                 else:
                     log.info('Błąd podczas aktualizacji ' + str(day) + '. zastępstwa', str(traceback.format_exc()))
                 for cnt in range(0, 7-day):
-                    with open(CACHE_LOCATION + 'substitution/' + period + '.sbt', 'wb') as f:
+                    with open(CACHE_LOCATION + 'substitution/' + period_unform.strftime('%Y-%m-%d') + '.sbt', 'wb') as f:
                         pickle.dump({'dane': [], 'notka': ''}, f, 2)
-                    period += timedelta(days=cnt)
+                    period_unform += timedelta(days=cnt)
                 return
         with open(CACHE_LOCATION + 'substitution/' + period + '.sbt', 'wb') as f:
             pickle.dump(result, f, 2)
