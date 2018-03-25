@@ -113,6 +113,7 @@ span.path {
 	word-break: break-all;
 }
 
+form.desktopchangepassword table { margin-bottom: 8px; }
 form.desktopchangepassword label { margin-right: 5em; }
 
 #loginform { display: inline-block; }
@@ -128,7 +129,7 @@ form.desktopchangepassword label { margin-right: 5em; }
 	form.mobilelogin { display: unset !important; }
 	p.error { text-align: center; }
 	
-	form.desktopchangepassword table { width: 100%; text-align: center; margin-bottom: 8px; }
+	form.desktopchangepassword table { width: 100%; text-align: center; }
 	form.desktopchangepassword label { margin-right: 0; }
 	form.desktopchangepassword input { width: 100%; box-sizing: border-box; }
 	form.desktopchangepassword td { display: block; }

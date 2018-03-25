@@ -24,6 +24,9 @@ body {
 #header > p {
 	display: inline;
 }
+#header a.logolink {
+	text-decoration: none;
+}
 #headerhamburger {
 	height: 30px;
 	margin-top: 10px;
