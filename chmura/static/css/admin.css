@@ -33,6 +33,7 @@ input[type="text"], input[type="password"], input[type="number"] {
 div.tablescroller {
 	margin: 8px 0;
 	height: 200px;
+	min-height: 200px;
 	
 	overflow-y: scroll;
 	resize: vertical;
@@ -84,7 +85,11 @@ div.eventlog {
 	overflow: auto;
 	
 	height: 15em;
+	min-height: 15em;
 }
+div.eventlog > span[data-entrylevel="WARN"] { color: #EF6C00; }
+div.eventlog > span[data-entrylevel="ERROR"] { color: #E53935; }
+div.eventlog > span[data-entrylevel="CRIT"] { color: #E53935; font-weight: bold; }
 
 .loginerror { margin: 0 8px; color: #E53935; }
 .error { color: #E53935; }

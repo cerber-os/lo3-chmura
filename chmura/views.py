@@ -164,7 +164,7 @@ def adminPanel(request):
            'priority_classrooms': {i.name: i.priority for i in PriorityClassroom.objects.all()},
 
            'params': {'debug': DEBUG, 'cache': CACHE_LOCATION, 'tor': ENABLE_TOR, 'aggr_ip': ENABLE_AGGRESSIVE_IP_CHANGE},
-           'events': sorted([i for i in list(Journal.objects.exclude(level=''))], key=lambda x: x.date, reverse=True),
+           'events': sorted([i for i in list(Journal.objects.exclude(level=''))], key=lambda x: x.date),
 
            'news_update': adminLastStateElement('updateNews'),
            'ids_update': adminLastStateElement('updateIds'),
@@ -397,7 +397,7 @@ def adminUpdateID(request):
 @login_required()
 def adminGetAdditionalJournal(request):
     j = get_object_or_404(Journal, pk=request.GET.get('pk', '-1'))
-    return HttpResponse(j.additional_info, content_type='text/plain')
+    return HttpResponse(j.message + '\n\n' + j.additional_info, content_type='text/plain; charset=utf-8')
 
 
 @login_required()
