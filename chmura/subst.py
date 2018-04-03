@@ -75,15 +75,10 @@ def updateSubstitution():
             try:
                 result = SubstitutionDB(jsdb).generateSubstitution()
             except ValueError:
-                if day < 2:
-                    log.warning('Błąd podczas aktualizacji ' + str(day) + '. zastępstwa', str(traceback.format_exc()))
-                else:
-                    log.info('Błąd podczas aktualizacji ' + str(day) + '. zastępstwa', str(traceback.format_exc()))
-                for cnt in range(0, 7-day):
-                    with open(CACHE_LOCATION + 'substitution/' + period_unform.strftime('%Y-%m-%d') + '.sbt', 'wb') as f:
-                        pickle.dump({'dane': [], 'notka': ''}, f, 2)
-                    period_unform += timedelta(days=cnt)
-                return
+                log.info('Podczas aktualizacji ' + str(day) + '. zastępstwa wystąpił problem', str(traceback.format_exc()))
+                with open(CACHE_LOCATION + 'substitution/' + period + '.sbt', 'wb') as f:
+                    pickle.dump({'dane': [], 'notka': ''}, f, 2)
+                continue
         with open(CACHE_LOCATION + 'substitution/' + period + '.sbt', 'wb') as f:
             pickle.dump(result, f, 2)
         sleep(10)
