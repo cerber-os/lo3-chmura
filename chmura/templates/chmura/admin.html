@@ -4,7 +4,7 @@
 {% block title %}Panel administracyjny{% endblock %}
 
 {% block localcss %}
-<link rel="stylesheet" href="/static/css/admin.css?2">
+<link rel="stylesheet" href="/static/css/admin.css?3">
 {% endblock %}
 
 {% block content %}
@@ -186,15 +186,15 @@
 		<caption>Pozostałe informacje</caption>
 		<tr>
 			<td>Tryb debugowania:</td>
-			<td> {% if params.debug %}<span style="color: red;">włączony</span>{% else %}wyłączony{% endif %}</td>
+			<td> {% if params.debug %}<span class="error">włączony</span>{% else %}<span class="success">wyłączony</span>{% endif %}</td>
 		</tr>
 		<tr>
 			<td>Wykorzystanie sieci Tor:</td>
-            <td> {% if params.tor %}włączone{% else %}<span style="color: red;">wyłączone</span>{% endif %}</td>
+			<td> {% if params.tor %}<span class="success">włączone</span>{% else %}<span class="error">wyłączone</span>{% endif %}</td>
 		</tr>
 		<tr>
 			<td>Agresywna zmiana adresu IP Tor:</td>
-            <td> {% if params.aggr_ip %}włączona{% else %}<span style="color: red;">wyłączona</span>{% endif %}</td>
+			<td> {% if params.aggr_ip %}<span class="success">włączona</span>{% else %}<span class="error">wyłączona</span>{% endif %}</td>
 		</tr>
 		<tr>
 			<td>Lokalizacja pamięci podręcznej:</td>
